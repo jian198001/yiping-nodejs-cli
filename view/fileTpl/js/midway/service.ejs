@@ -1,0 +1,178 @@
+import {Inject, Provide, } from "@midwayjs/decorator";
+import {BaseService, } from "../module/common/service/base.service";
+import {ReqParam, } from "../module/common/model/ReqParam";
+import {Page, } from "../module/common/model/Page";
+import {Equal, Not, Repository, } from "typeorm";
+import {InjectEntityModel, } from "@midwayjs/typeorm";
+import {<%= data.formNameUpperFirst %>, } from "../entity/<%= data.formNameUpperFirst %>";
+
+import {Zero0Error, } from "../module/common/model/Zero0Error";
+
+import {ILogger, } from "@midwayjs/logger";
+
+import {_, } from 'lodash';
+
+@Provide()
+export class <%= data.formNameUpperFirst %>Service extends BaseService {
+
+    private log: string = '';
+
+    @Inject()
+    private logger: ILogger = null
+
+    private fromSql: string = ' FROM <%= data.formNameSnakeCase %> t ';
+
+    private selectSql = ` ${BaseService.selSql}  
+  
+    `
+
+    @InjectEntityModel(<%= data.formNameUpperFirst %>, )
+    private repository: Repository<<%= data.formNameUpperFirst %>>;
+
+    public async page(reqParam: ReqParam = new ReqParam(), page: Page,): Promise<any> {
+
+        this?.logger.info?.('分页列表');
+
+        console.log(this?.log);
+
+        let whereSql: string = ''; // 查询条件字符串
+
+        if ((reqParam, ) && (reqParam.searchValue, )) {
+
+        let searchValues: string[] = _?.split(reqParam.searchValue, ' ', );
+
+        if (searchValues) {
+
+            whereSql += ' AND ( (1 < 0) ';
+
+            for (const searchValue of searchValues ) { 
+
+            <%
+                let columns = data.columns;
+
+                if (columns && columns.length > 0 ) {
+
+                    for (const val for columns ) { 
+
+                        if ((val.tag === 'el-input' && val.tagIcon !== 'password' && val.tagIcon !== 'textarea') || val.tag === 'el-input-number' ) {
+            %>
+            whereSql += ` OR ( t.<%- val.inputNameSnakeCase %> LIKE '%${searchValue}%' ) ` ;
+            <%
+                        }
+
+                    }
+
+                }
+    %>
+
+        }
+
+        whereSql += ' ) ';
+
+    }
+
+    }
+
+    if ((reqParam, ) && (reqParam.filters, )) {
+
+    let filters: any[] = eval(decodeURIComponent?.(reqParam.filters, ));
+
+    if (filters, ) {
+
+    for (const  filter of filters) {
+
+    let key: string = filter.key;
+
+    let values: string = filter.values;
+
+    console.log(key, values, );
+
+    whereSql += ` `;
+
+    }
+
+    }
+
+    }
+// 执行查询语句并返回page对象结果
+    const data: any = await super.pageBase?.(this?.selectSql, this?.fromSql, whereSql, reqParam, page,);
+
+    if (page?.pageSize > 0) {
+      
+        return data
+  
+      }
+  
+      if (page?.pageSize < 1) {
+        // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+        return _?.keyBy?.(data?.list, 'value',)
+  
+      }
+  
+    }
+
+    public async getById(id: string,): Promise<any> {
+
+        return super.getByIdBase?.(id, this?.selectSql, this?.fromSql,);
+
+    }
+
+    public async del(ids: string,): Promise<void> {
+
+        let idsArr: string[] = _?.split(ids, ',', );
+
+        await this?.repository?.delete?.(idsArr, );
+
+    }
+
+    public async update(obj: <%= data.formNameUpperFirst %>,): Promise<<%= data.formNameUpperFirst %>> { // 一个表进行操作 typeORM
+
+        let log: string = '', uniqueWhere: any = { id: Equal(obj?.id,), };
+
+        if (obj?.id, ) {
+
+            uniqueWhere.id = Not(obj?.id, );
+
+        }
+
+        let count: number = await this?.repository?.count( { where: uniqueWhere, }, );
+
+        if (count > 0) {
+
+            log = '名称已存在，操作失败';
+
+            const zero0Error: Zero0Error = new Zero0Error(log, '5000')
+            this?.logger.error?.(log, zero0Error,);
+            throw zero0Error
+
+        }
+
+        if (!obj?.id ) {
+
+            delete obj?.id;
+
+            return await this?.repository?.save?.(obj); // insert update
+
+        }
+
+        let old: <%= data.formNameUpperFirst %> = await this?.repository?.findOneById?.(obj?.id, )
+
+        <%
+            if (columns && columns.length > 0 ) {
+
+                for (const column for columns) {
+
+                    let str = ` old.${column.vModel} = obj.${column.vModel}; `
+
+            %>
+            <%- str %>
+            <%
+                }
+            }
+        %>
+
+        return await this?.repository?.save?.(old, );
+
+    }
+
+}

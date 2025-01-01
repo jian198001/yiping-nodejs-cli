@@ -1,0 +1,25 @@
+import {Entity, Column, } from "typeorm";
+import {BaseModel, } from "../module/common/model/BaseModel";
+
+@Entity()
+export class <%= data?.formNameUpperFirst %> extends BaseModel {
+
+<%
+let entityColumns = data?.entityColumns;
+
+if (!entityColumns || entityColumns?.length < 1 ) return
+ 
+for (const entityColumn of entityColumns) {
+ 
+    let col = `
+        @Column({nullable: true, comment: '', name: '${entityColumn?.inputNameSnakeCase}', ${entityColumn?.columnType} })
+        public  ${entityColumn?.vModel}: ${entityColumn?.type} = ${entityColumn?.defaultVal};
+
+    `;
+                  
+%><%- col %><%
+
+}
+%>
+
+}

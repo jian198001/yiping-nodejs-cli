@@ -1,7 +1,7 @@
-# 一平node.js脚手架
+# 一平midway脚手架
 
 #### Description
-一平node.js脚手架是一平软件推出的基于阿里midway框架的后端服务框架。提供了基础的后台功能，包括员工管理、部门管理、角色管理、菜单管理、商品、订单管理等。
+{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
 
 #### Software Architecture
 Software architecture description

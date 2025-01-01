@@ -1,0 +1,78 @@
+import {All, Controller, Inject, Query, Body, } from '@midwayjs/decorator';
+import {Result, } from "../../../../../module/common/model/Result";
+import {ReqParam, } from "../../../../../module/common/model/ReqParam";
+import {Page, } from "../../../../../module/common/model/Page";
+import {ILogger, } from '@midwayjs/logger';
+import {<%= data.formNameUpperFirst %>Service, } from "../../../../../service/<%= data.formName %>.service";
+import {<%= data.formNameUpperFirst %>, } from "../../../../../entity/<%= data.formNameUpperFirst %>";
+
+import _ = require('lodash');
+
+@Controller('/staff/web/userCenter/<%= data.dirName %>/<%= data.formName %>')
+export class StaffWebUserCenter<%= data.dirNameUpperFirst %><%= data.formNameUpperFirst %>Controller {
+
+    @Inject()
+    private logger: ILogger = null
+
+    @Inject()
+    private <%= data.formName %>Service: <%= data.formNameUpperFirst %>Service = null;
+
+    @All('/page.json')
+    public async page(@Query() reqParam: ReqParam = new ReqParam(), @Query() page: Page = new Page(),): Promise<Result> {
+
+        this?.logger.info?.('分页列表controller');
+
+        let result: Result = new Result(), data: Page = await this?.<%= data.formName %>Service.page?.(reqParam, page,);
+
+        result.data = data;
+
+        return result;
+
+    }
+
+    @All('/getById.json')
+    public async getById(@Query('id') id: string,): Promise<Result> {
+
+        let result: Result = new Result(), data: any = await this?.<%= data.formName %>Service.getById?.(id,);
+
+        result.data = data;
+
+        return result;
+
+        }
+ 
+    @All('/del.json')
+    public async del(@Body() ids: string[],): Promise<Result> {
+
+        let result: Result = new Result();
+
+        await this?.<%= data.formName %>Service.del(ids,);
+
+        return result;
+
+    }
+
+    @All('/update.json')
+    public async update(@Body() obj: <%= data.formNameUpperFirst %>, ):Promise<Result> {
+
+        let result:Result = new Result();
+
+        try {
+
+            result.data = await this?.<%= data.formName %>Service.update(obj, );
+
+        } catch (e) {
+
+            result.code = e.code;
+
+            result.message = e.message;
+
+            return result;
+
+        }
+
+        return result;
+
+        }
+
+    }
