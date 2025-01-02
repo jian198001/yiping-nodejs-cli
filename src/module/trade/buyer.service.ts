@@ -157,58 +157,61 @@ export class BuyerService extends BaseService { // 买家服务
     await this?.repository?.save?.(old) // 修改数据
   }
 
+  /**
+   * 买家登录
+   * @param usernamePasswordToken - 包含用户名和密码的对象
+   * @param shopId - 店铺ID
+   * @returns Promise<any> - 返回登录后的用户信息
+   */
   public async buyerLogin(usernamePasswordToken: Buyer, shopId = ''): Promise<any> {
     let log = '';
 
+    // 检查用户名是否存在
     const count: number = await this?.repository?.countBy({ username: usernamePasswordToken.username, })
 
     if (count < 1) {
-
-      log = '用户名不存在，将直接新建用户'
-
+      // 用户名不存在，直接新建用户
+      log = '用户名不存在，将直接新建用户';
       console.log(log);
-
-      delete usernamePasswordToken.id
-
-      await this?.reg(shopId, { ...usernamePasswordToken, }, 'buyer',)
-
+      delete usernamePasswordToken.id;
+      await this?.reg(shopId, { ...usernamePasswordToken, }, 'buyer',);
     }
 
-    const user = await this?.login(usernamePasswordToken, shopId)
+    // 执行登录操作
+    const user = await this?.login(usernamePasswordToken, shopId);
 
-    return user
-
+    return user;
   }
 
+  /**
+   * 卖家登录
+   * @param usernamePasswordToken - 包含用户名和密码的对象
+   * @param shopId - 店铺ID
+   * @returns Promise<any> - 返回登录后的用户信息
+   */
   public async sellerLogin(usernamePasswordToken: Buyer, shopId = ''): Promise<any> {
     let log = '';
 
+    // 检查用户名是否存在
     const count: number = await this?.repository?.countBy({ username: usernamePasswordToken.username, })
 
     if (count < 1) {
-
-      log = '用户名不存在，将直接新建用户'
-
+      // 用户名不存在，直接新建用户
+      log = '用户名不存在，将直接新建用户';
       console.log(log);
-
-      delete usernamePasswordToken.id
-
-      await this?.reg(shopId, { ...usernamePasswordToken, }, 'seller',)
-
+      delete usernamePasswordToken.id;
+      await this?.reg(shopId, { ...usernamePasswordToken, }, 'seller',);
     }
 
-    const user = await this?.login(usernamePasswordToken, shopId)
+    // 执行登录操作
+    const user = await this?.login(usernamePasswordToken, shopId);
 
-    return user
-
+    return user;
   }
 
-  public async login(usernamePasswordToken: Buyer, shopId = ''): Promise<any> {
-    let log = '';
-
-    console.log('用户登陆');
-
-
+  /**
+   * 登录
+   * @param usernamePasswordToken - 包含用户名和密码的
     const password: string = crypto?.md5?.(usernamePasswordToken.password);
 
     const whereSql = ` AND t.username = '${usernamePasswordToken.username}' AND t.password = '${password}' `;

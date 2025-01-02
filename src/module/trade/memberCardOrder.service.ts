@@ -14,25 +14,35 @@ import * as strUtils from '../common/utils/strUtils';
 
 import { MemberCard } from '../../entity/MemberCard';
 import _ = require('lodash');
+
+/**
+ * 会员卡订单服务类
+ */
 @Provide()
 export class MemberCardOrderService extends BaseService {
-  
   @Logger()
-  private logger: ILogger = null
-
-// 查询的数据库表名称
+  private logger: ILogger = null;
+  
+  // 查询的数据库表名称
   private static TABLE_NAME = 'member_card';
-
-// 查询的数据库表名称及别名
+  
+  // 查询的数据库表名称及别名
   private fromSql = ` FROM ${MemberCardOrderService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   
-     `
-
+     `;
   @InjectEntityModel(MemberCard)
   private repository: Repository<MemberCard> = null;
-
+  /**
+   * 分页查询会员卡订单
+   * @param query - 查询字符串
+   * @param params - 参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns Promise<any> - 返回分页查询结果
+   */
   public async page(
     query = '', params: string,
     reqParam: ReqParam, 
@@ -55,36 +65,43 @@ export class MemberCardOrderService extends BaseService {
     )
     
     if (page?.pageSize > 0) {
-      
         return data
+    }
   
-      }
-  
-      if (page?.pageSize < 1) {
+    if (page?.pageSize < 1) {
         // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
         return _?.keyBy?.(data?.list, 'value',)
-  
-      }
-  
+    }
   }
-
+  /**
+   * 根据ID查询会员卡订单
+   * @param id - 会员卡订单ID
+   * @returns Promise<any> - 返回查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
-
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
-
+  /**
+   * 删除会员卡订单
+   * @param idsArr - 会员卡订单ID数组
+   * @returns Promise<void> - 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
     await this?.repository?.delete?.(idsArr, )
   }
-
+  /**
+   * 更新会员卡订单
+   * @param obj - 会员卡订单对象
+   * @returns Promise<MemberCard> - 返回更新后的会员卡订单对象
+   */
   public async update(obj: MemberCard): Promise<MemberCard> {
     // 一个表进行操作 typeORM
 
     let log = '';
 
-   // 字段非重复性验证
-   const uniqueText = await super.unique?.(
+    // 字段非重复性验证
+    const uniqueText = await super.unique?.(
       MemberCardOrderService?.TABLE_NAME,
       null,
       obj?.id
@@ -97,7 +114,7 @@ export class MemberCardOrderService extends BaseService {
       this?.logger?.error?.(log, zero0Error)
       throw zero0Error
     }
-// 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
@@ -134,6 +151,7 @@ export class MemberCardOrderService extends BaseService {
       }
       return null
     }
+
     delete obj?.id
 
     old = {
@@ -144,14 +162,29 @@ export class MemberCardOrderService extends BaseService {
 
     await this?.repository?.save?.(old) // 修改数据
   }
-
+  /**
+   * 购买会员卡
+   * @returns Promise<void> - 无返回值
+   */
   public async buy(): Promise<void> {}
-
+  /**
+   * 保存会员卡优惠
+   * @returns Promise<void> - 无返回值
+   */
   public async saveMemberCardOffer(): Promise<void> {}
-
+  /**
+   * 创建会员卡优惠
+   * @returns Promise<void> - 无返回值
+   */
   public async createMemberCardOffers(): Promise<void> {}
-
+  /**
+   * 购买商城会员卡
+   * @returns Promise<void> - 无返回值
+   */
   public async buyMallMemberCard(): Promise<void> {}
-
+  /**
+   * 更新店铺结束时间
+   * @returns Promise<void> - 无返回值
+   */
   public async updateShopEndTime(): Promise<void> {}
 }

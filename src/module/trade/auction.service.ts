@@ -13,33 +13,38 @@ import { AuctionActivity } from '../../entity/AuctionActivity';
 import * as sqlUtils from '../common/utils/sqlUtils';
 import * as strUtils from '../common/utils/strUtils';
 import _ = require('lodash');
+
+/**
+ * 拍卖服务类
+ */
 @Provide()
-export class AuctionService extends BaseService { // 拍卖服务
-
+export class AuctionService extends BaseService {
   @Logger()
-  private logger: ILogger = null
-
+  private logger: ILogger = null;
+  // 拍卖延迟时间（分钟）
   private delayInMinutes = 5;
-
   // 查询的数据库表名称
   private static TABLE_NAME = 'auction';
-
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${AuctionService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   
-     `
-
+     `;
   @InjectEntityModel(Auction)
   private repository: Repository<Auction> = null;
-
   @InjectEntityModel(AuctionActivity)
   private auctionActivityRepository: Repository<AuctionActivity> = null;
-
   @InjectEntityModel(LatestBid)
   private latestBidRepository: Repository<LatestBid> = null;
-
+  /**
+   * 分页查询拍卖记录
+   * @param query - 查询字符串
+   * @param params - 参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns Promise<any> - 返回分页查询结果
+   */
   public async page(
     query = '', params: string, reqParam: ReqParam, 
     page: Page, 
@@ -50,12 +55,11 @@ export class AuctionService extends BaseService { // 拍卖服务
 
     let whereSql = ' ' // 查询条件字符串
 
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue, ) // 处理前端的搜索字符串的搜索需求
-// sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
-    // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  // 处理前端的表格中筛选需求
-// 执行查询语句并返回page对象结果
+    // 处理前端的搜索字符串的搜索需求
+    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue, ) 
+    // 处理前端的表格中筛选需求
+    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  
+    // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
@@ -65,36 +69,42 @@ export class AuctionService extends BaseService { // 拍卖服务
     )
     
     if (page?.pageSize > 0) {
-      
         return data
+    }
   
-      }
-  
-      if (page?.pageSize < 1) {
+    if (page?.pageSize < 1) {
         // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
         return _?.keyBy?.(data?.list, 'value',)
-  
-      }
-  
+    }
   }
-
+  /**
+   * 根据ID查询拍卖记录
+   * @param id - 拍卖记录ID
+   * @returns Promise<any> - 返回查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
-
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
-
+  /**
+   * 删除拍卖记录
+   * @param idsArr - 拍卖记录ID数组
+   * @returns Promise<void> - 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
     await this?.repository?.delete?.(idsArr, )
   }
-
+  /**
+   * 更新拍卖记录
+   * @param obj - 拍卖记录对象
+   * @returns Promise<Auction> - 返回更新后的拍卖记录对象
+   */
   public async update(obj: Auction): Promise<Auction> {
     // 一个表进行操作 typeORM
 
     let log = '';
-
-   // 字段非重复性验证
-   const uniqueText = await super.unique?.(
+    // 字段非重复性验证
+    const uniqueText = await super.unique?.(
       AuctionService?.TABLE_NAME,
       [],
       obj?.id
@@ -107,7 +117,7 @@ export class AuctionService extends BaseService { // 拍卖服务
       this?.logger?.error?.(log, zero0Error)
       throw zero0Error
     }
-// 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
@@ -144,7 +154,11 @@ export class AuctionService extends BaseService { // 拍卖服务
 
     await this?.repository?.save?.(old) // 修改数据
   }
-
+  /**
+   * 进行拍卖操作
+   * @param obj - 拍卖对象
+   * @returns Promise<Auction> - 返回拍卖对象
+   */
   public async auction(obj: Auction): Promise<Auction> {
     let log = '';
 
@@ -202,7 +216,11 @@ export class AuctionService extends BaseService { // 拍卖服务
 
     return obj; // insert update
   }
-
+  /**
+   * 进行拍卖操作
+   * @param obj - 拍卖对象
+   * @returns Promise<Auction> - 返回拍卖对象
+   */
   public async buyerInquiry(obj: LatestBid): Promise<string> {
     let log = '';
 

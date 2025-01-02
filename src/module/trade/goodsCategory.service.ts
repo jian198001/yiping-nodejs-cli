@@ -1,3 +1,4 @@
+// 导入所需的模块和装饰器
 import { App, Logger, Provide } from "@midwayjs/decorator";
 import { Application } from "@midwayjs/koa";
 import { BaseService } from "../common/service/base.service";
@@ -7,22 +8,23 @@ import { Repository } from "typeorm";
 import { InjectEntityModel } from "@midwayjs/typeorm";
 import { GoodsCategory } from "../../entity/GoodsCategory";
 import { MultipartFile } from "../../entity/MultipartFile";
-
 import { ILogger } from "@midwayjs/logger";
-
 import { Zero0Error } from "../common/model/Zero0Error";
-
 import _ = require('lodash');
-
 import * as sqlUtils from "../common/utils/sqlUtils";
 import * as strUtils from "../common/utils/strUtils";
+import * as fileUtils from "../common/utils/fileUtils";
 
-import * as fileUtils from "../common/utils/fileUtils"; 
+/**
+ * 商品分类服务类
+ */
 @Provide()
 export class GoodsCategoryService extends BaseService {
+  // 日志记录器
   @Logger()
   private logger: ILogger = null;
 
+  // 应用实例
   @App()
   private app: Application = null;
 
@@ -31,6 +33,7 @@ export class GoodsCategoryService extends BaseService {
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${GoodsCategoryService?.TABLE_NAME} t `;
+
   // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
 
@@ -46,12 +49,23 @@ export class GoodsCategoryService extends BaseService {
 
      `;
 
+  // 注入商品分类实体模型
   @InjectEntityModel(GoodsCategory)
   private repository: Repository<GoodsCategory> = null;
 
+  // 注入文件上传实体模型
   @InjectEntityModel(MultipartFile)
   private multipartFileRepository: Repository<MultipartFile> = null;
 
+  /**
+   * 分页查询商品分类数据
+   * @param shopId - 店铺ID
+   * @param query - 查询字符串
+   * @param params - 参数对象
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
     shopId = "",
     query = "",
@@ -59,19 +73,26 @@ export class GoodsCategoryService extends BaseService {
     reqParam: ReqParam,
     page: Page
   ): Promise<any> {
-    let whereSql = " "; // 查询条件字符串
+    // 查询条件字符串
+    let whereSql = " ";
 
+    // 根据店铺ID筛选
     if (shopId) {
       whereSql += ` AND t.shop_id = '${shopId}' `;
     }
 
-    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue,); // 处理前端的搜索字符串的搜索需求
-    // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
-    // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters); // 处理前端的表格中筛选需求
+    // 处理前端的搜索字符串的搜索需求
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue,);
+
+    // 处理前端的表格中筛选需求
+    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters);
+
+    // 处理前端的分页参数
     whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize',]));
+
+    // 处理查询字符串
     whereSql += sqlUtils?.query?.(query);
+
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
@@ -79,40 +100,43 @@ export class GoodsCategoryService extends BaseService {
       whereSql,
       reqParam,
       page
-    )
-        if (page?.pageSize > 0) {
+    );
     
-          return data
-    
-        }
-    
-        if (page?.pageSize < 1) {
-          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-          return _?.keyBy?.(data?.list, 'value',)
-    
-        }
-    
+    if (page?.pageSize > 0) {
+      return data;
+    }
+  
+    if (page?.pageSize < 1) {
+      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+      return _?.keyBy?.(data?.list, 'value',);
+    }
   }
 
+  /**
+   * 根据ID查询商品分类数据
+   * @param id - 商品分类ID
+   * @returns 查询结果
+   */
   public async getById(id = ""): Promise<any> {
     // 根据id查询一条数据
-
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
   }
 
+  /**
+   * 获取商品分类的子分类
+   * @param parentId - 父级分类ID
+   * @param reqParam - 请求参数对象
+   * @returns 商品分类的子分类数组
+   */
   public async arrPane(parentId: string, reqParam: ReqParam): Promise<any[]> {
     // 按照NutUI的格式，通过第一级商品栏目的ID，取得对应下两级商品栏目信息
 
     // 通过栏目的id，取得栏目的code
-
     const obj: GoodsCategory = await this?.repository?.findOneById?.(parentId);
-
     const parentCode = obj.code;
 
     // 通过like语句，一次性查询此栏目下的所有子栏目信息
-
     const whereSql = ` AND t.code LIKE '${parentCode}%' AND LENGTH(t.code) > 7 `;
-
     const anies: any[] = await super.arrBase?.(
       reqParam,
       this?.selectSql,
@@ -123,28 +147,22 @@ export class GoodsCategoryService extends BaseService {
     const arr: any[] = [];
 
     // 将二级目录筛选出来，放到arr中
-
     for (const element of anies) {
       if (element?.code?.length === 8) {
         arr?.push?.(element);
-
         continue;
       }
     }
 
     // 将对应的三级栏目整合到二级栏目下
-
     for (const element of arr) {
       const code = element?.code;
-
       for (const aniesOne of anies) {
         const subCode = aniesOne?.code;
-
         if (subCode.length === 12 && _?.startsWith?.(subCode, code)) {
           if (!element?.childCateList || !element?.childCateList?.length) {
             element.childCateList = [];
           }
-
           element?.childCateList?.push?.(aniesOne);
         }
       }
@@ -153,13 +171,22 @@ export class GoodsCategoryService extends BaseService {
     return arr;
   }
 
+  /**
+   * 删除商品分类数据
+   * @param idsArr - 商品分类ID数组
+   * @returns 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
     await this?.repository?.delete?.(idsArr);
   }
 
+  /**
+   * 更新商品分类数据
+   * @param obj - 商品分类对象
+   * @returns 更新后的商品分类对象
+   */
   public async update(obj: GoodsCategory): Promise<GoodsCategory> {
     // 一个表进行操作 typeORM
-
     let log = "";
 
     // 字段非重复性验证
@@ -172,21 +199,17 @@ export class GoodsCategoryService extends BaseService {
     if (uniqueText) {
       // 某unique字段值已存在，抛出异常，程序处理终止
       log = uniqueText + "已存在，操作失败";
-
       const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
+
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-
       log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
-
       delete obj?.id;
-
       await this?.repository?.save?.(obj); // insert update
-
       if (!obj?.orderNum) {
         await super.sortOrder?.(
           obj?.id,
@@ -195,7 +218,6 @@ export class GoodsCategoryService extends BaseService {
           GoodsCategoryService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-
       if (!obj?.code) {
         await this?.updateCode(obj);
       }
@@ -207,9 +229,7 @@ export class GoodsCategoryService extends BaseService {
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
-
       await this?.repository?.save?.(obj); // insert update
-
       if (!obj?.orderNum) {
         await super.sortOrder?.(
           obj?.id,
@@ -218,7 +238,6 @@ export class GoodsCategoryService extends BaseService {
           GoodsCategoryService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-
       if (!obj?.code) {
         await this?.updateCode(obj);
       }
@@ -230,7 +249,6 @@ export class GoodsCategoryService extends BaseService {
 
     old = {
       ...old,
-
       ...obj,
     };
 

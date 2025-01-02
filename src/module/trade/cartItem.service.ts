@@ -44,6 +44,16 @@ export class CartItemService extends BaseService { // 购物车服务
   @Inject()
   private goodsMessageService: GoodsMessageService = null;
 
+  /**
+   * 分页查询购物车项
+   * @param shopId - 店铺ID
+   * @param shopBuyerId - 店铺买家ID
+   * @param query - 查询字符串
+   * @param params - 参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns Promise<any> - 返回分页查询结果
+   */
   public async page(
     shopId = '',
     shopBuyerId,
@@ -51,22 +61,26 @@ export class CartItemService extends BaseService { // 购物车服务
     reqParam: ReqParam, 
     page: Page, 
   ): Promise<any> {
-    let whereSql = ' ' // 查询条件字符串
+    // 查询条件字符串
+    let whereSql = ' ' 
 
+    // 添加店铺ID查询条件
     if (shopId) {
       whereSql += ` AND t.shop_id = '${shopId}' `;
     }
 
+    // 添加店铺买家ID查询条件
     whereSql += ` AND t.shop_buyer_id = '${shopBuyerId}' `;
 
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue, ) // 处理前端的搜索字符串的搜索需求
-// sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
-    // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  // 处理前端的表格中筛选需求
+    // 处理前端的搜索字符串的搜索需求
+    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue, ) 
+
+    // 处理前端的表格中筛选需求
+    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  
 
     console.log(whereSql);
 
+    // 执行分页查询
     const pageBase = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
@@ -79,41 +93,66 @@ export class CartItemService extends BaseService { // 购物车服务
 
     console.log(pageBase);
 
+    // 返回分页查询结果
     return pageBase;
   }
 
   /**
-   * count
-
+   * 统计购物车项数量
+   * @param shopId - 店铺ID
+   * @param shopBuyerId - 店铺买家ID
+   * @returns Promise<number> - 返回购物车项数量
    */
   public async count(shopId = '', shopBuyerId: string ): Promise<number> {
-    let whereSql = ' ' // 查询条件字符串
+    // 查询条件字符串
+    let whereSql = ' ' 
 
+    // 添加店铺ID查询条件
     if (shopId) {
       whereSql += ` AND t.shop_id = '${shopId}' `;
     }
 
+    // 添加店铺买家ID查询条件
     whereSql += ` AND t.shop_buyer_id = '${shopBuyerId}' `;
 
-    const sqlCount: string = sqlUtils?.selectCount?.(this?.fromSql, whereSql); // 总条数
+    // 构建查询总数的SQL语句
+    const sqlCount: string = sqlUtils?.selectCount?.(this?.fromSql, whereSql); 
 
+    // 执行查询总数的SQL语句
     const resultCount: any = await this?.query?.(sqlCount);
 
+    // 获取查询结果中的总数
     const head: any = _?.head(resultCount)
 
+    // 返回总数
     return head.count_0;
   }
 
+  /**
+   * 根据ID查询购物车项
+   * @param id - 购物车项ID
+   * @returns Promise<any> - 返回查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
-
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
 
+  /**
+   * 删除购物车项
+   * @param idsArr - 购物车项ID数组
+   * @returns Promise<void> - 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
+    // 删除购物车项
     await this?.repository?.delete?.(idsArr);
   }
 
+  /**
+   * 更新购物车项
+   * @param obj - 购物车项对象
+   * @returns Promise<CartItem> - 返回更新后的购物车项对象
+   */
   public async update(obj: CartItem): Promise<CartItem> {
     // 一个表进行操作 typeORM
 
@@ -140,22 +179,27 @@ export class CartItemService extends BaseService { // 购物车服务
 
       delete obj?.id
 
+      // 保存购物车项
       await this?.repository?.save?.(obj) // insert update
 
       if (!obj?.orderNum) {
+        // 新增数据时，设置此条数据的orderNum排序值
         await super.sortOrder?.(obj?.id, null, null, CartItemService?.TABLE_NAME, ) // 新增数据时，设置此条数据的orderNum排序值
       }
       return null
     }
 
-    let old: CartItem = await this?.repository?.findOneById?.(obj?.id) // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+    // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+    let old: CartItem = await this?.repository?.findOneById?.(obj?.id) 
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
 
+      // 保存购物车项
       await this?.repository?.save?.(obj) // insert update
 
       if (!obj?.orderNum) {
+        // 新增数据时，设置此条数据的orderNum排序值
         await super.sortOrder?.(obj?.id, null, null, CartItemService?.TABLE_NAME, ) // 新增数据时，设置此条数据的orderNum排序值
       }
       return null
@@ -168,12 +212,21 @@ export class CartItemService extends BaseService { // 购物车服务
       ...obj,
     };
 
+    // 修改数据
     await this?.repository?.save?.(old) // 修改数据
   }
 
+  /**
+   * 保存购物车项
+   * @param map - 购物车项数据
+   * @param shopBuyerId - 店铺买家ID
+   * @param priceUnit - 价格单位
+   * @returns Promise<void> - 无返回值
+   */
   public async save(
     map: any,
     shopBuyerId,
+   
     priceUnit: number
   ): Promise<void> {
     let log = '';

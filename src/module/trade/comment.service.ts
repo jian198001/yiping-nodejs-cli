@@ -12,6 +12,10 @@ import { Zero0Error } from '../common/model/Zero0Error';
 import * as sqlUtils from '../common/utils/sqlUtils';
 import * as strUtils from '../common/utils/strUtils';
 import _ = require('lodash');
+
+/**
+ * 评价服务类
+ */
 @Provide()
 export class CommentService extends BaseService { // 评价服务
 
@@ -31,6 +35,14 @@ export class CommentService extends BaseService { // 评价服务
   @InjectEntityModel(Comment)
   private repository: Repository<Comment> = null;
 
+  /**
+   * 分页查询评价数据
+   * @param query - 查询字符串
+   * @param params - 参数对象
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns Promise<any> - 返回分页查询结果
+   */
   public async page(
     query = '', params: string, reqParam: ReqParam, 
     page: Page, 
@@ -56,27 +68,39 @@ export class CommentService extends BaseService { // 评价服务
     if (page?.pageSize > 0) {
       
         return data
+    }
   
-      }
-  
-      if (page?.pageSize < 1) {
+    if (page?.pageSize < 1) {
         // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
         return _?.keyBy?.(data?.list, 'value',)
-  
-      }
-  
+    }
   }
 
+  /**
+   * 根据ID查询评价数据
+   * @param id - 评价ID
+   * @returns Promise<any> - 返回查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
 
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
 
+  /**
+   * 删除评价数据
+   * @param idsArr - 评价ID数组
+   * @returns Promise<void> - 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
     await this?.repository?.delete?.(idsArr, )
   }
 
+  /**
+   * 更新评价数据
+   * @param obj - 评价对象
+   * @returns Promise<Comment> - 返回更新后的评价对象
+   */
   public async update(obj: Comment): Promise<Comment> {
     // 一个表进行操作 typeORM
 

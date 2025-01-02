@@ -13,8 +13,13 @@ import { Zero0Error } from "../common/model/Zero0Error";
 import * as sqlUtils from "../common/utils/sqlUtils";
 import * as strUtils from "../common/utils/strUtils";
 import _ = require('lodash');
+
+/**
+ * 商品属性服务类
+ */
 @Provide()
 export class GoodsPropsService extends BaseService {
+  // 日志记录器
   @Logger()
   private logger: ILogger = null;
 
@@ -23,16 +28,25 @@ export class GoodsPropsService extends BaseService {
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${GoodsPropsService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
 
         , ( CASE type WHEN 'date' THEN '日期' WHEN 'time' THEN '时间' WHEN
         'area' THEN '省市区' ELSE '文本' END ) AS type_cn
      `;
 
+  // 注入商品属性实体模型
   @InjectEntityModel(GoodsProps)
   private repository: Repository<GoodsProps> = null;
 
+  /**
+   * 分页查询商品属性数据
+   * @param query - 查询字符串
+   * @param params - 参数对象
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
     query = "",
     params: string,
@@ -44,20 +58,20 @@ export class GoodsPropsService extends BaseService {
     let whereSql = " "; // 查询条件字符串
 
     whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue, ); // 处理前端的搜索字符串的搜索需求
-// sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
+    // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
     // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
     whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters); // 处理前端的表格中筛选需求
     whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ]));
     whereSql += sqlUtils?.query?.(query);
-// 执行查询语句并返回page对象结果
+    // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
       whereSql,
       reqParam,
       page
-    )
+    );
     
     if (page?.pageSize > 0) {
       
@@ -73,16 +87,31 @@ export class GoodsPropsService extends BaseService {
   
   }
 
+  /**
+   * 根据ID查询商品属性数据
+   * @param id - 商品属性ID
+   * @returns 查询结果
+   */
   public async getById(id = ""): Promise<any> {
     // 根据id查询一条数据
 
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
   }
 
+  /**
+   * 删除商品属性数据
+   * @param idsArr - 商品属性ID数组
+   * @returns 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
     await this?.repository?.delete?.(idsArr);
   }
 
+  /**
+   * 更新商品属性数据
+   * @param obj - 商品属性对象
+   * @returns 更新后的商品属性对象
+   */
   public async update(obj: GoodsProps): Promise<GoodsProps> {
     // 一个表进行操作 typeORM
 
@@ -151,11 +180,21 @@ export class GoodsPropsService extends BaseService {
     await this?.repository?.save?.(old); // 修改数据
   }
 
+  /**
+   * 获取商品属性
+   * @param goodsId - 商品ID
+   * @returns 商品属性数组
+   */
   public async getProps(goodsId: string): Promise<any[]> {
     this?.logger?.info?.("取得商品对应的参数信息");
 
-    return []
+    return [];
   }
 
+  /**
+   * 保存商品属性
+   * @param goodsProps - 商品属性对象
+   * @returns 无返回值
+   */
   public async saveGoodsProps(goodsProps: GoodsProps): Promise<void> {}
 }

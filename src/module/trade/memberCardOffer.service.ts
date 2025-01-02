@@ -1,3 +1,4 @@
+// 导入所需的装饰器和模块
 import { Logger, Provide } from '@midwayjs/decorator';
 import { BaseService } from '../common/service/base.service';
 import { ReqParam } from '../common/model/ReqParam';
@@ -5,37 +6,46 @@ import { Page } from '../common/model/Page';
 import { Repository } from 'typeorm';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { MemberCardOffer } from '../../entity/MemberCardOffer';
-
 import { ILogger } from '@midwayjs/logger';
 import { MemberCardOfferConsume } from '../../entity/MemberCardOfferConsume';
 import { Zero0Error } from '../common/model/Zero0Error';
-
 import * as sqlUtils from '../common/utils/sqlUtils';
 import * as strUtils from '../common/utils/strUtils';
 import _ = require('lodash');
+
+/**
+ * 会员卡服务类
+ */
 @Provide()
 export class MemberCardOfferService extends BaseService {
-  
+  // 日志记录器
   @Logger()
-  private logger: ILogger = null
+  private logger: ILogger = null;
 
-// 查询的数据库表名称
+  // 查询的数据库表名称
   private static TABLE_NAME = 'member_card_offer';
 
-// 查询的数据库表名称及别名
+  // 查询的数据库表名称及别名
   private fromSql = ` FROM ${MemberCardOfferService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
-  private selectSql = ` ${BaseService.selSql}  
-  
-     `
+  // 查询的字段名称及头部的SELECT语句
+  private selectSql = ` ${BaseService.selSql}  `;
 
+  // 注入会员卡实体模型
   @InjectEntityModel(MemberCardOffer)
   private repository: Repository<MemberCardOffer> = null;
 
+  // 注入会员卡消费实体模型
   @InjectEntityModel(MemberCardOfferConsume)
-  private memberCardOfferConsumeRepository: Repository<MemberCardOfferConsume> =
-    null;
+  private memberCardOfferConsumeRepository: Repository<MemberCardOfferConsume> = null;
 
+  /**
+   * 分页查询会员卡数据
+   * @param query - 查询字符串
+   * @param params - 参数对象
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
     query = '', params: string, reqParam: ReqParam, 
     page: Page, 
@@ -44,17 +54,16 @@ export class MemberCardOfferService extends BaseService {
 
     let whereSql = ' ' // 查询条件字符串
 
-    
-      let parameters: any[] = []
+    let parameters: any[] = []
 
-      if (params && params.length > 3) {
-      
-        parameters = JSON?.parse?.(params)
+    if (params && params.length > 3) {
+      parameters = JSON?.parse?.(params)
+    }
 
-      }
+    // 构建查询条件
+    whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(parameters, ['current', 'pageSize',])) + sqlUtils?.like?.(['name'], reqParam?.searchValue, ) + sqlUtils?.whereOrFilters?.(reqParam?.filters) +  sqlUtils?.query?.(query)   // 处理前端的表格中筛选需求
 
-      whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(parameters, ['current', 'pageSize',])) + sqlUtils?.like?.(['name'], reqParam?.searchValue, ) + sqlUtils?.whereOrFilters?.(reqParam?.filters) +  sqlUtils?.query?.(query)   // 处理前端的表格中筛选需求
-// 执行查询语句并返回page对象结果
+    // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
@@ -64,36 +73,46 @@ export class MemberCardOfferService extends BaseService {
     )
     
     if (page?.pageSize > 0) {
-      
-        return data
+      return data
+    }
   
-      }
-  
-      if (page?.pageSize < 1) {
-        // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-        return _?.keyBy?.(data?.list, 'value',)
-  
-      }
-  
+    if (page?.pageSize < 1) {
+      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+      return _?.keyBy?.(data?.list, 'value',)
+    }
   }
 
+  /**
+   * 根据ID查询会员卡数据
+   * @param id - 会员卡ID
+   * @returns 查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
-
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
 
+  /**
+   * 删除会员卡数据
+   * @param idsArr - 会员卡ID数组
+   * @returns 无返回值
+   */
   public async del(idsArr: string[]): Promise<void> {
     await this?.repository?.delete?.(idsArr, )
   }
 
+  /**
+   * 更新会员卡数据
+   * @param obj - 会员卡对象
+   * @returns 更新后的会员卡对象
+   */
   public async update(obj: MemberCardOffer): Promise<MemberCardOffer> {
     // 一个表进行操作 typeORM
 
     let log = '';
 
-   // 字段非重复性验证
-   const uniqueText = await super.unique?.(
+    // 字段非重复性验证
+    const uniqueText = await super.unique?.(
       MemberCardOfferService?.TABLE_NAME,
       [],
       obj?.id
@@ -106,7 +125,8 @@ export class MemberCardOfferService extends BaseService {
       this?.logger?.error?.(log, zero0Error)
       throw zero0Error
     }
-// 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
@@ -154,6 +174,11 @@ export class MemberCardOfferService extends BaseService {
     await this?.repository?.save?.(old) // 修改数据
   }
 
+  /**
+   * 会员卡消费
+   * @param memberCardOfferConsume - 会员卡消费对象
+   * @returns 会员卡消费对象
+   */
   public async consume(
     memberCardOfferConsume: MemberCardOfferConsume
   ): Promise<MemberCardOfferConsume> {
