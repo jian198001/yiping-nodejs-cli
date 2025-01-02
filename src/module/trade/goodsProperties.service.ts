@@ -6,22 +6,21 @@ import { Repository } from "typeorm";
 import { InjectEntityModel } from "@midwayjs/typeorm";
 import { GoodsPropertiesKey } from "../../entity/GoodsPropertiesKey";
 
-import { ILogger } from "@midwayjs/logger"; 
+import { ILogger } from "@midwayjs/logger";
 import { GoodsPropertiesValue } from "../../entity/GoodsPropertiesValue";
 
 import { Zero0Error } from "../common/model/Zero0Error";
 
-import _ = require('lodash');
+import _ = require("lodash");
 
 import * as sqlUtils from "../common/utils/sqlUtils";
-import * as strUtils from '../common/utils/strUtils';
+import * as strUtils from "../common/utils/strUtils";
 
 /**
  * 商品属性服务类
  */
 @Provide()
 export class GoodsPropertiesService extends BaseService {
-  
   // 日志记录器
   @Logger()
   private logger: ILogger = null;
@@ -31,7 +30,7 @@ export class GoodsPropertiesService extends BaseService {
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${GoodsPropertiesService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
 
 
@@ -48,7 +47,7 @@ export class GoodsPropertiesService extends BaseService {
   @InjectEntityModel(GoodsPropertiesValue)
   private goodsPropertiesValueRepository: Repository<GoodsPropertiesValue> =
     null;
- 
+
   // 价格单位转换因子
   private priceUnit = 0.01;
 
@@ -61,19 +60,28 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    query = "", params: any,
-    reqParam: ReqParam, 
-    page: Page, 
+    query = "",
+    params: any,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
     // 查询条件字符串
-    let whereSql = ' ' 
+    let whereSql = " ";
 
     // 处理前端的搜索字符串的搜索需求
-    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue, ) 
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue);
     // 处理前端的表格中筛选需求
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  
+    whereSql +=
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(JSON?.parse?.(params), [
+          "current",
+          "pageSize",
+        ])
+      ) +
+      sqlUtils?.query?.(query);
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
@@ -81,15 +89,15 @@ export class GoodsPropertiesService extends BaseService {
       whereSql,
       reqParam,
       page
-    )
-    
+    );
+
     if (page?.pageSize > 0) {
-        return data
+      return data;
     }
-  
+
     if (page?.pageSize < 1) {
-        // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-        return _?.keyBy?.(data?.list, 'value',)
+      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+      return _?.keyBy?.(data?.list, "value");
     }
   }
 
@@ -106,12 +114,12 @@ export class GoodsPropertiesService extends BaseService {
 
   /**
    * 删除商品属性数据
-   * @param idsArr - 商品属性ID数组
+   * @param ids - 商品属性ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
     // 删除商品属性数据
-    await this?.repository?.delete?.(idsArr)
+    await this?.repository?.delete?.(ids);
   }
 
   /**
@@ -124,8 +132,8 @@ export class GoodsPropertiesService extends BaseService {
 
     let log = "";
 
-   // 字段非重复性验证
-   const uniqueText = await super.unique?.(
+    // 字段非重复性验证
+    const uniqueText = await super.unique?.(
       GoodsPropertiesService?.TABLE_NAME,
       [],
       obj?.id
@@ -135,18 +143,18 @@ export class GoodsPropertiesService extends BaseService {
       // 某unique字段值已存在，抛出异常，程序处理终止
       log = uniqueText + "已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, "5000")
-      this?.logger?.error?.(log, zero0Error)
-      throw zero0Error
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
+      this?.logger?.error?.(log, zero0Error);
+      throw zero0Error;
     }
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
-      delete obj?.id
+      delete obj?.id;
 
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
         await super.sortOrder?.(
@@ -154,17 +162,19 @@ export class GoodsPropertiesService extends BaseService {
           null,
           null,
           GoodsPropertiesService?.TABLE_NAME
-        ) // 新增数据时，设置此条数据的orderNum排序值
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null
+      return null;
     }
 
-    let old: GoodsPropertiesKey = await this?.repository?.findOneById?.(obj?.id) // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+    let old: GoodsPropertiesKey = await this?.repository?.findOneById?.(
+      obj?.id
+    ); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
 
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
         await super.sortOrder?.(
@@ -172,11 +182,11 @@ export class GoodsPropertiesService extends BaseService {
           null,
           null,
           GoodsPropertiesService?.TABLE_NAME
-        ) // 新增数据时，设置此条数据的orderNum排序值
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null
+      return null;
     }
-    delete obj?.id
+    delete obj?.id;
 
     old = {
       ...old,
@@ -184,7 +194,7 @@ export class GoodsPropertiesService extends BaseService {
       ...obj,
     };
 
-    await this?.repository?.save?.(old) // 修改数据
+    await this?.repository?.save?.(old); // 修改数据
   }
 
   /**
@@ -193,7 +203,7 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 中文描述字符串
    */
   public async getCnStrFromCart(properties: string): Promise<string> {
-    return null
+    return null;
   }
 
   /**
@@ -202,7 +212,7 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 初始SKU对象
    */
   public async getInitialSkuFromCart(properties: string): Promise<object> {
-    return null
+    return null;
   }
 
   /**
@@ -243,33 +253,33 @@ export class GoodsPropertiesService extends BaseService {
       return [];
     }
 
-    for (const any of anies) { 
-
+    for (const any of anies) {
       any.is_multiple = false;
 
       const multiple: string = any.multiple;
 
       if (multiple === "1") {
         any.is_multiple = true;
-     
-      const goodsPropertiesValues: any[] = [];
 
-      for (const goodsPropertiesValue of goodsPropertiesValues) {
-        let price: number = goodsPropertiesValue.price;
+        const goodsPropertiesValues: any[] = [];
 
-        price = _?.divide?.(price, this?.priceUnit);
+        for (const goodsPropertiesValue of goodsPropertiesValues) {
+          let price: number = goodsPropertiesValue.price;
 
-        goodsPropertiesValue.price = price;
+          price = _?.divide?.(price, this?.priceUnit);
+
+          goodsPropertiesValue.price = price;
+        }
+
+        any.v = goodsPropertiesValues;
       }
 
-      any.v = goodsPropertiesValues;
-    }
+      if (!anies) {
+        return [];
+      }
 
-    if (!anies) {
-      return [];
+      return anies;
     }
-
-    return anies;
   }
 
   public async save(map: any): Promise<void> {
@@ -321,7 +331,9 @@ export class GoodsPropertiesService extends BaseService {
 
         goodsPropertiesValue.goodsPropertiesKeyId = goodsPropertiesKey1.id;
 
-        await this?.goodsPropertiesValueRepository?.save?.(goodsPropertiesValue);
+        await this?.goodsPropertiesValueRepository?.save?.(
+          goodsPropertiesValue
+        );
       }
     }
   }

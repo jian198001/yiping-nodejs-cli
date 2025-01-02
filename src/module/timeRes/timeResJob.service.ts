@@ -113,10 +113,10 @@ export class TimeResJobService extends BaseService {
 
   }
 
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
      
 
-    await this?.repository?.delete?.(idsArr);
+    await this?.repository?.delete?.(ids);
   }
 
   public async update(

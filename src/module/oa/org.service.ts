@@ -78,20 +78,20 @@ export class OrgService extends BaseService {
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
  
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
     let newVar: any[] = [];
 
     newVar = arrayUtils?.camelCase?.(newVar);
 
     let children: any = null;
  
-    treeUtils.getIds(children, idsArr);
+    treeUtils.getIds(children, ids);
 
     await this?.repository
       ?.createQueryBuilder()
       .delete?.()
       .from(Org)
-      .whereInIds(idsArr)
+      .whereInIds(ids)
       .execute();
   }
 

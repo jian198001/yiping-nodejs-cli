@@ -143,11 +143,11 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
 
   /**
    * 删除买家收货地址
-   * @param idsArr - 收货地址ID数组
+   * @param ids - 收货地址ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

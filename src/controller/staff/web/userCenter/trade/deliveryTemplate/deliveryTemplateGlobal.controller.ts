@@ -104,15 +104,5 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController 
     // 调用配送模板全局服务的更新方法
     return await this?.deliveryTemplateGlobalService?.update?.(obj);
   }
-  /**
-   * 创建配送模板全局
-   * 
-   * @param obj - 配送模板全局对象
-   * @returns 返回创建结果
-   */
-  @All('/create.json', { middleware: [JwtPassportMiddleware] })
-  public async create(@Body() obj: DeliveryTemplateGlobal): Promise<any> {
-    // 调用配送模板全局服务的创建方法
-    return await this?.deliveryTemplateGlobalService?.create?.(obj);
-  }
+ 
 }

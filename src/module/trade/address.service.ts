@@ -99,11 +99,11 @@ export class AddressService extends BaseService {
   
   /**
    * 删除地址
-   * @param idsArr - 地址ID数组
+   * @param ids - 地址ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr);
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids);
   }
   
   /**

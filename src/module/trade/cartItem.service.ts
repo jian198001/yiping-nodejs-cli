@@ -140,12 +140,12 @@ export class CartItemService extends BaseService { // 购物车服务
 
   /**
    * 删除购物车项
-   * @param idsArr - 购物车项ID数组
+   * @param ids - 购物车项ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
     // 删除购物车项
-    await this?.repository?.delete?.(idsArr);
+    await this?.repository?.delete?.(ids);
   }
 
   /**

@@ -95,11 +95,11 @@ export class DeliveryTemplateGlobalService extends BaseService {
 
   /**
    * 删除全域物流模板数据
-   * @param idsArr - 全域物流模板ID数组
+   * @param ids - 全域物流模板ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

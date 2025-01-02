@@ -85,8 +85,8 @@ export class MobileModuleService extends BaseService {
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
  
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   public async update(obj: MobileModule): Promise<MobileModule> {

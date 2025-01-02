@@ -89,11 +89,11 @@ export class CommentService extends BaseService { // 评价服务
 
   /**
    * 删除评价数据
-   * @param idsArr - 评价ID数组
+   * @param ids - 评价ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

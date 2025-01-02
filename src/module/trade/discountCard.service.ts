@@ -89,11 +89,11 @@ export class DiscountCardService extends BaseService {
 
   /**
    * 删除优惠卡数据
-   * @param idsArr - 优惠卡ID数组
+   * @param ids - 优惠卡ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**
@@ -236,7 +236,7 @@ export class DiscountCardService extends BaseService {
    * 创建优惠卡
    * @param cardCreateMessage - 创建优惠卡消息对象
    * @param goods - 商品对象
-   *
+   **/
    public async createCard(cardCreateMessage: any, goods: any): Promise<void> {}
    
    public async createCardOffer(

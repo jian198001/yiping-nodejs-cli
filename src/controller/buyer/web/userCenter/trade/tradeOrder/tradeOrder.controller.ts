@@ -71,8 +71,8 @@ export class BuyerWebUserCenterTradeOrderTradeOrderController {
   ): Promise<any> {
     // 记录日志
     this?.logger?.info?.('分页列表controller');
-    // 调用tradeOrderService的Transfer方法进行转账操作
-    Transfer(shopId);
+    // // 调用tradeOrderService的Transfer方法进行转账操作
+    //  await this.tradeOrderService.transfer(shopId);
     
     // 调用tradeOrderService的page方法进行分页查询
     const data = await this?.tradeOrderService?.page?.(

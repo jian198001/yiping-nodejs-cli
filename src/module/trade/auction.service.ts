@@ -88,11 +88,11 @@ export class AuctionService extends BaseService {
   }
   /**
    * 删除拍卖记录
-   * @param idsArr - 拍卖记录ID数组
+   * @param ids - 拍卖记录ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
   /**
    * 更新拍卖记录

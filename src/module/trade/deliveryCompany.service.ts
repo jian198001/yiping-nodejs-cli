@@ -87,11 +87,11 @@ export class DeliveryCompanyService extends BaseService {
 
   /**
    * 删除物流公司数据
-   * @param idsArr - 物流公司ID数组
+   * @param ids - 物流公司ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

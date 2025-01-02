@@ -115,19 +115,4 @@ export class BuyerUniUserCenterUserController {
     return await this?.shopBuyerService.findByUsername(username, shopId);
   }
 
-  /**
-   * 根据邀请码查找用户
-   * 
-   * @param inviteCode - 邀请码
-   * @param shopId - 店铺ID
-   * @returns 返回用户信息
-   */
-  @All('/findByInviteCode.json', { middleware: [JwtPassportMiddleware] })
-  public async findByInviteCode(@Query('inviteCode') inviteCode, @Query('shopId') shopId): Promise<any> {
-    // 记录日志
-    this?.logger?.info?.('根据邀请码查找用户controller');
-
-    // 调用店铺买家服务的根据邀请码查找方法
-    return await this?.shopBuyerService.findByInviteCode(inviteCode, shopId);
-  }
 }

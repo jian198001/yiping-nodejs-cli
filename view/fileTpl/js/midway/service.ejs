@@ -119,9 +119,9 @@ export class <%= data.formNameUpperFirst %>Service extends BaseService {
 
     public async del(ids: string,): Promise<void> {
 
-        let idsArr: string[] = _?.split(ids, ',', );
+        let ids: string[] = _?.split(ids, ',', );
 
-        await this?.repository?.delete?.(idsArr, );
+        await this?.repository?.delete?.(ids, );
 
     }
 

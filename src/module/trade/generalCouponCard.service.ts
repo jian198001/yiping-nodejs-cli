@@ -89,11 +89,11 @@ export class GeneralCouponCardService extends BaseService {
 
   /**
    * 删除通用优惠券卡数据
-   * @param idsArr - 通用优惠券卡ID数组
+   * @param ids - 通用优惠券卡ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

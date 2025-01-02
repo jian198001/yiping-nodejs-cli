@@ -85,11 +85,11 @@ export class FavorService extends BaseService {
 
   /**
    * 删除收藏数据
-   * @param idsArr - 收藏ID数组
+   * @param ids - 收藏ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

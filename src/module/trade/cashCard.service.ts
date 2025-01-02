@@ -90,11 +90,11 @@ export class CashCardService extends BaseService {
 
   /**
    * 删除现金卡数据
-   * @param idsArr - 现金卡ID数组
+   * @param ids - 现金卡ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**
@@ -229,7 +229,9 @@ export class CashCardService extends BaseService {
    * @param goods - 商品对象
    * @returns 无返回值
    */
-  public async createCard(cardCreateMessage: any, goods: any): Promise
+  public async createCard(cardCreateMessage: any, goods: any): Promise<void> {
+    
+  }
 
   public async createCardOffer(
     cardCreateMessage: any,

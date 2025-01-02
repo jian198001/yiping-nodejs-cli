@@ -98,12 +98,12 @@ export class SkuService extends BaseService {
   }
   /**
    * 根据商品规格ID删除商品规格信息
-   * @param idsArr - 商品规格ID数组
+   * @param ids - 商品规格ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
     // 根据商品规格ID删除商品规格信息
-    await this?.repository?.delete?.(idsArr);
+    await this?.repository?.delete?.(ids);
   }
   /**
    * 更新或插入SKU规格信息

@@ -100,11 +100,11 @@ export class GoodsPropsService extends BaseService {
 
   /**
    * 删除商品属性数据
-   * @param idsArr - 商品属性ID数组
+   * @param ids - 商品属性ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr);
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids);
   }
 
   /**

@@ -130,7 +130,7 @@ export class BuyerUniFrontPagePassportPassportController {
     @Body('shopId') shopId = ''
   ): Promise<any> {
     // 调用买家服务的注册方法
-    return await this?.buyerService?.reg(shopId, buyer);
+    return await this?.buyerService?.reg?.(shopId, buyer);
   }
   /**
    * 注销
@@ -151,7 +151,7 @@ export class BuyerUniFrontPagePassportPassportController {
   @All('/captchaImage.json')
   public async captchaImage(): Promise<any> {
     // 调用验证码服务的生成图片方法
-    return await this?.captchaService?.image({
+    return await this?.captchaService?.image?.({
       width: 120,
       height: 40,
     });
@@ -164,7 +164,7 @@ export class BuyerUniFrontPagePassportPassportController {
   @All('/captchaFormula.json')
   public async captchaFormula(): Promise<any> {
     // 调用验证码服务的生成公式方法
-    return await this?.captchaService?.formula({ noise: 1 });
+    return await this?.captchaService?.formula?.({ noise: 1 });
   }
   /**
    * 验证验证码
@@ -179,7 +179,7 @@ export class BuyerUniFrontPagePassportPassportController {
     @Query('answer') answer: string
   ): Promise<any> {
     // 调用验证码服务的验证方法
-    return await this?.captchaService?.check(id, answer);
+    return await this?.captchaService?.check?.(id, answer);
   }
   /**
    * 生成JWT token

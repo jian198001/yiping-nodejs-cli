@@ -49,6 +49,9 @@ export class BuyerUniFrontPageGoodsGoodsCategoryController {
   ): Promise<any> {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
+
+    console.log(shopBuyerId);
+
     // 记录日志
     this?.logger?.info?.("分页列表controller");
     // 调用商品分类服务的分页方法

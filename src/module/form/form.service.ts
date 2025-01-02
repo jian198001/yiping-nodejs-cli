@@ -102,8 +102,8 @@ export class FormService extends BaseService {
     return null
   }
  
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   public async update(obj: Form): Promise<Form> {

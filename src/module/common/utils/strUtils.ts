@@ -20,11 +20,11 @@ export function subStartEndSep(filePath: string): string {
   filePath = _?.replace?.(filePath, /\\/g, '/');
 
   if (_?.startsWith?.(filePath, '/')) {
-    filePath = filepath?.substring?.(1, filePath?.length);
+    filePath = filePath?.substring?.(1, filePath?.length);
   }
 
   if (_?.endsWith?.(filePath, '/')) {
-    filePath = filepath?.substring?.(0, filePath?.length - 1);
+    filePath = filePath?.substring?.(0, filePath?.length - 1);
   }
 
   return filePath;
@@ -42,7 +42,7 @@ export function random(str = '', separator = '|'): string {
   return arr[_?.random?.(arr?.length - 1)];
 }
 
-export function split?.(str = '', start = '[', end = ']'): string[] {
+export function split(str = '', start = '[', end = ']'): string[] {
   // 将一个字符串拆分成按start和end包起来的数组
 
   // 例如：输入'[大家|你们][早晨|上午]好，[大家|各位]辛苦了'

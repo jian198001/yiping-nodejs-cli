@@ -77,11 +77,11 @@ export class MallService extends BaseService {
   }
   /**
    * 删除商城数据
-   * @param idsArr - 商城ID数组
+   * @param ids - 商城ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, );
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, );
   }
   /**
    * 更新商城数据

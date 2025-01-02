@@ -80,11 +80,11 @@ export class BrandService extends BaseService {
 
   /**
    * 删除品牌
-   * @param idsArr - 品牌ID数组
+   * @param ids - 品牌ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

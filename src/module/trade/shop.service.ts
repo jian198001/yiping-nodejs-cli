@@ -150,12 +150,12 @@ export class ShopService extends BaseService { // 店铺服务
   }
   /**
    * 删除指定ID的店铺
-   * @param idsArr - 要删除的店铺ID数组
+   * @param ids - 要删除的店铺ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
     // 使用TypeORM的delete方法删除指定ID的店铺
-    await this?.repository?.delete?.(idsArr, )
+    await this?.repository?.delete?.(ids, )
   }
   /**
    * 更新店铺信息，包括地址、微信支付配置和支付宝支付配置

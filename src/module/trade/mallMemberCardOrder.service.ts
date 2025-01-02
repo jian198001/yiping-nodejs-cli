@@ -82,11 +82,11 @@ export class TradeOrderService extends BaseService {
   }
   /**
    * 删除交易订单数据
-   * @param idsArr - 交易订单ID数组
+   * @param ids - 交易订单ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, );
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, );
   }
   /**
    * 更新交易订单数据

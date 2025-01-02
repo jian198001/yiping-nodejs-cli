@@ -96,11 +96,11 @@ export class GoodsMessageService extends BaseService {
 
   /**
    * 删除商品消息数据
-   * @param idsArr - 商品消息ID数组
+   * @param ids - 商品消息ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr,);
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids,);
   }
 
   /**
@@ -248,8 +248,8 @@ export class GoodsMessageService extends BaseService {
    * @returns 更新后的购物车消息列表字符串
    */
   public async insertCartMessages(
-    listCart
-    messages: any
+    listCartMessagesStr,
+    cartMessages: any
   ): Promise<string> {
     if (!listCartMessagesStr) {
       return JSON?.stringify([cartMessages]);

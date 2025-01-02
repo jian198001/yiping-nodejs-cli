@@ -84,11 +84,11 @@ export class MemberCardOrderService extends BaseService {
   }
   /**
    * 删除会员卡订单
-   * @param idsArr - 会员卡订单ID数组
+   * @param ids - 会员卡订单ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
   /**
    * 更新会员卡订单

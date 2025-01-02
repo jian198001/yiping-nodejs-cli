@@ -138,13 +138,13 @@ export class ShopBuyerService extends BaseService {
   }
   /**
    * 删除指定ID的店铺买家
-   * @param idsArr - 要删除的店铺买家ID数组
+   * @param ids - 要删除的店铺买家ID数组
    * @returns Promise<void> - 无返回值
    * @description 根据提供的店铺买家ID数组，删除对应的店铺买家记录
    */
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
     // 使用TypeORM的delete方法删除指定ID的店铺买家
-    await this?.repository?.delete?.?(idsArr);
+    await this?.repository?.delete?.(ids);
   }
   /**
    * 更新店铺买家信息
@@ -290,7 +290,7 @@ export class ShopBuyerService extends BaseService {
     }
 
     // 根据店铺买家ID查询店铺买家信息
-    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.?(shopBuyerId);
+    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(shopBuyerId);
 
     // 如果店铺买家不存在，则返回null
     if (!shopBuyer) {

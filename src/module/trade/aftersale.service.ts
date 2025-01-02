@@ -83,11 +83,11 @@ export class AftersaleService extends BaseService {
   }
   /**
    * 删除售后服务记录
-   * @param idsArr - 售后服务记录ID数组
+   * @param ids - 售后服务记录ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
   /**
    * 更新售后服务记录

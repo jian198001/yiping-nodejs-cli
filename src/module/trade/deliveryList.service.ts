@@ -91,11 +91,11 @@ export class DeliveryListService extends BaseService {
 
   /**
    * 删除发货单数据
-   * @param idsArr - 发货单ID数组
+   * @param ids - 发货单ID数组
    * @returns 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

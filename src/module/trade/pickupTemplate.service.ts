@@ -92,11 +92,11 @@ export class PickupTemplateService extends BaseService {
   
   /**
    * 删除提货模板
-   * @param idsArr - 提货模板ID数组
+   * @param ids - 提货模板ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
   
   /**

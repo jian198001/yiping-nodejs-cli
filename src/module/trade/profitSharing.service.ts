@@ -97,11 +97,11 @@ export class ProfitSharingService extends BaseService {
 
   /**
    * 删除分润记录
-   * @param idsArr - 分润记录ID数组
+   * @param ids - 分润记录ID数组
    * @returns Promise<void> - 无返回值
    */
-  public async del(idsArr: string[]): Promise<void> {
-    await this?.repository?.delete?.(idsArr, )
+  public async del(ids: string[]): Promise<void> {
+    await this?.repository?.delete?.(ids, )
   }
 
   /**

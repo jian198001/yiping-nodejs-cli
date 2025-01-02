@@ -78,10 +78,10 @@ export class ConfService extends BaseService {
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
  
-  public async del(idsArr: string[]): Promise<void> {
+  public async del(ids: string[]): Promise<void> {
      
 
-    await this?.repository?.delete?.(idsArr)
+    await this?.repository?.delete?.(ids)
   }
 
   public async update(obj: Conf): Promise<Conf> {
