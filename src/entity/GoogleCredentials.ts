@@ -1,28 +1,68 @@
 import {Column, Entity,} from "typeorm"
 import {BaseModel,} from "../module/common/model/BaseModel";
+import { ApiProperty } from "@midwayjs/swagger";
 
+/**
+ * Google凭证实体类
+ * 用于表示Google凭证的基本信息
+ */
 @Entity()
 export class GoogleCredentials extends BaseModel {
 
-    @Column({nullable: true, comment: '', name: 'account_name',})
-    public accountName: string  
+  /**
+   * 账户名称
+   * Google凭证的账户名称
+   */
+  @Column({nullable: true, comment: '', name: 'account_name',})
+  @ApiProperty({description: '账户名称',})
+  public accountName: string  
 
-    @Column({nullable: true, comment: '', name: 'display_name',})
-    public  displayName: string  
+  /**
+   * 显示名称
+   * Google凭证的显示名称
+   */
+  @Column({nullable: true, comment: '', name: 'display_name',})
+  @ApiProperty({description: '显示名称',})
+  public displayName: string  
 
-    @Column({nullable: true, comment: '', name: '',})
-    public  email: string  
+  /**
+   * 邮箱
+   * Google凭证的邮箱
+   */
+  @Column({nullable: true, comment: '', name: 'email',})
+  @ApiProperty({description: '邮箱',})
+  public email: string  
 
-    @Column({nullable: true, comment: '', name: 'family_name',})
-    public  familyName: string  
+  /**
+   * 姓氏
+   * Google凭证的姓氏
+   */
+  @Column({nullable: true, comment: '', name: 'family_name',})
+  @ApiProperty({description: '姓氏',})
+  public familyName: string  
 
-    @Column({nullable: true, comment: '', name: 'given_name',})
-    public  givenName: string  
+  /**
+   * 名字
+   * Google凭证的名字
+   */
+  @Column({nullable: true, comment: '', name: 'given_name',})
+  @ApiProperty({description: '名字',})
+  public givenName: string  
 
-    @Column({nullable: true, comment: '', name: 'google_id',})
-    public  googleId: string  
+  /**
+   * Google ID
+   * Google凭证的Google ID
+   */
+  @Column({nullable: true, comment: '', name: 'google_id',})
+  @ApiProperty({description: 'Google ID',})
+  public googleId: string  
 
-    @Column({nullable: true, comment: '', name: 'photo_url',})
-    public  photoUrl: string 
+  /**
+   * 照片URL
+   * Google凭证的照片URL
+   */
+  @Column({nullable: true, comment: '', name: 'photo_url',})
+  @ApiProperty({description: '照片URL',})
+  public photoUrl: string  
   
 }

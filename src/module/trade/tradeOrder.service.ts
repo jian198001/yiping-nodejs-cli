@@ -659,7 +659,7 @@ export class TradeOrderService extends BaseService {
     if (!cartItems) {
       await this?.cartItemService?.clear(shopId, shopBuyerId);
     } else {
-      await this?.cartItemService?.del(cartItems);
+      await this?.cartItemService?.del?.(cartItems);
     }
 
     return tradeOrder;

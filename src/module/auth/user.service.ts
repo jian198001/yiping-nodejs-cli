@@ -17,19 +17,26 @@ import * as sqlUtils from '../common/utils/sqlUtils';
 import * as strUtils from '../common/utils/strUtils';
 import { UserRoleMap, } from '../../entity/UserRoleMap';
 import _ = require('lodash');
+
+/**
+ * 用户服务类
+ * 提供用户的增删改查、分页查询、密码重置、更新密码、登录、获取微信配置、获取访问令牌、获取OpenID、生成小程序码等功能
+ */
 @Provide()
 export class UserService extends BaseService {
-
+  // 日志记录器
   @Logger()
-  private logger: ILogger = null
+  private logger: ILogger = null;
 
+  // 应用程序实例
   @App()
   private app: Application = null;
 
   // 查询的数据库表名称
   private static TABLE_NAME = 'user';
 
-  private static initPwd = 'aaaa1111'
+  // 默认初始化密码
+  private static initPwd = 'aaaa1111';
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${UserService?.TABLE_NAME} t `;
@@ -37,16 +44,26 @@ export class UserService extends BaseService {
   // 查询结果集要返回的列名称，其中label和value是给select组件的option使用 // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   
-     `
+     `;
 
+  // 注入User实体的Repository
   @InjectEntityModel(User)
   private repository: Repository<User> = null;
 
+  // 注入UserRoleMap实体的Repository
   @InjectEntityModel(UserRoleMap)
   private userRoleMapRepository: Repository<UserRoleMap> = null;
 
   private log = '';
 
+  /**
+   * 分页查询用户
+   * @param query - 查询条件字符串
+   * @param params - 前端传递的参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
     query = '', params: string,
     reqParam: ReqParam,
@@ -56,14 +73,14 @@ export class UserService extends BaseService {
 
     console?.log(this?.log);
 
-    let whereSql = ' ' // 查询条件字符串
+    let whereSql = ' '; // 查询条件字符串
 
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue,) // 处理前端的搜索字符串的搜索需求
+    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
 
     // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
     // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize',])) + sqlUtils?.query?.(query)  // 处理前端的表格中筛选需求
+    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize'])) + sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
@@ -72,111 +89,115 @@ export class UserService extends BaseService {
       whereSql,
       reqParam,
       page
-    )
-
+    );
+    
     if (page?.pageSize > 0) {
-
-      return data
-
+      return data;
     }
 
     if (page?.pageSize < 1) {
       // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, 'value',)
-
+      return _?.keyBy?.(data?.list, 'value');
     }
-
   }
 
+  /**
+   * 根据ID查询用户
+   * @param id - 用户ID
+   * @returns 查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
 
-    const data: any = await super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
+    const data: any = await super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
 
-    const userRoleMaps: UserRoleMap[] = await this.userRoleMapRepository?.findBy?.({ userId: id, })
+    const userRoleMaps: UserRoleMap[] = await this.userRoleMapRepository?.findBy?.({ userId: id });
 
-    const roleIds = []
+    const roleIds = [];
 
     for (const item of userRoleMaps) {
-
-      roleIds?.push?.(item?.roleId)
-
+      roleIds?.push?.(item?.roleId);
     }
 
-    data.roleIds = roleIds
+    data.roleIds = roleIds;
 
-    return data
-
+    return data;
   }
 
+  /**
+   * 根据ID数组删除用户
+   * @param ids - 用户ID数组
+   * @returns 无返回值
+   */
   public async del(ids: string[]): Promise<void> {
     // 根据id数组删除多条数据
-    await this?.repository?.delete?.(ids,)
+    await this?.repository?.delete?.(ids);
   }
 
+  /**
+   * 重置用户密码
+   * @param id - 用户ID
+   * @returns 无返回值
+   */
   public async resetPwd(id: string): Promise<void> {
     // 一个表进行操作 typeORM
- 
-    let old: User = await this?.repository?.findOneById?.(id) // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+
+    let old: User = await this?.repository?.findOneById?.(id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
     old = {
-
       ...old,
+      password: crypto?.md5?.(UserService?.initPwd),
+    };
 
-      password: crypto?.md5?.(UserService?.initPwd, )
-
-    }
-
-    await this?.repository?.save?.(old) // 修改数据
-
+    await this?.repository?.save?.(old); // 修改数据
   }
 
-  public async updatePwd(obj: any,): Promise<void> {
+  /**
+   * 更新用户密码
+   * @param obj - 用户对象
+   * @returns 无返回值
+   */
+  public async updatePwd(obj: any): Promise<void> {
     // 一个表进行操作 typeORM
 
     let log = '';
 
-    obj.password = crypto?.md5?.(obj?.password,)
+    obj.password = crypto?.md5?.(obj?.password);
+    obj.passwordNew = crypto?.md5?.(obj?.passwordNew);
 
-    obj.passwordNew = crypto?.md5?.(obj?.passwordNew,)
-
-    let old: User = await this?.repository?.findOneById?.(obj?.id) // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+    let old: User = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
     // 验证原密码是否正确
-
     if (obj?.password !== old?.password) {
-
       log = '原密码输入错误';
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000')
-      this?.logger?.error?.(log, zero0Error)
-      throw zero0Error
-
+      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+      this?.logger?.error?.(log, zero0Error);
+      throw zero0Error;
     }
 
     old = {
-
       ...old,
+      password: obj?.passwordNew,
+    };
 
-      password: obj?.passwordNew
-
-    }
-
-    await this?.repository?.save?.(old) // 修改数据
-
+    await this?.repository?.save?.(old); // 修改数据
   }
 
+  /**
+   * 更新用户信息及角色
+   * @param obj - 用户对象
+   * @param roleIds - 角色ID数组
+   * @returns 更新后的用户对象
+   */
   public async update(obj: User, roleIds: string[]): Promise<User> {
     // 一个表进行操作 typeORM
 
     console.log(obj);
 
     try {
-
       if (obj?.password) {
-
-        obj.password = crypto?.md5?.(obj?.password)
-
+        obj.password = crypto?.md5?.(obj?.password);
       }
 
       let log = '';
@@ -191,17 +212,16 @@ export class UserService extends BaseService {
       if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止
         log = uniqueText + '已存在，操作失败';
 
-        const zero0Error: Zero0Error = new Zero0Error(log, '5000')
-        this?.logger?.error?.(log, zero0Error)
-        throw zero0Error
+        const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+        this?.logger?.error?.(log, zero0Error);
+        throw zero0Error;
       }
       // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
       if (!obj?.id) {
         // 新增数据，主键id的随机字符串值，由后端typeorm提供
-        log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
+        log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
 
-        delete obj?.id
-
+        this?.logger?.info?.(log);
         await this?.repository?.save?.(obj) // insert update
 
         if (!obj?.orderNum) {

@@ -42,7 +42,7 @@ export class BuyerWebUserCenterAuthMenuController {
     @Query('level') level: number
   ): Promise<any> {
     // 调用menuService的del方法根据ID和级别删除菜单
-    await this?.menuService?.del(id, level);
+    await this?.menuService?.del?.(id, level);
     return null;
   }
 
@@ -57,13 +57,4 @@ export class BuyerWebUserCenterAuthMenuController {
     return await this?.menuService?.update?.(obj);
   }
 
-  /**
-   * 初始化菜单
-   * @returns 返回初始化结果
-   */
-  @All('/init.json', { middleware: [JwtPassportMiddleware] })
-  public async init(): Promise<any> {
-    // 调用menuService的init方法初始化菜单
-    return await this?.menuService?.init();
-  }
 }

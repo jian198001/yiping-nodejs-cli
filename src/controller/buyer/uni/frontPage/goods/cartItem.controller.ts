@@ -154,6 +154,6 @@ export class BuyerUniFrontPageGoodsCartItemController {
   @All("/del.json", { middleware: [JwtPassportMiddleware] })
   public async del(@Body() cartItems: string[] = []): Promise<any> {
     // 调用购物车项服务的删除方法
-    return await this?.cartItemService?.del(cartItems);
+    return await this?.cartItemService?.del?.(cartItems);
   }
 }

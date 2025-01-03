@@ -11,27 +11,37 @@ import { ILogger } from '@midwayjs/logger';
 import * as sqlUtils from '../common/utils/sqlUtils';
 import * as strUtils from '../common/utils/strUtils';
 
+/**
+ * 消耗服务类
+ * 提供消耗记录的增删改查以及分页查询功能
+ */
 @Provide()
 export class ConsumeService extends BaseService {
-  
+  // 日志记录器
   @Logger()
-  private logger: ILogger = null
-
-// 查询的数据库表名称
+  private logger: ILogger = null;
+  // 查询的数据库表名称
   private static TABLE_NAME = 'consume';
-
-// 查询的数据库表名称及别名
+  // 查询的数据库表名称及别名
   private fromSql = ` FROM ${ConsumeService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   , ( SELECT name FROM staff WHERE staff.id = t.staff_id ) AS staff_name
   , ( SELECT name FROM material WHERE material.id = t.material_id ) AS material_name
   , ( SELECT sku FROM material WHERE material.id = t.material_id ) AS material_sku
      `;
-
+  // 注入Consume实体的Repository
   @InjectEntityModel(Consume)
   private repository: Repository<Consume> = null;
-
+  /**
+   * 分页查询消耗记录
+   * @param staffId - 员工ID
+   * @param query - 查询条件字符串
+   * @param params - 前端传递的参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(staffId: string,
     query: string, params: string, reqParam: ReqParam, 
     page: Page, 
@@ -45,7 +55,7 @@ export class ConsumeService extends BaseService {
       whereSql += ` AND t.material_id IN ( SELECT id FROM material WHERE name LIKE '%${reqParam?.searchValue}%' ) `
 
     }
-// sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
+    // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
     // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
     whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  // 处理前端的表格中筛选需求
@@ -61,17 +71,31 @@ export class ConsumeService extends BaseService {
     return data
 
   }
-
+  /**
+   * 根据ID查询消耗记录
+   * @param id - 消耗记录ID
+   * @returns 查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
 
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
  
+  /**
+   * 删除消耗记录
+   * @param ids - 消耗记录ID数组
+   * @returns 无返回值
+   */
   public async del(ids: string[]): Promise<void> {
     await this?.repository?.delete?.(ids, )
   }
 
+  /**
+   * 更新消耗记录
+   * @param obj - 消耗记录对象
+   * @returns 更新后的消耗记录对象
+   */
   public async update(obj: Consume): Promise<Consume> {
     // 一个表进行操作 typeORM
 
@@ -91,7 +115,8 @@ export class ConsumeService extends BaseService {
       this?.logger?.error?.(log, zero0Error)
       throw zero0Error
     }
-// 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
@@ -129,12 +154,8 @@ export class ConsumeService extends BaseService {
 
     await this?.repository?.save?.(old) // 修改数据
   }
-
   // 采购入库->purchase采购信息->inbill->形成入库单，记录入库信息->stock库存信息
-
   // 领用出库->stock库存信息->consume->形成出库单，记录出库信息
-
   // 领用信息表->谁领用了哪些物料 staffId materialId quantity
-
   // 归还入库->inbill->形成入库单，记录归还入库信息->stock库存信息
 }

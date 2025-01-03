@@ -1,3 +1,4 @@
+// 导入依赖项
 import { Inject, Logger, Provide } from "@midwayjs/decorator";
 import { BaseService } from "../common/service/base.service";
 import { ReqParam } from "../common/model/ReqParam";
@@ -15,9 +16,14 @@ import dayjs = require("dayjs");
 import { ShopBuyer } from "../../entity/ShopBuyer";
 import { ShopBuyerService } from "../trade/shopBuyer.service";
 import _ = require('lodash');
+
+/**
+ * 时间资源任务服务类
+ * 提供时间资源任务的分页查询、根据ID查询、删除、更新等功能
+ */
 @Provide()
 export class TimeResJobService extends BaseService {
-  
+  // 日志记录器
   @Logger()
   private logger: ILogger = null;
 
@@ -45,18 +51,32 @@ export class TimeResJobService extends BaseService {
 
      `;
 
+  // 注入TimeResJob实体的Repository
   @InjectEntityModel(TimeResJob)
   private repository: Repository<TimeResJob> = null;
 
+  // 注入TimeRes实体的Repository
   @InjectEntityModel(TimeRes)
   private timeJobRepository: Repository<TimeRes> = null;
- 
+
+  // 注入ShopBuyer实体的Repository
   @InjectEntityModel(ShopBuyer)
   private shopBuyerRepository: Repository<ShopBuyer> = null;
- 
+
+  // 注入ShopBuyerService
   @Inject()
   private shopBuyerService: ShopBuyerService = null;
 
+  /**
+   * 分页查询时间资源任务
+   * @param sellerId - 预约信息发布者id
+   * @param user - 用户类型
+   * @param query - 查询条件字符串
+   * @param params - 前端传递的参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
     sellerId: string, // 预约信息发布者id,发布者只能看到自己发布的信息,消费者只能看到指定发布者发布的信息
     user: string, // 用户类型，买家只可以看到可预约的时间段，无法看到已过期的时间段，卖家(排班生产者)可以看到全部时间段
@@ -102,6 +122,11 @@ export class TimeResJobService extends BaseService {
     
   }
 
+  /**
+   * 根据ID查询时间资源任务
+   * @param id - 时间资源任务ID
+   * @returns 查询结果
+   */
   public async getById(id = ""): Promise<any> {
     // 根据id查询一条数据
 
@@ -113,12 +138,26 @@ export class TimeResJobService extends BaseService {
 
   }
 
+  /**
+   * 删除时间资源任务
+   * @param ids - 时间资源任务ID数组
+   * @returns 无返回值
+   */
   public async del(ids: string[]): Promise<void> {
      
 
     await this?.repository?.delete?.(ids);
   }
 
+  /**
+   * 更新时间资源任务
+   * @param obj - 时间资源任务对象
+   * @param timeStartStr - 开始时间字符串
+   * @param timeEndStr - 结束时间字符串
+   * @param day - 日期字符串
+   * @param userId - 用户ID
+   * @returns 更新后的时间资源任务
+   */
   public async update(
     obj: TimeResJob,
     timeStartStr: string = "",

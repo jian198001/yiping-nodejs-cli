@@ -46,7 +46,7 @@ export class StaffWebUserCenter<%= data.dirNameUpperFirst %><%= data.formNameUpp
 
         let result: Result = new Result();
 
-        await this?.<%= data.formName %>Service.del(ids,);
+        await this?.<%= data.formName %>Service.del?.(ids,);
 
         return result;
 

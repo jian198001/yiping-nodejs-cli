@@ -96,7 +96,7 @@ export class StaffWebUserCenterInventoryInbillController {
   @All('/purchaseInstock.json')
   public async purchaseInstock(@Body() data: any, ): Promise<any> {
     // 调用purchaseOrderService的purchaseInstock方法进行采购入库
-    await this?.purchaseOrderService?.purchaseInstock(data, );
+    await this?.purchaseOrderService?.purchaseInstock?.(data, );
   }
   
   /**
@@ -114,6 +114,6 @@ export class StaffWebUserCenterInventoryInbillController {
       billId: data?.id,
     }];
     // 调用inbillService的consumeInbill方法进行消费入库
-    await this?.inbillService?.consumeInbill(data, list);
+    await this?.inbillService?.consumeInbill?.(data, list);
   }
 }

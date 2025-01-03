@@ -1,43 +1,59 @@
-import { Logger, Provide } from "@midwayjs/decorator";
-import { BaseService } from "../common/service/base.service";
-import { ReqParam } from "../common/model/ReqParam";
-import { Page } from "../common/model/Page";
-import { Repository } from "typeorm";
-import { InjectEntityModel } from "@midwayjs/typeorm";
-import { Tabbar } from "../../entity/Tabbar";
-import { Zero0Error } from "../common/model/Zero0Error";
-import { ILogger } from "@midwayjs/logger";
+// 引入必要的模块和装饰器
+import { Logger, Provide } from '@midwayjs/decorator';
+import { BaseService } from '../common/service/base.service';
+import { ReqParam } from '../common/model/ReqParam';
+import { Page } from '../common/model/Page';
+import { Repository } from 'typeorm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Tabbar } from '../../entity/Tabbar';
+import { Zero0Error } from '../common/model/Zero0Error';
+import { ILogger } from '@midwayjs/logger';
 
-import * as sqlUtils from "../common/utils/sqlUtils";
-import * as strUtils from "../common/utils/strUtils";
-import _ = require("lodash");
+// 引入SQL和字符串工具函数
+import * as sqlUtils from '../common/utils/sqlUtils';
+import * as strUtils from '../common/utils/strUtils';
+import _ = require('lodash');
+
+/**
+ * 标签栏服务类
+ * 提供标签栏的增删改查功能
+ */
 @Provide()
 export class TabbarService extends BaseService {
+  // 日志记录器
   @Logger()
   private logger: ILogger = null;
 
   // 查询的数据库表名称
-  private static TABLE_NAME = "tabbar";
+  private static TABLE_NAME = 'tabbar';
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${TabbarService?.TABLE_NAME} t `;
+
   // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
-  
-     `;
+  `;
 
+  // 注入Tabbar实体的Repository
   @InjectEntityModel(Tabbar)
   private repository: Repository<Tabbar> = null;
 
+  /**
+   * 分页查询标签栏
+   * @param query - 查询条件字符串
+   * @param params - 前端传递的参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
-    query = "",
-    params: string,
+    query = '', params: string,
     reqParam: ReqParam,
-    page: Page
+    page: Page,
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = " "; // 查询条件字符串
+    let whereSql = ' '; // 查询条件字符串
 
     let parameters: any[] = [];
 
@@ -45,13 +61,15 @@ export class TabbarService extends BaseService {
       parameters = JSON?.parse?.(params);
     }
 
+    // 处理前端的表格中筛选需求
     whereSql +=
       sqlUtils?.mulColumnLike?.(
         strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
       ) +
       sqlUtils?.like?.(["name"], reqParam?.searchValue) +
       sqlUtils?.whereOrFilters?.(reqParam?.filters) +
-      sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
+      sqlUtils?.query?.(query);
+
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
@@ -71,20 +89,35 @@ export class TabbarService extends BaseService {
     }
   }
 
-  public async getById(id = ""): Promise<any> {
+  /**
+   * 根据ID查询标签栏
+   * @param id - 标签栏ID
+   * @returns 查询结果
+   */
+  public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
 
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
   }
 
+  /**
+   * 删除标签栏
+   * @param ids - 标签栏ID数组
+   * @returns 无返回值
+   */
   public async del(ids: string[]): Promise<void> {
     await this?.repository?.delete?.(ids);
   }
 
+  /**
+   * 更新标签栏
+   * @param obj - 标签栏对象
+   * @returns 更新后的标签栏对象
+   */
   public async update(obj: Tabbar): Promise<Tabbar> {
     // 一个表进行操作 typeORM
 
-    let log = "";
+    let log = '';
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
@@ -95,16 +128,16 @@ export class TabbarService extends BaseService {
 
     if (uniqueText) {
       // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + "已存在，操作失败";
+      log = uniqueText + '已存在，操作失败';
 
-      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
+      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
-    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+
+    // 新增数据，主键id的随机字符串值，由后端typeorm提供
     if (!obj?.id) {
-      // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
+      log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
 
       delete obj?.id;
 

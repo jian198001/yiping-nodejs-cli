@@ -1,3 +1,4 @@
+// 引入必要的模块和装饰器
 import { Logger, Provide } from '@midwayjs/decorator';
 import { BaseService } from '../common/service/base.service';
 import { ReqParam } from '../common/model/ReqParam';
@@ -5,52 +6,63 @@ import { Page } from '../common/model/Page';
 import { Repository } from 'typeorm';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Notice } from '../../entity/Notice';
-
 import { ILogger } from '@midwayjs/logger';
-
 import { Zero0Error } from '../common/model/Zero0Error';
-
 import * as sqlUtils from '../common/utils/sqlUtils';
 import * as strUtils from '../common/utils/strUtils';
-
 import _ = require('lodash');
 
+/**
+ * 通知消息服务类
+ * 提供通知消息的增删改查功能
+ */
 @Provide()
-export class NoticeService extends BaseService { // 通知消息服务,此文件是较标准的业务，没有特殊业务，可作为其它相似模块的模版
+export class NoticeService extends BaseService {
+  // 日志记录器
   @Logger()
-  private logger: ILogger = null
+  private logger: ILogger = null;
 
   // 查询的数据库表名称
   private static TABLE_NAME = 'notice';
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${NoticeService?.TABLE_NAME} t `;
+
   // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
-  
-     `
+  `;
 
+  // 注入Notice实体的Repository
   @InjectEntityModel(Notice)
   private repository: Repository<Notice> = null;
 
+  // 日志字符串
   private log = '';
 
+  /**
+   * 分页查询通知消息
+   * @param query - 查询条件字符串
+   * @param params - 前端传递的参数字符串
+   * @param reqParam - 请求参数对象
+   * @param page - 分页对象
+   * @returns 分页查询结果
+   */
   public async page(
     query = '', params: string,
     reqParam: ReqParam,
     page: Page,
   ): Promise<any> {
     // 分页列表查询数据
-
     console?.log(this?.log);
 
     let whereSql = ' ' // 查询条件字符串
 
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue,) // 处理前端的搜索字符串的搜索需求
-    // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
-    // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize',])) + sqlUtils?.query?.(query)  // 处理前端的表格中筛选需求
+    // 处理前端的搜索字符串的搜索需求
+    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue,)
+
+    // 处理前端的表格中筛选需求
+    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize',])) + sqlUtils?.query?.(query)
+
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
@@ -61,29 +73,39 @@ export class NoticeService extends BaseService { // 通知消息服务,此文件
     )
 
     if (page?.pageSize > 0) {
-      
       return data
-
     }
 
     if (page?.pageSize < 1) {
       // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, 'value',)
-
     }
-
   }
 
+  /**
+   * 根据ID查询通知消息
+   * @param id - 通知消息ID
+   * @returns 查询结果
+   */
   public async getById(id = ''): Promise<any> {
     // 根据id查询一条数据
-
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
 
+  /**
+   * 删除通知消息
+   * @param ids - 通知消息ID数组
+   * @returns 无返回值
+   */
   public async del(ids: string[]): Promise<void> {
     await this?.repository?.delete?.(ids,)
   }
 
+  /**
+   * 更新通知消息
+   * @param obj - 通知消息对象
+   * @returns 更新后的通知消息对象
+   */
   public async update(obj: Notice): Promise<Notice> {
     // 一个表进行操作 typeORM
 
@@ -103,15 +125,12 @@ export class NoticeService extends BaseService { // 通知消息服务,此文件
       this?.logger?.error?.(log, zero0Error)
       throw zero0Error
     }
-    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+
+    // 新增数据，主键id的随机字符串值，由后端typeorm提供
     if (!obj?.id) {
-      // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
-
       delete obj?.id
-
       await this?.repository?.save?.(obj) // insert update
-
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, NoticeService?.TABLE_NAME,) // 新增数据时，设置此条数据的orderNum排序值
       }
@@ -122,9 +141,7 @@ export class NoticeService extends BaseService { // 通知消息服务,此文件
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
-
       await this?.repository?.save?.(obj) // insert update
-
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, NoticeService?.TABLE_NAME,) // 新增数据时，设置此条数据的orderNum排序值
       }
@@ -134,7 +151,6 @@ export class NoticeService extends BaseService { // 通知消息服务,此文件
 
     old = {
       ...old,
-
       ...obj,
     };
 

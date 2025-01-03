@@ -1,7 +1,11 @@
+// 导入MidwayConfig类型
 import { MidwayConfig } from '@midwayjs/core';
 
+// 导入Node.js的path和os模块
 import { join } from 'path';
 import { tmpdir } from 'os';
+
+// 导入各种实体类
 import { Buyer } from '../entity/Buyer';
 import { UserOpenId } from '../entity/UserOpenId';
 import { ShopBuyer } from '../entity/ShopBuyer';
@@ -60,13 +64,27 @@ import { MultipartFile } from '../entity/MultipartFile';
 import { GoodsCategory } from '../entity/GoodsCategory';
 import { User } from '../module/common/model/User';
 
+/**
+ * 默认配置文件
+ * 定义了应用程序的各种配置选项
+ */
 export default {
-  // use for cookie sign key, should change to your own and keep security
+  // 用于Cookie签名的密钥，应该更改为自己的并保持安全
   keys: '1650944839830_1213',
+
+  /**
+   * Koa框架配置
+   */
   koa: {
+    // 应用程序监听的端口号
     port: 7098,
+    // 全局路由前缀
     globalPrefix: '/api'
   },
+
+  /**
+   * TypeORM配置
+   */
   typeorm: {
     dataSource: {
       default: {
@@ -149,7 +167,9 @@ export default {
     },
   },
 
-  // 文件上传测试：导入官方文档示例 TODO
+  /**
+   * 文件上传配置
+   */
   upload: {
     // mode: UploadMode, 默认为file，即上传到服务器临时目录，可以配置为 stream
     mode: 'file',
@@ -186,25 +206,46 @@ export default {
     // cleanTimeout: number，上传的文件在临时目录中多久之后自动删除，默认为 5 分钟
     cleanTimeout: 5 * 60 * 1000,
   },
+
+  /**
+   * 视图配置
+   */
   view: {
     defaultExtension: '.ejs',
     mapping: {
       '.ejs': 'ejs',
     },
   },
+
   // ejs config
   ejs: {},
+
+  /**
+   * 域名配置
+   */
   domain: {
     // yiping
     domainName: 'yunchuang.zero9.work',
   },
+
+  /**
+   * Passport配置
+   */
   passport: {
     session: false,
   },
+
+  /**
+   * JWT配置
+   */
   jwt: {
     secret: 'yiping', // fs.readFileSync('xxxxx.key')
     expiresIn: '999999d', // https://github.com/vercel/ms
   },
+
+  /**
+   * CORS配置
+   */
   cors: {
     // origin: '*',
     credentials: true,

@@ -127,9 +127,9 @@ export class PurchaseOrderService extends BaseService {
     return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
   }
 
-  public async del(ids: string[]): Promise<void> {
+  public async del(idsArr: string[]): Promise<void> {
 
-    await this?.repository?.delete?.(ids,)
+    await this?.repository?.delete?.(idsArr,)
   }
 
   public async submit(id = ''): Promise<PurchaseOrder> {

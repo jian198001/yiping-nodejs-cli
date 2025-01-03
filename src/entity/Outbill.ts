@@ -1,103 +1,235 @@
-import {Column, Entity,} from "typeorm"
+import {Column, Entity,} from "typeorm";
 import {BaseModel,} from "../module/common/model/BaseModel";
 
+/**
+ * 出库单实体类
+ * 用于表示出库单的基本信息
+ */
 @Entity()
 export class Outbill extends BaseModel { // 出库单
   
-  @Column({nullable: true, comment: '', name: 'bill_content',})
+  /**
+   * 出库单内容
+   * 出库单的详细内容
+   */
+  @Column({nullable: true, comment: '出库单内容', name: 'bill_content',})
   public billContent: string  
- 
-  @Column({nullable: true, comment: '', name: 'detail_address',})
+  
+  /**
+   * 详细地址
+   * 收货人的详细地址
+   */
+  @Column({nullable: true, comment: '详细地址', name: 'detail_address',})
   public detailAddress: string  
 
-  @Column({nullable: true, comment: '', name: 'post_code',})
+  /**
+   * 邮编
+   * 收货人的邮编
+   */
+  @Column({nullable: true, comment: '邮编', name: 'post_code',})
   public postCode: string  
 
-  @Column({nullable: true, comment: '', name: 'bill_receiver_phone',})
+  /**
+   * 收货人电话
+   * 收货人的电话号码
+   */
+  @Column({nullable: true, comment: '收货人电话', name: 'bill_receiver_phone',})
   public billReceiverPhone: string  
 
-  @Column({nullable: true, comment: '', name: 'receiver_address_id',})
+  /**
+   * 收货地址ID
+   * 收货地址的唯一标识
+   */
+  @Column({nullable: true, comment: '收货地址ID', name: 'receiver_address_id',})
   public receiverAddressId: string  
 
-  @Column({nullable: true, comment: '', name: 'delivery_company',})
+  /**
+   * 快递公司
+   * 负责配送的快递公司名称
+   */
+  @Column({nullable: true, comment: '快递公司', name: 'delivery_company',})
   public deliveryCompany: string  
 
-  @Column({nullable: true, comment: '', name: 'post_fee', type: 'double',})
+  /**
+   * 邮费
+   * 订单的邮费金额
+   */
+  @Column({nullable: true, comment: '邮费', name: 'post_fee', type: 'double',})
   public postFee: number  
 
-  @Column({nullable: true, comment: '', name: 'province',})
+  /**
+   * 省份
+   * 收货地址所在的省份
+   */
+  @Column({nullable: true, comment: '省份', name: 'province',})
   public province: string  
 
-  @Column({nullable: true, comment: '', name: 'shop_memo',})
+  /**
+   * 店铺备注
+   * 店铺对该订单的备注信息
+   */
+  @Column({nullable: true, comment: '店铺备注', name: 'shop_memo',})
   public shopMemo: string  
 
-  @Column({nullable: true, comment: '', name: 'receive_time', type: "datetime",})
+  /**
+   * 收货时间
+   * 预计的收货时间
+   */
+  @Column({nullable: true, comment: '收货时间', name: 'receive_time', type: "datetime",})
   public receiveTime: any = null;
 
-  @Column({nullable: true, comment: '', name: 'bill_type', type: 'integer',})
+  /**
+   * 单据类型
+   * 出库单的类型
+   */
+  @Column({nullable: true, comment: '单据类型', name: 'bill_type', type: 'integer',})
   public billType: number  
 
-  @Column({nullable: true, comment: '', name: 'delivery',})
+  /**
+   * 配送方式
+   * 订单的配送方式
+   */
+  @Column({nullable: true, comment: '配送方式', name: 'delivery',})
   public delivery: string  
 
-  @Column({nullable: true, comment: '', name: 'modify_time', type: "datetime",})
+  /**
+   * 修改时间
+   * 出库单的最后修改时间
+   */
+  @Column({nullable: true, comment: '修改时间', name: 'modify_time', type: "datetime",})
   public modifyTime: any = null;
 
-  @Column({nullable: true, comment: '', name: 'pay_time', type: "datetime",})
+  /**
+   * 支付时间
+   * 订单的支付时间
+   */
+  @Column({nullable: true, comment: '支付时间', name: 'pay_time', type: "datetime",})
   public payTime: any = null;
 
-  @Column({nullable: true, comment: '', name: 'freight_payer',})
+  /**
+   * 运费支付方
+   * 承担运费的一方
+   */
+  @Column({nullable: true, comment: '运费支付方', name: 'freight_payer',})
   public freightPayer: string  
 
-  @Column({nullable: true, comment: '', name: 'region',})
+  /**
+   * 地区
+   * 收货地址所在的地区
+   */
+  @Column({nullable: true, comment: '地区', name: 'region',})
   public region: string  
 
-  @Column({nullable: true, comment: '', name: 'trade_state',})
+  /**
+   * 交易状态
+   * 订单的交易状态
+   */
+  @Column({nullable: true, comment: '交易状态', name: 'trade_state',})
   public tradeState: string  
 
-  @Column({nullable: true, comment: '', name: 'delivery_sn',})
+  /**
+   * 物流单号
+   * 快递公司提供的物流单号
+   */
+  @Column({nullable: true, comment: '物流单号', name: 'delivery_sn',})
   public deliverySn: string  
 
-  @Column({nullable: true, comment: '', name: 'city',})
+  /**
+   * 城市
+   * 收货地址所在的城市
+   */
+  @Column({nullable: true, comment: '城市', name: 'city',})
   public city: string  
 
-  @Column({nullable: true, comment: '', name: 'pay_type',})
+  /**
+   * 支付类型
+   * 订单的支付方式类型
+   */
+  @Column({nullable: true, comment: '支付类型', name: 'pay_type',})
   public payType: string  
 
-  @Column({nullable: true, comment: '', name: 'read_history', type: 'integer',})
+  /**
+   * 阅读历史
+   * 订单的阅读历史状态
+   */
+  @Column({nullable: true, comment: '阅读历史', name: 'read_history', type: 'integer',})
   public readHistory: number  
 
-  @Column({nullable: true, comment: '', name: 'bill_header',})
+  /**
+   * 单据抬头
+   * 出库单的抬头信息
+   */
+  @Column({nullable: true, comment: '单据抬头', name: 'bill_header',})
   public billHeader: string  
 
-  @Column({nullable: true, comment: '', name: 'bill_receiver_email',})
+  /**
+   * 收货人邮箱
+   * 收货人的邮箱地址
+   */
+  @Column({nullable: true, comment: '收货人邮箱', name: 'bill_receiver_email',})
   public billReceiverEmail: string  
 
-  @Column({nullable: true, comment: '', name: 'total_amount', type: 'double',})
+  /**
+   * 总金额
+   * 订单的总金额
+   */
+  @Column({nullable: true, comment: '总金额', name: 'total_amount', type: 'double',})
   public totalAmount: number  
 
-  @Column({nullable: true, comment: '', name: 'delivery_time', type: "datetime",})
+  /**
+   * 发货时间
+   * 订单的发货时间
+   */
+  @Column({nullable: true, comment: '发货时间', name: 'delivery_time', type: "datetime",})
   public deliveryTime: any = null;
 
-  @Column({nullable: true, comment: '', name: 'confirm_status',})
+  /**
+   * 确认状态
+   * 订单的确认状态
+   */
+  @Column({nullable: true, comment: '确认状态', name: 'confirm_status',})
   public confirmStatus: string  
 
-  @Column({nullable: true, comment: '', name: 'delivery_id',})
+  /**
+   * 发货ID
+   * 发货记录的唯一标识
+   */
+  @Column({nullable: true, comment: '发货ID', name: 'delivery_id',})
   public deliveryId: string  
 
-  @Column({nullable: true, comment: '', name: 'true_name',})
+  /**
+   * 真实姓名
+   * 收货人的真实姓名
+   */
+  @Column({nullable: true, comment: '真实姓名', name: 'true_name',})
   public trueName: string  
 
-  @Column({nullable: true, comment: '', name: 'message',})
+  /**
+   * 留言
+   * 买家对订单的留言信息
+   */
+  @Column({nullable: true, comment: '留言', name: 'message',})
   public message: string  
 
-  @Column({nullable: true, comment: '', name: 'shop_buyer_id',})
+  /**
+   * 店铺买家ID
+   * 购买该订单的店铺买家ID
+   */
+  @Column({nullable: true, comment: '店铺买家ID', name: 'shop_buyer_id',})
   public shopBuyerId: string  
 
-  @Column({nullable: true, comment: '', name: 'phone_num',})
+  /**
+   * 电话号码
+   * 收货人的电话号码
+   */
+  @Column({nullable: true, comment: '电话号码', name: 'phone_num',})
   public phoneNum: string  
 
-  @Column({nullable: true, comment: '', name: 'comment_time', type: "datetime",})
+  /**
+   * 评论时间
+   * 订单的评论时间
+   */
+  @Column({nullable: true, comment: '评论时间', name: 'comment_time', type: "datetime",})
   public commentTime: any = null;
 
 }

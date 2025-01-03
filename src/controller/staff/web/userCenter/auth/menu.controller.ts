@@ -40,7 +40,7 @@ export class StaffWebUserCenterAuthMenuController {
     @Query('level') level: number
   ): Promise<any> {
     // 调用menuService的del方法删除菜单
-    await this?.menuService?.del(id, level);
+    await this?.menuService?.del?.(id, level);
   }
 
   /**
