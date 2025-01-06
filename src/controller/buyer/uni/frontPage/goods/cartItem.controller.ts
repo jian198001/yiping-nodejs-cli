@@ -38,7 +38,7 @@ export class BuyerUniFrontPageGoodsCartItemController {
   private cartItemService: CartItemService = null;
   /**
    * 获取购物车项分页列表
-   * 
+   *
    * @param shopId - 店铺ID
    * @param query - 查询条件
    * @param params - 参数
@@ -70,7 +70,7 @@ export class BuyerUniFrontPageGoodsCartItemController {
   }
   /**
    * 获取购物车项数量
-   * 
+   *
    * @param shopId - 店铺ID
    * @returns 返回购物车项数量
    */
@@ -81,14 +81,11 @@ export class BuyerUniFrontPageGoodsCartItemController {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
     // 调用购物车项服务的数量统计方法
-    return await this?.cartItemService?.count(
-      shopId,
-      shopBuyerId
-    );
+    return await this?.cartItemService?.count(shopId, shopBuyerId);
   }
   /**
    * 根据ID获取购物车项
-   * 
+   *
    * @param id - 购物车项ID
    * @returns 返回购物车项信息
    */
@@ -99,7 +96,7 @@ export class BuyerUniFrontPageGoodsCartItemController {
   }
   /**
    * 添加购物车项
-   * 
+   *
    * @param cartItem - 购物车项信息
    * @returns 返回添加结果
    */
@@ -114,7 +111,7 @@ export class BuyerUniFrontPageGoodsCartItemController {
   }
   /**
    * 清空购物车项
-   * 
+   *
    * @param shopId - 店铺ID
    * @returns 返回清空结果
    */
@@ -123,14 +120,11 @@ export class BuyerUniFrontPageGoodsCartItemController {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
     // 调用购物车项服务的清空方法
-    return await this?.cartItemService?.clear(
-      shopId,
-      shopBuyerId
-    );
+    return await this?.cartItemService?.clear(shopId, shopBuyerId);
   }
   /**
    * 更新购物车项数量
-   * 
+   *
    * @param id - 购物车项ID
    * @param quantity - 数量
    * @returns 返回更新结果
@@ -147,7 +141,7 @@ export class BuyerUniFrontPageGoodsCartItemController {
   }
   /**
    * 删除购物车项
-   * 
+   *
    * @param cartItems - 购物车项ID数组
    * @returns 返回删除结果
    */
