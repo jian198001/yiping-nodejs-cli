@@ -225,7 +225,7 @@ export default {
    */
   domain: {
     // yiping
-    domainName: 'yunchuang.zero9.work',
+    domainName: 'test.zero9.work',
   },
 
   /**
@@ -250,4 +250,14 @@ export default {
     // origin: '*',
     credentials: true,
   },
+
+  redis: {
+    client: {
+      port: 6379, // Redis port
+      host: "localhost", // Redis host
+      password: "",
+      db: 0,
+    },
+  },
+
 } as MidwayConfig;

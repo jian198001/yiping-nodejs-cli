@@ -17,6 +17,7 @@ import * as cron from '@midwayjs/cron';
 import * as passport from '@midwayjs/passport';
 import * as crossDomain from '@midwayjs/cross-domain';
 import { FormatMiddleware } from './middleware/format.middleware';
+import * as redis from '@midwayjs/redis';
 
 /**
  * 应用配置类
@@ -42,6 +43,7 @@ import { FormatMiddleware } from './middleware/format.middleware';
     cron,
     passport,
     crossDomain,
+    redis,       // 导入 redis 组件
   ],
   // 导入配置文件的路径
   importConfigs: [join(__dirname, './config')],

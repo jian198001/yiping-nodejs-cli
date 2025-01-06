@@ -1,9 +1,10 @@
-import { Config, Provide } from "@midwayjs/decorator";
+import { Config, Inject, Provide } from "@midwayjs/decorator";
 import { query } from "../dao/mysql";
 import { Page } from "../model/Page";
 import { ReqParam } from "../model/ReqParam";
 
 import _ = require("lodash");
+import { RedisService } from "@midwayjs/redis";
 
 const sqlUtils: any = require("../utils/sqlUtils"),
   arrayUtils: any = require("../utils/arrayUtils"),
@@ -12,6 +13,10 @@ const sqlUtils: any = require("../utils/sqlUtils"),
 
 @Provide()
 export abstract class BaseService {
+
+  @Inject()
+  protected redisService: RedisService;
+
   @Config("typeorm")
   private mysqlConf: any = null;
 
