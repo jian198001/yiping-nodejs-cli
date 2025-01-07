@@ -99,9 +99,17 @@ export class ShopBuyerService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page
-    )
-    
+      page,
+    );
+
+    // 遍历查询结果,将查询结果异步读取到redis
+
+    for (const item of data?.list) {
+      
+      this?.getById?.(item?.id);
+
+    }
+
     if (page?.pageSize > 0) {
       // 返回分页数据
       return data

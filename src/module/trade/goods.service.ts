@@ -108,9 +108,9 @@ export class GoodsService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page
+      page,
     );
-    
+ 
     if (page?.pageSize > 0) {
       return data;
     }

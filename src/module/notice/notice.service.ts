@@ -81,6 +81,14 @@ export class NoticeService extends BaseService {
       page
     );
 
+    // 遍历查询结果,将查询结果中异步读取到redis
+
+    for (const item of data?.list) {
+      
+      this?.getById?.(item?.id);
+
+    }
+
     if (page?.pageSize > 0) {
       return data;
     }
