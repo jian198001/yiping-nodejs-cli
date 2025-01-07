@@ -103,8 +103,17 @@ export class AddressService extends BaseService {
    * @returns Promise<void> - 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    await this?.repository?.delete?.(ids);
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = AddressService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   
   /**
    * 更新地址
@@ -115,7 +124,12 @@ export class AddressService extends BaseService {
     // 一个表进行操作 typeORM
   
     let log = "";
-  
+  // 删除redis缓存
+
+    const key = AddressService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
       AddressService?.TABLE_NAME,

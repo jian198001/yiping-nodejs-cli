@@ -111,10 +111,17 @@ export class MaterialService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 根据id数组删除多条数据
+    // 删除redis缓存
 
-    await this?.repository?.delete?.(ids, )
-  }
+    for (const id of ids) {
+      const key = MaterialService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   
   /**
    * 更新物料
@@ -124,8 +131,14 @@ export class MaterialService extends BaseService {
   public async update(obj: Material): Promise<Material> {
     // 一个表进行操作 typeORM
 
-    let log = '';
-    
+    let log = "";
+ 
+// 删除redis缓存
+
+    const key = MaterialService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
       MaterialService?.TABLE_NAME,

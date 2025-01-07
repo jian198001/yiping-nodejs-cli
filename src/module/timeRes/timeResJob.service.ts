@@ -144,10 +144,17 @@ export class TimeResJobService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-     
+    // 删除redis缓存
 
-    await this?.repository?.delete?.(ids);
-  }
+    for (const id of ids) {
+      const key = TimeResJobService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新时间资源任务

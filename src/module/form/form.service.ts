@@ -133,8 +133,17 @@ export class FormService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    await this?.repository?.delete?.(ids, )
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = FormService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   
   /**
    * 更新表单

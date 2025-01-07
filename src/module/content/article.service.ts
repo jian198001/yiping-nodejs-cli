@@ -104,9 +104,17 @@ export class ArticleService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 根据id数组删除多条数据
-    await this?.repository?.delete?.(ids);
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = ArticleService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   
   /**
    * 更新文章

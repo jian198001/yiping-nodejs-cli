@@ -146,7 +146,12 @@ export class DeptService extends BaseService {
     // 一个表进行操作 typeORM
   
     let log = '';
-  
+  // 删除redis缓存
+
+    const key = DeptService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(DeptService?.TABLE_NAME, [], obj?.id); // 新增或修改数据时，判断某字段值在数据库中是否已重复
   

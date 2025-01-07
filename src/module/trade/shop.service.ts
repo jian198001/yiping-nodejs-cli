@@ -174,6 +174,11 @@ export class ShopService extends BaseService { // 店铺服务
     // 一个表进行操作 typeORM
 
     let log = '';
+// 删除redis缓存
+
+    const key = ShopService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

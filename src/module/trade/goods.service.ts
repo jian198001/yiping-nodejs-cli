@@ -184,8 +184,17 @@ export class GoodsService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    await this?.repository?.delete?.(ids, );
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = GoodsService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新商品数据
@@ -193,7 +202,12 @@ export class GoodsService extends BaseService {
    * @param imgs - 商品图片
    * @returns 更新后的商品对象
    */
-  public async update(obj: Goods, imgs = ''): Promise<Goods> {
+  public async update(obj: Goods, imgs = ''): Promise<Goods> {// 删除redis缓存
+
+    const key = GoodsService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(GoodsService?.TABLE_NAME, [], obj?.id);
 

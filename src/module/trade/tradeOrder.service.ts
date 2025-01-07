@@ -227,13 +227,27 @@ export class TradeOrderService extends BaseService {
   }
 
   public async del(ids: string[]): Promise<void> {
-    await this?.repository?.delete?.(ids);
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = TradeOrderService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
 
   public async update(obj: TradeOrder): Promise<TradeOrder> {
     // 一个表进行操作 typeORM
 
     let log = "";
+// 删除redis缓存
+
+    const key = TradeOrderService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

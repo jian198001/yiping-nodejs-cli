@@ -138,9 +138,17 @@ export class StaffService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 根据id数组删除多条数据
-    await this?.repository?.delete?.(ids);
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = StaffService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   
   /**
    * 更新员工信息
@@ -151,7 +159,12 @@ export class StaffService extends BaseService {
     // 一个表进行操作 typeORM
   
     let log = '';
-  
+  // 删除redis缓存
+
+    const key = StaffService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(StaffService?.TABLE_NAME, [], obj?.id); // 新增或修改数据时，判断某字段值在数据库中是否已重复
   

@@ -84,9 +84,42 @@ export class DeliveryListService extends BaseService {
    * @param id - 发货单ID
    * @returns 查询结果
    */
-  public async getById(id = ''): Promise<any> {
+  public async getById(id = ""): Promise<any> {
+
+    // 记录日志
+    this?.logger?.info?.("根据ID查询通知消息");
+
     // 根据id查询一条数据
-    return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
+    
+    // 查看缓存中是否有此数据
+
+    const key = DeliveryListService.TABLE_NAME + `:${id}`;
+
+    let data: any = await this?.redisService?.get?.(key);
+
+    // 缓存中有此数据，直接返回
+
+    if (data) { 
+
+        const parse = JSON.parse(data);
+  
+        return parse;
+   
+    }
+
+    // 缓存中没有此数据，查询数据库
+
+    // 调用父类的getByIdBase方法，根据ID查询数据
+
+    data = await super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
+
+    // 查询数据库后，把数据放入缓存
+
+    await this?.redisService?.set?.(key, JSON.stringify(data));
+
+    // 返回数据
+
+    return data;
   }
 
   /**
@@ -95,8 +128,17 @@ export class DeliveryListService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    await this?.repository?.delete?.(ids, )
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = DeliveryListService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新发货单数据
@@ -107,6 +149,11 @@ export class DeliveryListService extends BaseService {
     // 一个表进行操作 typeORM
 
     let log = '';
+// 删除redis缓存
+
+    const key = DeliveryListService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

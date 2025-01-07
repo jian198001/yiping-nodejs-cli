@@ -81,9 +81,42 @@ export class InbillService extends BaseService {
    * @param id - 入库单ID
    * @returns 查询结果
    */
-  public async getById(id = ''): Promise<any> {
+  public async getById(id = ""): Promise<any> {
+
+    // 记录日志
+    this?.logger?.info?.("根据ID查询通知消息");
+
     // 根据id查询一条数据
-    return super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
+    
+    // 查看缓存中是否有此数据
+
+    const key = InbillService.TABLE_NAME + `:${id}`;
+
+    let data: any = await this?.redisService?.get?.(key);
+
+    // 缓存中有此数据，直接返回
+
+    if (data) { 
+
+        const parse = JSON.parse(data);
+  
+        return parse;
+   
+    }
+
+    // 缓存中没有此数据，查询数据库
+
+    // 调用父类的getByIdBase方法，根据ID查询数据
+
+    data = await super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
+
+    // 查询数据库后，把数据放入缓存
+
+    await this?.redisService?.set?.(key, JSON.stringify(data));
+
+    // 返回数据
+
+    return data;
   }
   /**
    * 删除入库单
@@ -91,9 +124,17 @@ export class InbillService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 根据id数组删除多条数据
-    await this?.repository?.delete?.(ids);
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = InbillService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   /**
    * 更新入库单
    * @param obj - 入库单对象
@@ -101,7 +142,12 @@ export class InbillService extends BaseService {
    */
   public async update(obj: Inbill): Promise<Inbill> {
     // 一个表进行操作 typeORM
-    let log = '';
+    let log = '';// 删除redis缓存
+
+    const key = InbillService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
       InbillService?.TABLE_NAME,
@@ -152,7 +198,12 @@ export class InbillService extends BaseService {
     purchaseOrderId = ''
   ): Promise<Inbill> { // 采购入库
     // 一个表进行操作 typeORM 采购入库
-    let log = '';
+    let log = '';// 删除redis缓存
+
+    const key = InbillService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.('stock', null, obj?.id);
     if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止
@@ -190,7 +241,12 @@ export class InbillService extends BaseService {
   }
   public async consumeInbill(obj: Inbill, items: any[]): Promise<Inbill> { // 领用归还入库
     // 一个表进行操作 typeORM 领用归还入库
-    let log = '';
+    let log = '';// 删除redis缓存
+
+    const key = InbillService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.('stock', null, obj?.id);
     if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止

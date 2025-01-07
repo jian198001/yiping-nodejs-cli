@@ -100,9 +100,17 @@ export class AlipayConfigService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 根据id数组删除多条数据
-    await this?.repository?.delete?.(ids, );
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = AlipayConfigService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   
   /**
    * 更新支付宝配置
@@ -113,7 +121,12 @@ export class AlipayConfigService extends BaseService {
     // 一个表进行操作 typeORM
   
     let log = '';
-  
+  // 删除redis缓存
+
+    const key = AlipayConfigService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
       AlipayConfigService?.TABLE_NAME,

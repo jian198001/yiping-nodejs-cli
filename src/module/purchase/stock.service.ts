@@ -80,10 +80,42 @@ export class StockService extends BaseService {
    * @param id - 库存ID
    * @returns 查询结果
    */
-  public async getById(id = ''): Promise<any> {
-    // 根据id查询一条数据
+  public async getById(id = ""): Promise<any> {
 
-    return super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
+    // 记录日志
+    this?.logger?.info?.("根据ID查询通知消息");
+
+    // 根据id查询一条数据
+    
+    // 查看缓存中是否有此数据
+
+    const key = StockService.TABLE_NAME + `:${id}`;
+
+    let data: any = await this?.redisService?.get?.(key);
+
+    // 缓存中有此数据，直接返回
+
+    if (data) { 
+
+        const parse = JSON.parse(data);
+  
+        return parse;
+   
+    }
+
+    // 缓存中没有此数据，查询数据库
+
+    // 调用父类的getByIdBase方法，根据ID查询数据
+
+    data = await super.getByIdBase?.(id, this?.selectSql, this?.fromSql);
+
+    // 查询数据库后，把数据放入缓存
+
+    await this?.redisService?.set?.(key, JSON.stringify(data));
+
+    // 返回数据
+
+    return data;
   }
   /**
    * 根据ID数组删除库存
@@ -91,9 +123,17 @@ export class StockService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 根据id数组删除多条数据
-    await this?.repository?.delete?.(ids,)
-  }
+    // 删除redis缓存
+
+    for (const id of ids) {
+      const key = StockService.TABLE_NAME + `:${id}`;
+
+      await this?.redisService?.del?.(key);
+    }
+
+    // 调用delete方法，根据ID删除数据
+    await this?.repository?.delete?.(ids);
+  }
   /**
    * 更新库存
    * @param obj - 库存对象
@@ -103,6 +143,11 @@ export class StockService extends BaseService {
     // 一个表进行操作 typeORM
 
     let log = '';
+// 删除redis缓存
+
+    const key = StockService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
@@ -145,6 +190,11 @@ export class StockService extends BaseService {
     // 一个表进行操作 typeORM
 
     let log = '';
+// 删除redis缓存
+
+    const key = StockService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(StockService?.TABLE_NAME, [], obj?.id); // 新增或修改数据时，判断某字段值在数据库中是否已重复
