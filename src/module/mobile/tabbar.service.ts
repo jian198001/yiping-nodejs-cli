@@ -81,11 +81,9 @@ export class TabbarService extends BaseService {
 
     // 遍历查询结果,将查询结果异步读取到redis
 
-    for (const item of data?.list) {
-      
-      this?.getById?.(item?.id);
+    // 遍历查询结果,将查询结果中异步读取到redis
 
-    }
+    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
 
     if (page?.pageSize > 0) {
       return data;
@@ -96,6 +94,18 @@ export class TabbarService extends BaseService {
       return _?.keyBy?.(data?.list, "value");
     }
   }
+
+  private async getToRedis(ids) {
+    // 根据id查询一条数据
+
+    for (const id of ids) {
+
+      await this?.getById?.(id)
+
+    }
+  
+  }
+
 
   /**
    * 根据ID查询标签栏

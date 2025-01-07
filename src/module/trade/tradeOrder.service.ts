@@ -127,7 +127,7 @@ export class TradeOrderService extends BaseService {
     page: Page
   ): Promise<any> {
     let whereSql = " "; // 查询条件字符串
- 
+
     let parameters: any[] = [];
 
     if (params && params.length > 3) {
@@ -138,7 +138,8 @@ export class TradeOrderService extends BaseService {
       sqlUtils?.whereOrFilters?.(reqParam?.filters) +
       sqlUtils?.mulColumnLike?.(
         strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
-      ) + sqlUtils?.like?.(["outTradeNo"], reqParam?.searchValue) +
+      ) +
+      sqlUtils?.like?.(["outTradeNo"], reqParam?.searchValue) +
       sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
 
     if (shopBuyerId) {
@@ -227,23 +228,22 @@ export class TradeOrderService extends BaseService {
   }
 
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = TradeOrderService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = TradeOrderService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   public async update(obj: TradeOrder): Promise<TradeOrder> {
     // 一个表进行操作 typeORM
 
     let log = "";
-// 删除redis缓存
+    // 删除redis缓存
 
     const key = TradeOrderService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -1005,10 +1005,7 @@ export class TradeOrderService extends BaseService {
     });
 
     for (const orderItem of orderItems) {
-      const goods = await this?.goodsService?.getById?.(
-        orderItem?.goodsId,
-        null
-      );
+      const goods = await this?.goodsService?.getById?.(orderItem?.goodsId);
 
       const subStock: string = goods?.subStock;
 

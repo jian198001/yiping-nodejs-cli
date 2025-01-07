@@ -1,5 +1,5 @@
 // 引入必要的模块和装饰器
-import { Logger, Provide } from "@midwayjs/decorator";
+import { Logger, Provide, } from "@midwayjs/decorator";
 import { BaseService } from "../common/service/base.service";
 import { ReqParam } from "../common/model/ReqParam";
 import { Page } from "../common/model/Page";
@@ -83,11 +83,7 @@ export class NoticeService extends BaseService {
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    for (const item of data?.list) {
-      
-      this?.getById?.(item?.id);
-
-    }
+    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
 
     if (page?.pageSize > 0) {
       return data;
@@ -99,6 +95,16 @@ export class NoticeService extends BaseService {
     }
   }
 
+  private async getToRedis(ids) { 
+    
+    for (const id of ids) {
+
+      await this?.getById?.(id)
+
+    }
+  
+  }
+
   /**
    * 根据ID查询通知消息
    * @param id - 通知消息ID
@@ -107,6 +113,8 @@ export class NoticeService extends BaseService {
   public async getById(id = ""): Promise<any> {
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
+
+    console.log('getById');
 
     // 根据id查询一条数据
 
@@ -119,6 +127,9 @@ export class NoticeService extends BaseService {
     // 缓存中有此数据，直接返回
 
     if (data) {
+
+      this?.logger?.info?.('缓存中有此数据，直接返回')
+
       const parse = JSON.parse(data);
 
       return parse;

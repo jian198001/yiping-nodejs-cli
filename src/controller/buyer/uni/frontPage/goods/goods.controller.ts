@@ -75,7 +75,7 @@ export class BuyerUniFrontPageGoodsGoodsController {
   @All("/getById.json", { middleware: [JwtPassportMiddleware] })
   public async getById(@Query("id") id: string): Promise<any> {
     // 调用商品服务的根据ID获取方法
-    return  await this?.goodsService?.getById?.(id, null);
+    return  await this?.goodsService?.getById?.(id, );
   }
   /**
    * 收藏商品

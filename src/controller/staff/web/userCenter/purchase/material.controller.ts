@@ -72,7 +72,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
   @All('/getById.json', { middleware: [JwtPassportMiddleware] })
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用物料服务的根据ID获取方法
-    return await this?.materialService?.getById?.(id, null);
+    return await this?.materialService?.getById?.(id, );
   }
   /**
    * 删除物料
