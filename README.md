@@ -15,7 +15,7 @@
 
 #### 作者
 
-![作者微信: jian198001](https://zero9.work/static/media/img/q.jpg =546x745)
+![作者微信: jian198001](https://zero9.work/static/media/img/q.jpg)
 
 #### 软件架构
 软件目录结构基于midway.js确定的基础结构。<br/>
