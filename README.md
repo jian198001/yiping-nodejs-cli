@@ -7,7 +7,7 @@
 
 #### 预览
 
-地址: http://test.zero9.work
+地址: http://test.zero9.work/public/index.html
 
 用户名: admin
 
