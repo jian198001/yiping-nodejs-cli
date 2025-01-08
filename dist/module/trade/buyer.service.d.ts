@@ -1,0 +1,37 @@
+import { BaseService } from '../common/service/base.service';
+import { ReqParam } from '../common/model/ReqParam';
+import { Page } from '../common/model/Page';
+import { Buyer } from '../../entity/Buyer';
+import { ShopBuyer } from '../../entity/ShopBuyer';
+import { GoogleCredentials } from '../../entity/GoogleCredentials';
+export declare class BuyerService extends BaseService {
+    private logger;
+    private static TABLE_NAME;
+    private fromSql;
+    private selectSql;
+    private repository;
+    private shopBuyerRepository;
+    private userOpenIdRepository;
+    private tradeOrderService;
+    private userService;
+    private credentialsService;
+    page(query: string, params: string, reqParam: ReqParam, page: Page): Promise<any>;
+    private getToRedis;
+    getById(id?: string): Promise<any>;
+    del(ids: string[]): Promise<void>;
+    update(obj: Buyer): Promise<Buyer>;
+    buyerLogin(usernamePasswordToken: Buyer, shopId?: string): Promise<any>;
+    sellerLogin(usernamePasswordToken: Buyer, shopId?: string): Promise<any>;
+    login(usernamePasswordToken: Buyer, shopId?: string): Promise<any>;
+    loginWxma(code?: string, shopId?: string): Promise<any>;
+    loginGoogle(googleCredentials: GoogleCredentials, shopId?: string): Promise<any>;
+    getPhoneNumberInfo(code: string, shopId: string, encryptedData: string, ivStr: string): Promise<void>;
+    reg(shopId: string, buyer: Buyer, userRole?: string): Promise<Buyer>;
+    imgUpload(files: any, id: string): Promise<void>;
+    uploadFile(file: any, id: string): Promise<void>;
+    imgDel(fileId: string): Promise<void>;
+    updateNicknameAndGender(obj: any, birthDateStr: string, code: string, shopId?: string): Promise<void>;
+    balanceAdd(shopBuyerId: string, amount: number, shopId?: string): Promise<ShopBuyer>;
+    bind(shopId: string, shopBuyerId: string, openId: string): Promise<Buyer>;
+    batchesTransfer(shopId?: string, transferDetailList?: any[]): Promise<any>;
+}
