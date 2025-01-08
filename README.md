@@ -15,7 +15,7 @@
 
 #### 作者
 
-<img src="https://zero9.work/static/media/img/q.jpg" width="100" />
+<img src="https://zero9.work/static/media/img/q.jpg" width="256" />
 
 
 #### 软件架构
