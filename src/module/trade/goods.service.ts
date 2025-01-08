@@ -1,21 +1,21 @@
 // 导入所需的模块和装饰器
-import { App, Config, Inject, Logger, Provide } from '@midwayjs/decorator';
-import { Application } from '@midwayjs/koa';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Goods } from '../../entity/Goods';
-import { ILogger } from '@midwayjs/logger';
-import { Zero0Error } from '../common/model/Zero0Error';
-import { ShopService } from './shop.service';
-import { Shop } from '../../entity/Shop'; 
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
-import { MultipartFile } from '../../entity/MultipartFile';
-import * as fileUtils from '../common/utils/fileUtils';
-import _ = require('lodash');
+import { App, Config, Inject, Logger, Provide } from "@midwayjs/decorator";
+import { Application } from "@midwayjs/koa";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { Goods } from "../../entity/Goods";
+import { ILogger } from "@midwayjs/logger";
+import { Zero0Error } from "../common/model/Zero0Error";
+import { ShopService } from "./shop.service";
+import { Shop } from "../../entity/Shop";
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
+import { MultipartFile } from "../../entity/MultipartFile";
+import * as fileUtils from "../common/utils/fileUtils";
+import _ = require("lodash");
 
 /**
  * 商品服务类
@@ -27,18 +27,18 @@ export class GoodsService extends BaseService {
   private logger: ILogger = null;
 
   // 配置项：域名
-  @Config('domain')
-  private domain: any = { domainName: '' };
+  @Config("domain")
+  private domain: any = { domainName: "" };
 
   // 应用实例
   @App()
   private app: Application = null;
 
   // 商品图片为空时的默认图片
-  public static emptyGoodsImg = 'http://cdn.uviewui.com/uview/empty/data.png';
+  public static emptyGoodsImg = "http://cdn.uviewui.com/uview/empty/data.png";
 
   // 查询的数据库表名称
-  public static TABLE_NAME = 'goods';
+  public static TABLE_NAME = "goods";
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${GoodsService?.TABLE_NAME} t `;
@@ -77,14 +77,15 @@ export class GoodsService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    goodsCategoryId = '',
-    approveStatus = '',
-    query = '', params: string,
-    reqParam: ReqParam, 
-    page: Page, 
+    goodsCategoryId = "",
+    approveStatus = "",
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 查询条件字符串
-    let whereSql = ' ';
+    let whereSql = " ";
 
     // 根据商品分类ID筛选
     if (goodsCategoryId) {
@@ -97,10 +98,18 @@ export class GoodsService extends BaseService {
     }
 
     // 处理前端的搜索字符串的搜索需求
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue, );
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue);
 
     // 处理前端的表格中筛选需求
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query);
+    whereSql +=
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(JSON?.parse?.(params), [
+          "current",
+          "pageSize",
+        ])
+      ) +
+      sqlUtils?.query?.(query);
 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
@@ -108,17 +117,17 @@ export class GoodsService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
- 
+
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
     }
-  
+
     if (page?.pageSize < 1) {
       // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
@@ -129,13 +138,9 @@ export class GoodsService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id, )
-
+      await this?.getById?.(id);
     }
-  
   }
-
 
   /**
    * 根据ID查询商品数据
@@ -143,7 +148,7 @@ export class GoodsService extends BaseService {
    * @param shopBuyerId - 店铺买家ID
    * @returns 查询结果
    */
-  public async getById(id: string, ): Promise<any> {
+  public async getById(id: string): Promise<any> {
     // 根据id查询一条数据
     const goods: any = await super.getByIdBase?.(
       id,
@@ -163,7 +168,7 @@ export class GoodsService extends BaseService {
     const shop: Shop = await this?.shopService?.getById?.(goods?.shopId);
 
     // 判断是否显示添加购物车按钮
-    if (shop?.cart === '0') {
+    if (shop?.cart === "0") {
       showAddCart = false;
     }
 
@@ -178,12 +183,12 @@ export class GoodsService extends BaseService {
     const imgs: string[] = [];
 
     if (multipartFiles) {
-      for (const  multipartFile of multipartFiles ) { 
+      for (const multipartFile of multipartFiles) {
         // 拼接图片URL
-        imgs.push?.('https://' + this?.domain.domainName + multipartFile.uri);
+        imgs.push?.("https://" + this?.domain.domainName + multipartFile.uri);
       }
       // 拼接商品主图URL
-      goods.img = 'https://' + this?.domain.domainName + goods.img;
+      goods.img = "https://" + this?.domain.domainName + goods.img;
     } else {
       // 添加默认图片
       imgs.push?.(GoodsService.emptyGoodsImg);
@@ -200,17 +205,16 @@ export class GoodsService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = GoodsService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = GoodsService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新商品数据
@@ -218,94 +222,95 @@ export class GoodsService extends BaseService {
    * @param imgs - 商品图片
    * @returns 更新后的商品对象
    */
-  public async update(obj: Goods, imgs = ''): Promise<Goods> {// 删除redis缓存
+  public async update(obj: Goods, imgs = ""): Promise<Goods> {
+    // 删除redis缓存
 
     const key = GoodsService?.TABLE_NAME + `:${obj?.id}`;
 
     await this?.redisService?.del?.(key);
 
     // 字段非重复性验证
-    const uniqueText = await super.unique?.(GoodsService?.TABLE_NAME, [], obj?.id);
+    const uniqueText = await super.unique?.(
+      GoodsService?.TABLE_NAME,
+      [],
+      obj?.id
+    );
 
     if (uniqueText) {
       // 某unique字段值已存在，抛出异常，程序处理终止
-      const log = uniqueText + '已存在，操作失败';
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+      const log = uniqueText + "已存在，操作失败";
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
 
-    let log = '';
+    let log = "";
 
     // 新增数据，主键id的随机字符串值，由后端typeorm
 
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
-      delete obj?.id
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
+      delete obj?.id;
     }
 
-    this?.logger?.info?.('新增或修改商品');
+    this?.logger?.info?.("新增或修改商品");
 
-    if (
-      !(obj?.name) ||
-      !(obj?.goodsCategoryId) ||
-      !(obj?.goodsSn)
-    ) {
-      log = '商品名称/商品分类/商品货号某些内容为空';
+    if (!obj?.name || !obj?.goodsCategoryId || !obj?.goodsSn) {
+      log = "商品名称/商品分类/商品货号某些内容为空";
 
-      throw new Zero0Error(log, '5000');
+      throw new Zero0Error(log, "5000");
     }
- 
+
     if (!obj?.approveStatus) {
-      obj.approveStatus = 'instock';
+      obj.approveStatus = "instock";
     }
 
     if (!obj?.title) {
       obj.title = obj?.name;
     }
- 
-    if (!(obj?.quota) || obj?.quota < 1) {
+
+    if (!obj?.quota || obj?.quota < 1) {
       obj.quota = 1000000000;
     }
 
-    if (!(obj?.startSaleNum) || obj?.startSaleNum < 1) {
+    if (!obj?.startSaleNum || obj?.startSaleNum < 1) {
       obj.startSaleNum = 1;
     }
 
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
-      delete obj?.id
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
+      delete obj?.id;
 
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, GoodsService?.TABLE_NAME, ) // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(obj?.id, null, null, GoodsService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
 
       await this?.imgUpdate(imgs, obj?.id);
 
-      return null
+      return null;
     }
 
-    let old: Goods = await this?.repository?.findOneById?.(obj?.id) // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+    let old: Goods = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
 
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, GoodsService?.TABLE_NAME, ) // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(obj?.id, null, null, GoodsService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
 
       await this?.imgUpdate(imgs, obj?.id);
 
-      return null
+      return null;
     }
 
-    delete obj?.id
+    delete obj?.id;
 
     old = {
       ...old,
@@ -314,7 +319,7 @@ export class GoodsService extends BaseService {
 
     await this?.imgUpdate(imgs, old?.id);
 
-    await this?.repository?.save?.(old) // 修改数据
+    await this?.repository?.save?.(old); // 修改数据
   }
 
   /**
@@ -323,7 +328,7 @@ export class GoodsService extends BaseService {
    * @returns 更新后的商品对象
    */
   public async updateApproveStatus(id: string): Promise<object> {
-    return null
+    return null;
   }
 
   /**
@@ -332,11 +337,11 @@ export class GoodsService extends BaseService {
    * @returns 无返回值
    */
   public async instock(goodsId: string): Promise<void> {
-    this?.logger?.info?.('商品下架');
+    this?.logger?.info?.("商品下架");
 
     const goods: Goods = await this?.repository?.findOneById?.(goodsId);
 
-    goods.approveStatus = 'instock';
+    goods.approveStatus = "instock";
 
     await this?.repository?.save?.(goods);
 
@@ -349,11 +354,11 @@ export class GoodsService extends BaseService {
    * @returns 无返回值
    */
   public async onsale(goodsId: string): Promise<void> {
-    this?.logger?.info?.('商品上架');
+    this?.logger?.info?.("商品上架");
 
     const goods: Goods = await this?.repository?.findOneById?.(goodsId);
 
-    goods.approveStatus = 'onsale';
+    goods.approveStatus = "onsale";
 
     await this?.repository?.save?.(goods);
 
@@ -366,7 +371,7 @@ export class GoodsService extends BaseService {
    * @returns 商品数量
    */
   public async goodsCount(shopId: string): Promise<number> {
-    return null
+    return null;
   }
 
   /**
@@ -385,14 +390,13 @@ export class GoodsService extends BaseService {
   ): Promise<void> {
     // let log = '';
 
-    this?.logger?.info?.('判断商品库存是否充足,是否能满足此次购买所需库存');
+    this?.logger?.info?.("判断商品库存是否充足,是否能满足此次购买所需库存");
 
     // const goods: Goods = await this?.repository?.findOneById?.(goodsId);
 
-    this?.logger?.info?.('多规格商品');
+    this?.logger?.info?.("多规格商品");
 
     // TODO
- 
   }
 
   /**
@@ -407,9 +411,9 @@ export class GoodsService extends BaseService {
     goodsSkuId: string,
     quantity: number
   ): Promise<void> {
-    this?.logger?.info?.('增加库存');
+    this?.logger?.info?.("增加库存");
 
-    return null
+    return null;
   }
 
   /**
@@ -424,12 +428,12 @@ export class GoodsService extends BaseService {
     goodsSkuId: string,
     quantity: number
   ): Promise<void> {
-    this?.logger?.info?.('减少库存');
+    this?.logger?.info?.("减少库存");
 
-    return null
+    return null;
   }
 
-  private async imgUpdate(imgs = '', goodsId = ''): Promise<void> {
+  private async imgUpdate(imgs = "", goodsId = ""): Promise<void> {
     await this?.multipartFileRepository?.delete?.({ extId: goodsId });
 
     if (!imgs) return;
@@ -438,8 +442,7 @@ export class GoodsService extends BaseService {
 
     if (!imgArr) return;
 
-    for (const element of imgArr )  { 
-
+    for (const element of imgArr) {
       const multipartFile = new MultipartFile();
 
       multipartFile.uri = element;
@@ -459,7 +462,7 @@ export class GoodsService extends BaseService {
 
     const uri: string = fileUtils?.copySync(
       file,
-      'goods',
+      "goods",
       this?.app?.getAppDir()
     );
 

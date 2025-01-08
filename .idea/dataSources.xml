@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 表示这是一个XML文件，版本为1.0，编码为UTF-8 -->
 <project version="4">
+  <!-- 组件名称为DataSourceManagerImpl，格式为XML，多文件模型为true -->
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <!-- 数据源配置，来源为LOCAL，名称为zero9，UUID为b3b34df8-03e4-4eef-8341-960da01ef2b7 -->
     <data-source source="LOCAL" name="zero9" uuid="b3b34df8-03e4-4eef-8341-960da01ef2b7">
+      <!-- 引用的驱动为mysql.8 -->
       <driver-ref>mysql.8</driver-ref>
+      <!-- 同步设置为true -->
       <synchronize>true</synchronize>
+      <!-- JDBC驱动类为com.mysql.cj.jdbc.Driver -->
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://114.116.33.43:3306/post</jdbc-url>
+      <!-- JDBC连接URL为jdbc:mysql://localhost:3306/test -->
+      <jdbc-url>jdbc:mysql://localhost:3306/test</jdbc-url>
+      <!-- 工作目录为项目文件目录 -->
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="yunchuang@114.116.33.43" uuid="befcedcd-ad50-4944-af47-01ff3a73bef9">
+    <!-- 数据源配置，来源为LOCAL，名称为test@localhost，UUID为befcedcd-ad50-4944-af47-01ff3a73bef9 -->
+    <data-source source="LOCAL" name="test@localhost" uuid="befcedcd-ad50-4944-af47-01ff3a73bef9">
+      <!-- 引用的驱动为mysql.8 -->
       <driver-ref>mysql.8</driver-ref>
+      <!-- 同步设置为true -->
       <synchronize>true</synchronize>
+      <!-- JDBC驱动类为com.mysql.cj.jdbc.Driver -->
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://114.116.33.43:3306/yunchuang</jdbc-url>
+      <!-- JDBC连接URL为jdbc:mysql://localhost:3306/test -->
+      <jdbc-url>jdbc:mysql://localhost:3306/test</jdbc-url>
+      <!-- 工作目录为项目文件目录 -->
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <!-- 数据源配置，来源为LOCAL，名称为@localhost，UUID为ab8338c4-2510-4a2f-a444-4fac34458b8c -->
     <data-source source="LOCAL" name="@localhost" uuid="ab8338c4-2510-4a2f-a444-4fac34458b8c">
+      <!-- 引用的驱动为mysql.8 -->
       <driver-ref>mysql.8</driver-ref>
+      <!-- 同步设置为true -->
       <synchronize>true</synchronize>
+      <!-- JDBC驱动类为com.mysql.cj.jdbc.Driver -->
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <!-- JDBC连接URL为jdbc:mysql://localhost:3306 -->
       <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
+      <!-- 工作目录为项目文件目录 -->
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

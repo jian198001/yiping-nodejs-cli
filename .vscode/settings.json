@@ -1,7 +1,27 @@
 {
+    /**
+     * 设置Marscode的聊天语言为中文。
+     * 
+     * 该配置项指定了Marscode在与用户交互时使用的语言。
+     * 'cn'表示中文。
+     */
     "marscode.chatLanguage": "cn",
+
+    /**
+     * 启用Marscode的代码补全专业版功能。
+     * 
+     * 该配置项指定了是否启用Marscode的代码补全专业版功能。
+     * 'enableCodeCompletionPro'设置为true表示启用。
+     */
     "marscode.codeCompletionPro": {
         "enableCodeCompletionPro": true
     },
+
+    /**
+     * 启用Marscode的内联命令功能。
+     * 
+     * 该配置项指定了是否启用Marscode的内联命令功能。
+     * 'enableInlineCommand'设置为true表示启用。
+     */
     "marscode.enableInlineCommand": true
 }

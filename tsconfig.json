@@ -1,25 +1,42 @@
 {
+  // 当保存文件时自动编译TypeScript文件
   "compileOnSave": true,
   "compilerOptions": {
+    // 指定编译目标为ES2018
     "target": "es2018",
+    // 指定模块系统为CommonJS
     "module": "commonjs",
+    // 指定模块解析策略为Node.js
     "moduleResolution": "node",
+    // 启用实验性的装饰器支持
     "experimentalDecorators": true,
+    // 启用装饰器元数据的发射
     "emitDecoratorMetadata": true,
+    // 生成内联的source map文件
     "inlineSourceMap": true,
+    // 禁止隐式的this参数
     "noImplicitThis": true,
+    // 禁止未使用的局部变量
     "noUnusedLocals": true,
+    // 去除内部模块的声明
     "stripInternal": true,
+    // 跳过类型检查
     "skipLibCheck": true,
+    // 生成格式化的输出
     "pretty": true,
+    // 生成声明文件
     "declaration": true,
+    // 强制文件名的大小写一致
     "forceConsistentCasingInFileNames": true,
+    // 指定类型定义文件的搜索路径
     "typeRoots": [
       "./typings",
       "./node_modules/@types"
     ],
+    // 指定输出目录
     "outDir": "dist"
   },
+  // 指定要排除的文件或目录
   "exclude": [
     "dist",
     "node_modules",

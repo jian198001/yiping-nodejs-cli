@@ -2,6 +2,11 @@
 
 /**
  * Module dependencies.
+ * 
+ * 该模块依赖于以下几个模块：
+ * - app: 从../app文件中导入的应用程序实例。
+ * - debug: 用于调试的模块，命名空间为'demo:server'。
+ * - http: Node.js的内置模块，用于创建HTTP服务器。
  */
 
 var app = require('../app');
@@ -10,6 +15,9 @@ var http = require('http');
 
 /**
  * Get port from environment and store in Express.
+ * 
+ * 从环境变量中获取端口号，如果没有设置则使用默认端口3000。
+ * 将获取到的端口号存储在Express应用程序的设置中。
  */
 
 var port = normalizePort(process.env.PORT || '3000');
@@ -17,12 +25,17 @@ app.set('port', port);
 
 /**
  * Create HTTP server.
+ * 
+ * 使用Express应用程序创建一个HTTP服务器实例。
  */
 
 var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
+ * 
+ * 让服务器监听指定的端口，并在所有网络接口上可用。
+ * 同时，为服务器的'error'和'listening'事件添加监听器。
  */
 
 server.listen(port);
@@ -31,6 +44,9 @@ server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
+ * 
+ * 将端口号规范化为数字、字符串或布尔值。
+ * 如果端口号是有效的数字，则返回该数字；如果是字符串，则返回该字符串；否则返回false。
  */
 
 function normalizePort(val) {
@@ -51,6 +67,10 @@ function normalizePort(val) {
 
 /**
  * Event listener for HTTP server "error" event.
+ * 
+ * HTTP服务器'error'事件的监听器。
+ * 如果错误不是'listen'系统调用引起的，则抛出该错误。
+ * 根据错误代码提供友好的错误信息，并退出进程。
  */
 
 function onError(error) {
@@ -79,6 +99,9 @@ function onError(error) {
 
 /**
  * Event listener for HTTP server "listening" event.
+ * 
+ * HTTP服务器'listening'事件的监听器。
+ * 获取服务器的地址信息，并使用debug模块输出监听的地址。
  */
 
 function onListening() {

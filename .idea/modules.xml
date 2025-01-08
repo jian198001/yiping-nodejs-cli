@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 表示这是一个XML文件，版本为1.0，编码为UTF-8 -->
 <project version="4">
+  <!-- 组件名称为ProjectModuleManager，用于管理项目模块 -->
   <component name="ProjectModuleManager">
+    <!-- 模块列表 -->
     <modules>
+      <!-- 模块配置，指定模块的文件URL和文件路径，文件路径指向项目目录下的.idea/yiping-midway-cli.iml文件 -->
       <module fileurl="file://$PROJECT_DIR$/.idea/yiping-midway-cli.iml" filepath="$PROJECT_DIR$/.idea/yiping-midway-cli.iml" />
     </modules>
   </component>

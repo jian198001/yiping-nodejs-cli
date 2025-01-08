@@ -1,6 +1,10 @@
 # 默认忽略的文件
+# 忽略shelf目录及其内容
 /shelf/
+# 忽略workspace.xml文件
 /workspace.xml
 # Datasource local storage ignored files
+# 忽略dataSources目录及其内容
 /dataSources/
+# 忽略dataSources.local.xml文件
 /dataSources.local.xml

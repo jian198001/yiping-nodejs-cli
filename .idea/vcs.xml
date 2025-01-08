@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 表示这是一个XML文件，版本为1.0，编码为UTF-8 -->
 <project version="4">
+  <!-- 组件名称为VcsDirectoryMappings，用于版本控制系统目录映射 -->
   <component name="VcsDirectoryMappings">
+    <!-- 映射配置，指定目录为空字符串，表示整个项目目录，使用的版本控制系统为Git -->
     <mapping directory="" vcs="Git" />
   </component>
 </project>
