@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心库存控制器
  * 处理与库存相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/inventory/inventory')
+@Controller('/staff/web/userCenter/inventory/inventory', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterInventoryInventoryController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterInventoryInventoryController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterInventoryInventoryController {
    * @param id - 库存记录ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用inventoryService的getById方法根据ID查询库存记录
     return await this?.inventoryService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterInventoryInventoryController {
    * @param ids - 库存记录ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用inventoryService的del方法删除库存记录
     await this?.inventoryService?.del?.(ids);
@@ -89,7 +89,7 @@ export class StaffWebUserCenterInventoryInventoryController {
    * @param obj - 库存记录对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Inventory): Promise<any> {
     // 调用inventoryService的update方法更新库存记录
     return await this?.inventoryService?.update?.(obj);

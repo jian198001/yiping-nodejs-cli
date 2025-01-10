@@ -15,7 +15,10 @@ import * as fileUtils from '../../../../../module/common/utils/fileUtils';
  * 员工Web用户中心上传控制器
  * 处理文件上传请求
  */
-@Controller('/staff/web/userCenter/upload')
+@Controller('/staff/web/userCenter/upload', {
+  tagName: '员工Web用户中心',
+  description: '员工Web用户中心上传',
+})
 export class StaffWebUserCenterUploadController {
   // 注入Logger实例
   @Logger()

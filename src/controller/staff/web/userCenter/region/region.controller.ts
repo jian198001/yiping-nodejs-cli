@@ -5,7 +5,7 @@ import { JwtPassportMiddleware } from "../../../../../middleware/jwt.passport.mi
 /**
  * 员工用户中心区域控制器
  */
-@Controller("/staff/web/userCenter/region/region")
+@Controller("/staff/web/userCenter/region/region", { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterRegionRegionController {
   /**
    * 获取指定省份的城市列表
@@ -13,7 +13,7 @@ export class StaffWebUserCenterRegionRegionController {
    * @param province - 省份名称
    * @returns 返回城市列表
    */
-  @All("/city.json", { middleware: [JwtPassportMiddleware] })
+  @All("/city.json", )
   public async city(@Query("province") province: string): Promise<any> {
     return [
       {
@@ -84,7 +84,7 @@ export class StaffWebUserCenterRegionRegionController {
    * 
    * @returns 返回地区列表
    */
-  @All("/region.json", { middleware: [JwtPassportMiddleware] })
+  @All("/region.json", )
   public async getById(): Promise<any> {
     return [
       {

@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心移动模块控制器
  * 处理与移动模块相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/mobile/mobileModule')
+@Controller('/staff/web/userCenter/mobile/mobileModule', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterMobileMobileModuleController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterMobileMobileModuleController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterMobileMobileModuleController {
    * @param id - 移动模块ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用mobileModuleService的getById方法根据ID查询移动模块
     return await this?.mobileModuleService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterMobileMobileModuleController {
    * @param ids - 移动模块ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用mobileModuleService的del方法删除移动模块
     await this?.mobileModuleService?.del?.(ids);
@@ -89,7 +89,7 @@ export class StaffWebUserCenterMobileMobileModuleController {
    * @param obj - 移动模块对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: MobileModule): Promise<any> {
     // 调用mobileModuleService的update方法更新移动模块
     return await this?.mobileModuleService?.update?.(obj);

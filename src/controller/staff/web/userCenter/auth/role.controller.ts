@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心权限角色控制器
  * 负责处理与角色相关的HTTP请求，如分页查询、根据ID查询、删除、更新和更新数据范围
  */
-@Controller('/staff/web/userCenter/auth/role')
+@Controller('/staff/web/userCenter/auth/role', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterAuthRoleController {
   // 注入Context实例
   @Inject()
@@ -43,7 +43,7 @@ export class StaffWebUserCenterAuthRoleController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('userId') userId: string,
     @Query('query') query: string,
@@ -74,7 +74,7 @@ export class StaffWebUserCenterAuthRoleController {
    * @param id - 角色ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用roleService的getById方法根据ID查询角色
     return await this?.roleService?.getById?.(id);
@@ -85,7 +85,7 @@ export class StaffWebUserCenterAuthRoleController {
    * @param ids - 角色ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用roleService的del方法删除角色
     await this?.roleService?.del?.(ids);
@@ -96,7 +96,7 @@ export class StaffWebUserCenterAuthRoleController {
    * @param obj - 角色对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Role): Promise<any> {
     // 调用roleService的update方法更新角色
     const data = await this?.roleService?.update?.(obj);

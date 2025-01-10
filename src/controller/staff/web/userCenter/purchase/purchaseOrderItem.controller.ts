@@ -19,7 +19,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
 /**
  * 员工用户中心采购订单项控制器
  */
-@Controller('/staff/web/userCenter/purchaseOrder/purchaseOrderItem')
+@Controller('/staff/web/userCenter/purchaseOrder/purchaseOrderItem', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
   /**
    * 注入上下文对象
@@ -46,7 +46,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('orderId') orderId = '',
     @Query('query') query: string,
@@ -77,7 +77,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param id - 采购订单项ID
    * @returns 返回采购订单项信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用采购订单项服务的根据ID获取方法
     return await this?.purchaseOrderItemService?.getById?.(id);
@@ -88,7 +88,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param obj - 采购订单项对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: PurchaseOrderItem): Promise<any> {
     // 调用采购订单项服务的更新方法
     return await this?.purchaseOrderItemService?.update?.(obj);

@@ -13,7 +13,7 @@ import { Context } from '@midwayjs/koa';
 /**
  * 买家用户中心签到控制器
  */
-@Controller('/buyer/uni/userCenter/signIn/signIn')
+@Controller('/buyer/uni/userCenter/signIn/signIn', { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterSignInSignInController {
   /**
    * 注入上下文对象
@@ -42,7 +42,7 @@ export class BuyerUniUserCenterSignInSignInController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query() params: any,
@@ -71,7 +71,7 @@ export class BuyerUniUserCenterSignInSignInController {
    * @param id - 签到ID
    * @returns 返回签到信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用签到服务的根据ID获取方法
     return await this?.signInService?.getById?.(id);
@@ -83,7 +83,7 @@ export class BuyerUniUserCenterSignInSignInController {
    * @param obj - 签到对象
    * @returns 返回签到结果
    */
-  @All('/signIn.json', { middleware: [JwtPassportMiddleware] })
+  @All('/signIn.json', )
   public async signIn(@Query() obj: SignIn): Promise<any> {
     // 调用签到服务的签到方法
     return await this?.signInService?.signIn(obj);

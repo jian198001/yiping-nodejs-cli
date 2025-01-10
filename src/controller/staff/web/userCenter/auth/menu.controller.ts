@@ -9,7 +9,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心权限菜单控制器
  * 负责处理与菜单相关的HTTP请求，如获取、删除、更新和初始化菜单
  */
-@Controller('/staff/web/userCenter/auth/menu')
+@Controller('/staff/web/userCenter/auth/menu', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterAuthMenuController {
   // 注入MenuService实例
   @Inject()
@@ -20,7 +20,7 @@ export class StaffWebUserCenterAuthMenuController {
    * @param level - 菜单级别
    * @returns 返回菜单信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(
     @Query('id') id: string,
     @Query('level') level: number
@@ -48,7 +48,7 @@ export class StaffWebUserCenterAuthMenuController {
    * @param obj - 菜单对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Menu): Promise<any> {
     // 调用menuService的update方法更新菜单
     return await this?.menuService?.update?.(obj);
@@ -58,7 +58,7 @@ export class StaffWebUserCenterAuthMenuController {
    * 初始化菜单
    * @returns 返回初始化结果
    */
-  @All('/init.json', { middleware: [JwtPassportMiddleware] })
+  @All('/init.json', )
   public async init(): Promise<any> {
     // 调用menuService的init方法初始化菜单
     return await this?.menuService?.init();

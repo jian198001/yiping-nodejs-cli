@@ -17,7 +17,7 @@ import { User } from "../../../../../module/common/model/User";
  * 用户Web用户中心认证用户控制器
  * 处理与用户相关的HTTP请求，如分页查询、根据ID查询、删除、更新、更新密码、重置密码、根据Token获取用户信息、获取用户详情、获取用户设置和获取用户中心信息
  */
-@Controller("/staff/web/userCenter/auth/user")
+@Controller("/staff/web/userCenter/auth/user", { middleware: [JwtPassportMiddleware,], }, )
 export class UserWebUserCenterAuthUserController {
 
   // 注入Context实例
@@ -40,7 +40,7 @@ export class UserWebUserCenterAuthUserController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any, @Query() reqParam: ReqParam,
@@ -66,7 +66,7 @@ export class UserWebUserCenterAuthUserController {
    * @param id - 用户ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用userService的getById方法根据ID查询用户
     return await this?.userService?.getById?.(id);
@@ -78,7 +78,7 @@ export class UserWebUserCenterAuthUserController {
    * @param ids - 用户ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用userService的del方法删除用户
     await this?.userService?.del?.(ids);
@@ -91,7 +91,7 @@ export class UserWebUserCenterAuthUserController {
    * @param roleIds - 角色ID数组
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: User, @Body('roleIds') roleIds): Promise<any> {
     // 调用userService的update方法更新用户
     return await this?.userService?.update?.(obj, roleIds);
@@ -103,7 +103,7 @@ export class UserWebUserCenterAuthUserController {
    * @param obj - 包含新密码的对象
    * @returns 返回更新结果
    */
-  @All('/updatePwd.json', { middleware: [JwtPassportMiddleware] })
+  @All('/updatePwd.json', )
   public async updatePwd(@Body() obj: any): Promise<any> {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
@@ -121,7 +121,7 @@ export class UserWebUserCenterAuthUserController {
    * @param id - 用户ID
    * @returns 返回重置结果
    */
-  @All('/resetPwd.json', { middleware: [JwtPassportMiddleware] })
+  @All('/resetPwd.json', )
   public async resetPwd(@Query('id') id: string): Promise<any> {
     // 调用userService的resetPwd方法重置用户密码
     return await this?.userService?.resetPwd?.(id,);
@@ -132,7 +132,7 @@ export class UserWebUserCenterAuthUserController {
    * 根据Token获取用户信息
    * @returns 返回用户信息
    */
-  @All("/getByToken.json", { middleware: [JwtPassportMiddleware] })
+  @All("/getByToken.json", )
   public async getByToken(): Promise<any> {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
@@ -157,7 +157,7 @@ export class UserWebUserCenterAuthUserController {
    * 获取用户详情
    * @returns 返回用户详情
    */
-  @All("/detail.json", { middleware: [JwtPassportMiddleware] })
+  @All("/detail.json", )
   public async detail(): Promise<any> {
     // 返回用户详情
     return {
@@ -223,7 +223,7 @@ export class UserWebUserCenterAuthUserController {
    * 获取用户设置
    * @returns 返回用户设置
    */
-  @All("/setting.json", { middleware: [JwtPassportMiddleware] })
+  @All("/setting.json", )
   public async setting(): Promise<any> {
     // 返回用户设置
     return {
@@ -263,7 +263,7 @@ export class UserWebUserCenterAuthUserController {
     };
   }
 
-  @All("/center.json", { middleware: [JwtPassportMiddleware] })
+  @All("/center.json", )
   public async center(): Promise<any> {
     return {
       list: [

@@ -13,7 +13,7 @@ import { Context } from "@midwayjs/koa";
 /**
  * 买家用户中心收货地址控制器
  */
-@Controller("/buyer/uni/userCenter/receiveAddress/receiveAddress")
+@Controller("/buyer/uni/userCenter/receiveAddress/receiveAddress", { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterReceiveAddressReceiveAddressController {
   /**
    * 注入上下文对象
@@ -39,7 +39,7 @@ export class BuyerUniUserCenterReceiveAddressReceiveAddressController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All("/page.json", { middleware: [JwtPassportMiddleware] })
+  @All("/page.json", )
   public async page(
     @Query("query") query: string,
     @Query() params: any,
@@ -67,7 +67,7 @@ export class BuyerUniUserCenterReceiveAddressReceiveAddressController {
    * @param id - 收货地址ID
    * @returns 返回收货地址信息
    */
-  @All("/getById.json", { middleware: [JwtPassportMiddleware] })
+  @All("/getById.json", )
   public async getById(@Query("id") id: string): Promise<any> {
     // 调用买家收货地址服务的根据ID获取方法
     return await this?.buyerReceiveAddressService?.getById?.(id);
@@ -78,7 +78,7 @@ export class BuyerUniUserCenterReceiveAddressReceiveAddressController {
    * @param obj - 收货地址对象
    * @returns 返回更新结果
    */
-  @All("/update.json", { middleware: [JwtPassportMiddleware] })
+  @All("/update.json", )
   public async update(@Query() obj: BuyerReceiveAddress): Promise<any> {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;

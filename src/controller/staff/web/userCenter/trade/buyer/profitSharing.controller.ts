@@ -12,7 +12,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心买家分账控制器
  */
-@Controller('/staff/web/userCenter/trade/buyer/profitSharing')
+@Controller('/staff/web/userCenter/trade/buyer/profitSharing', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterTradeOrderBuyerProfitSharingController {
   /**
    * 注入上下文对象
@@ -39,7 +39,7 @@ export class StaffWebUserCenterTradeOrderBuyerProfitSharingController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('shopBuyerId') shopBuyerId = '',
     @Query('query') query: string,
@@ -74,7 +74,7 @@ export class StaffWebUserCenterTradeOrderBuyerProfitSharingController {
    * @param id - 分账ID
    * @returns 返回分账信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用分账服务的根据ID获取方法
     return await this?.profitSharingService?.getById?.(id);

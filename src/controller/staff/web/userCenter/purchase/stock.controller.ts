@@ -11,7 +11,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
 /**
  * 员工用户中心库存控制器
  */
-@Controller('/staff/web/userCenter/purchase/stock')
+@Controller('/staff/web/userCenter/purchase/stock', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterStockStockController {
   /**
    * 注入上下文对象
@@ -37,7 +37,7 @@ export class StaffWebUserCenterStockStockController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -61,7 +61,7 @@ export class StaffWebUserCenterStockStockController {
    * @param id - 库存ID
    * @returns 返回库存信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用库存服务的根据ID获取方法
     return await this?.stockService?.getById?.(id);

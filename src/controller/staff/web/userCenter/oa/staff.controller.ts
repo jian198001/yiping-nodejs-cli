@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心OA员工控制器
  * 处理与员工相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/oa/staff')
+@Controller('/staff/web/userCenter/oa/staff', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterDeptStaffController {
   // 注入Context实例
   @Inject()
@@ -43,7 +43,7 @@ export class StaffWebUserCenterDeptStaffController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('deptId') deptId = '',
     @Query('query') query: string,
@@ -98,7 +98,7 @@ export class StaffWebUserCenterDeptStaffController {
    * @param id - 员工ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用staffService的getById方法根据ID查询员工
     let data: any = await this?.staffService?.getById?.(id);
@@ -119,7 +119,7 @@ export class StaffWebUserCenterDeptStaffController {
    * @param ids - 员工ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用staffService的del方法删除员工
     await this?.staffService?.del?.(ids);
@@ -130,7 +130,7 @@ export class StaffWebUserCenterDeptStaffController {
    * @param obj - 员工对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Staff): Promise<any> {
     // 调用staffService的update方法更新员工
     return await this?.staffService?.update?.(obj);

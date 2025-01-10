@@ -10,7 +10,7 @@ import { Menu } from '../../../../../model/Menu';
  * 买家Web用户中心认证菜单控制器
  * 处理与菜单相关的HTTP请求，如根据ID查询、删除、更新和初始化
  */
-@Controller('/buyer/web/userCenter/auth/menu')
+@Controller('/buyer/web/userCenter/auth/menu', { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerWebUserCenterAuthMenuController {
   // 注入MenuService实例
   @Inject()
@@ -21,7 +21,7 @@ export class BuyerWebUserCenterAuthMenuController {
    * @param level - 菜单级别
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json')
   public async getById(
     @Query('id') id: string,
     @Query('level') level: number
@@ -36,7 +36,7 @@ export class BuyerWebUserCenterAuthMenuController {
    * @param level - 菜单级别
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json')
   public async del(
     @Query('id') id: string,
     @Query('level') level: number
@@ -51,7 +51,7 @@ export class BuyerWebUserCenterAuthMenuController {
    * @param obj - 菜单对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json')
   public async update(@Body() obj: Menu): Promise<any> {
     // 调用menuService的update方法更新菜单
     return await this?.menuService?.update?.(obj);

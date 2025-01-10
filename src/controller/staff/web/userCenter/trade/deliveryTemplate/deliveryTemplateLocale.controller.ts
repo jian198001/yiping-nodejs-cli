@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心配送模板地区控制器
  */
-@Controller('/staff/web/userCenter/deliveryTemplate/deliveryTemplateLocale')
+@Controller('/staff/web/userCenter/deliveryTemplate/deliveryTemplateLocale', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateLocaleController {
   /**
    * 注入上下文对象
@@ -46,7 +46,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateLocaleController 
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -80,7 +80,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateLocaleController 
    * @param id - 配送模板地区ID
    * @returns 返回配送模板地区信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用配送模板地区服务的根据ID获取方法
     return await this?.deliveryTemplateLocaleService?.getById?.(id);
@@ -92,7 +92,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateLocaleController 
    * @param ids - 配送模板地区ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用配送模板地区服务的删除方法
     await this?.deliveryTemplateLocaleService?.del?.(ids);
@@ -107,7 +107,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateLocaleController 
    * @param obj - 配送模板地区对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: DeliveryTemplateLocale): Promise<any> {
     // 调用配送模板地区服务的更新方法
     return await this?.deliveryTemplateLocaleService?.update?.(obj);

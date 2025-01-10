@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心通知控制器
  * 处理与通知相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/notice/notice')
+@Controller('/staff/web/userCenter/notice/notice', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterNoticeNoticeController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterNoticeNoticeController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterNoticeNoticeController {
    * @param id - 通知ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用noticeService的getById方法根据ID查询通知
     return await this?.noticeService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterNoticeNoticeController {
    * @param ids - 通知ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用noticeService的del方法删除通知
     await this?.noticeService?.del?.(ids);
@@ -89,7 +89,7 @@ export class StaffWebUserCenterNoticeNoticeController {
    * @param obj - 通知对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Notice): Promise<any> {
     // 调用noticeService的update方法更新通知
     return await this?.noticeService?.update?.(obj);

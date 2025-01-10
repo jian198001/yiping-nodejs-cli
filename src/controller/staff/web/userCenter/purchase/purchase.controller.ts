@@ -21,7 +21,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
 /**
  * 员工用户中心采购订单控制器
  */
-@Controller('/staff/web/userCenter/purchaseOrder/purchaseOrder')
+@Controller('/staff/web/userCenter/purchaseOrder/purchaseOrder', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
   /**
    * 注入上下文对象
@@ -47,7 +47,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -76,7 +76,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param id - 采购订单ID
    * @returns 返回采购订单信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用采购订单服务的根据ID获取方法
     return await this?.purchaseOrderService?.getById?.(id);
@@ -87,7 +87,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param obj - 采购订单对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: PurchaseOrder): Promise<any> {
     // 设置采购订单的交易状态为编辑
     obj.tradeState = 'edit';
@@ -136,7 +136,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
    * @param ids - 采购订单ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用采购订单服务的删除方法
     await this?.purchaseOrderService?.del?.(ids);

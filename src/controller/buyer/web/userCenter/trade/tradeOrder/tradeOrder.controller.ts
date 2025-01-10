@@ -20,7 +20,7 @@ import { Context } from '@midwayjs/koa';
  * 买家Web用户中心交易订单控制器
  * 处理与交易订单相关的HTTP请求，如创建订单、分页查询、根据ID查询、更新、审核退款和获取图表数据
  */
-@Controller('/buyer/web/userCenter/trade/tradeOrder')
+@Controller('/buyer/web/userCenter/trade/tradeOrder', { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerWebUserCenterTradeOrderTradeOrderController {
   // 注入Context实例
   @Inject()
@@ -39,7 +39,7 @@ export class BuyerWebUserCenterTradeOrderTradeOrderController {
    * @param shopId - 店铺ID
    * @returns 返回创建订单的结果
    */
-  @All('/createOrder.json', { middleware: [JwtPassportMiddleware] })
+  @All('/createOrder.json', )
   public async createOrder(@Query('shopId') shopId): Promise<any> {
     // 根据购物车信息生成订单
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
@@ -59,7 +59,7 @@ export class BuyerWebUserCenterTradeOrderTradeOrderController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('tradeState') tradeState = '',
     @Query('shopId') shopId,
@@ -92,7 +92,7 @@ export class BuyerWebUserCenterTradeOrderTradeOrderController {
    * @param id - 订单ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用tradeOrderService的getById方法根据ID查询交易订单
     return await this?.tradeOrderService?.getById?.(id);
@@ -103,7 +103,7 @@ export class BuyerWebUserCenterTradeOrderTradeOrderController {
    * @param obj - 交易订单对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: TradeOrder): Promise<any> {
     // 调用tradeOrderService的update方法更新交易订单
     return await this?.tradeOrderService?.update?.(obj);

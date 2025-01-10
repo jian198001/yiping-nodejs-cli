@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心表单提交控制器
  * 处理与表单提交相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/form/formSubmit')
+@Controller('/staff/web/userCenter/form/formSubmit', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterFormFormSubmitController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterFormFormSubmitController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterFormFormSubmitController {
    * @param id - 表单提交记录ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用formSubmitService的getById方法根据ID查询表单提交记录
     return await this?.formSubmitService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterFormFormSubmitController {
    * @param ids - 表单提交记录ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用formSubmitService的del方法删除表单提交记录
     await this?.formSubmitService?.del?.(ids);
@@ -89,7 +89,7 @@ export class StaffWebUserCenterFormFormSubmitController {
    * @param obj - 表单提交记录对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: FormSubmit): Promise<any> {
     // 调用formSubmitService的update方法更新表单提交记录
     return await this?.formSubmitService?.update?.(obj);

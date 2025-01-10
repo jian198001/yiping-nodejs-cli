@@ -9,7 +9,7 @@ import { Context } from '@midwayjs/koa';
 /**
  * 买家用户中心用户控制器
  */
-@Controller('/buyer/uni/userCenter/user')
+@Controller('/buyer/uni/userCenter/user', { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterUserController {
   /**
    * 注入上下文对象
@@ -32,7 +32,7 @@ export class BuyerUniUserCenterUserController {
    * @param shopId - 店铺ID
    * @returns 返回二维码信息
    */
-  @All('/qrcode.json', { middleware: [JwtPassportMiddleware] })
+  @All('/qrcode.json', )
   public async qrcode(@Query('shopId') shopId): Promise<any> {
     // 记录日志
     this?.logger?.info?.('获取用户二维码controller');
@@ -49,7 +49,7 @@ export class BuyerUniUserCenterUserController {
    * 
    * @returns 返回用户信息
    */
-  @All('/getByToken.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getByToken.json', )
   public async getByToken(): Promise<any> {
     // 记录日志
     this?.logger?.info?.('根据Token获取用户信息controller');
@@ -67,7 +67,7 @@ export class BuyerUniUserCenterUserController {
    * @param id - 用户ID
    * @returns 返回用户信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id): Promise<any> {
     // 记录日志
     this?.logger?.info?.('根据ID获取用户信息controller');
@@ -82,7 +82,7 @@ export class BuyerUniUserCenterUserController {
    * @param scene - 场景信息
    * @returns 返回更新结果
    */
-  @All('/updateScene.json', { middleware: [JwtPassportMiddleware] })
+  @All('/updateScene.json', )
   public async updateScene(@Query('scene') scene): Promise<any> {
     // 记录日志
     this?.logger?.info?.('更新用户场景controller');
@@ -106,7 +106,7 @@ export class BuyerUniUserCenterUserController {
    * @param shopId - 店铺ID
    * @returns 返回用户信息
    */
-  @All('/findByUsername.json', { middleware: [JwtPassportMiddleware] })
+  @All('/findByUsername.json', )
   public async findByUsername(@Query('username') username, @Query('shopId') shopId): Promise<any> {
     // 记录日志
     this?.logger?.info?.('根据用户名查找用户controller');

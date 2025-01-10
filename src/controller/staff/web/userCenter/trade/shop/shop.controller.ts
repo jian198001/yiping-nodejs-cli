@@ -16,7 +16,7 @@ import { JwtPassportMiddleware } from "../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心店铺控制器
  */
-@Controller("/staff/web/userCenter/shop/shop")
+@Controller("/staff/web/userCenter/shop/shop", { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterShopShopController {
   /**
    * 注入上下文对象
@@ -42,7 +42,7 @@ export class StaffWebUserCenterShopShopController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All("/page.json", { middleware: [JwtPassportMiddleware] })
+  @All("/page.json", )
   public async page(
     @Query("query") query: string,
     @Query("params") params: any,
@@ -66,7 +66,7 @@ export class StaffWebUserCenterShopShopController {
    * @param id - 店铺ID
    * @returns 返回店铺信息
    */
-  @All("/getById.json", { middleware: [JwtPassportMiddleware] })
+  @All("/getById.json", )
   public async getById(@Query("id") id: string): Promise<any> {
     // 调用店铺服务的根据ID获取方法
     return await this?.shopService?.getById?.(id);
@@ -82,7 +82,7 @@ export class StaffWebUserCenterShopShopController {
    * @param appIdAlipay - 支付宝支付AppID
    * @returns 返回更新结果
    */
-  @All("/update.json", { middleware: [JwtPassportMiddleware] })
+  @All("/update.json", )
   public async update(
     @Query() obj: Shop = null,
     @Query() address: Address = null,

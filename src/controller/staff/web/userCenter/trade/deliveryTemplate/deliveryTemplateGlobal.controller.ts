@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心配送模板全局控制器
  */
-@Controller('/staff/web/userCenter/deliveryTemplate/deliveryTemplateGlobal')
+@Controller('/staff/web/userCenter/deliveryTemplate/deliveryTemplateGlobal', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController {
   /**
    * 注入上下文对象
@@ -46,7 +46,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController 
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -75,7 +75,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController 
    * @param id - 配送模板全局ID
    * @returns 返回配送模板全局信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用配送模板全局服务的根据ID获取方法
     return await this?.deliveryTemplateGlobalService?.getById?.(id);
@@ -86,7 +86,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController 
    * @param ids - 配送模板全局ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用配送模板全局服务的删除方法
     await this?.deliveryTemplateGlobalService?.del?.(ids);
@@ -99,7 +99,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController 
    * @param obj - 配送模板全局对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: DeliveryTemplateGlobal): Promise<any> {
     // 调用配送模板全局服务的更新方法
     return await this?.deliveryTemplateGlobalService?.update?.(obj);

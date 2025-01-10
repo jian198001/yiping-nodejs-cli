@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心表单对话框控制器
  * 处理与对话框相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/form/dlg')
+@Controller('/staff/web/userCenter/form/dlg', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterDlgDlgController {
   // 注入Context实例
   @Inject()
@@ -39,7 +39,7 @@ export class StaffWebUserCenterDlgDlgController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -65,7 +65,7 @@ export class StaffWebUserCenterDlgDlgController {
    * @param id - 对话框ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用dlgService的getById方法根据ID查询对话框
     return await this?.dlgService?.getById?.(id);
@@ -76,7 +76,7 @@ export class StaffWebUserCenterDlgDlgController {
    * @param ids - 对话框ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用dlgService的del方法删除对话框
     await this?.dlgService?.del?.(ids);
@@ -87,7 +87,7 @@ export class StaffWebUserCenterDlgDlgController {
    * @param obj - 对话框对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Dlg): Promise<any> {
     // 调用dlgService的update方法更新对话框
     return await this?.dlgService?.update?.(obj);

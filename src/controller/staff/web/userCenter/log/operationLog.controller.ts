@@ -12,7 +12,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心操作日志控制器
  * 处理与操作日志相关的HTTP请求，如分页查询、根据ID查询、删除
  */
-@Controller('/staff/web/userCenter/log/operationLog')
+@Controller('/staff/web/userCenter/log/operationLog', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterLogOperationLogController {
   // 注入Context实例
   @Inject()
@@ -31,7 +31,7 @@ export class StaffWebUserCenterLogOperationLogController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -57,7 +57,7 @@ export class StaffWebUserCenterLogOperationLogController {
    * @param id - 操作日志ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用operationLogService的getById方法根据ID查询操作日志
     return await this?.operationLogService?.getById?.(id);
@@ -68,7 +68,7 @@ export class StaffWebUserCenterLogOperationLogController {
    * @param ids - 操作日志ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用operationLogService的del方法删除操作日志
     await this?.operationLogService?.del?.(ids);

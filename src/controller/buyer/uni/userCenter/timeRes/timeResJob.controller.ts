@@ -13,7 +13,7 @@ import { Context } from "@midwayjs/koa";
 /**
  * 买家用户中心可预约时间段管理控制器
  */
-@Controller("/buyer/uni/userCenter/timeRes/timeResJob")
+@Controller("/buyer/uni/userCenter/timeRes/timeResJob", { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterTimeResTimeResJobController {
   /**
    * 注入上下文对象
@@ -40,7 +40,7 @@ export class BuyerUniUserCenterTimeResTimeResJobController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All("/page.json", { middleware: [JwtPassportMiddleware] })
+  @All("/page.json", )
   public async page(
     @Query("user") user,
     @Query("query") query: string,
@@ -70,7 +70,7 @@ export class BuyerUniUserCenterTimeResTimeResJobController {
    * @param id - 可预约时间段ID
    * @returns 返回可预约时间段信息
    */
-  @All("/getById.json", { middleware: [JwtPassportMiddleware] })
+  @All("/getById.json", )
   public async getById(@Query("id") id: string): Promise<any> {
     // 调用可预约时间段管理服务的根据ID获取方法
     return await this?.timeResJobService?.getById?.(id);
@@ -84,7 +84,7 @@ export class BuyerUniUserCenterTimeResTimeResJobController {
    * @param day - 日期
    * @returns 返回更新结果
    */
-  @All("/update.json", { middleware: [JwtPassportMiddleware] })
+  @All("/update.json", )
   public async update(
     @Query() obj: TimeResJob,
     @Query("timeStartStr") timestartStr: string,
@@ -110,7 +110,7 @@ export class BuyerUniUserCenterTimeResTimeResJobController {
    * @param username - 用户名
    * @returns 返回更新结果
    */
-  @All("/updateScene.json", { middleware: [JwtPassportMiddleware] })
+  @All("/updateScene.json", )
   public async updateScene(@Query("username") username: string): Promise<any> {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;

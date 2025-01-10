@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心库存出库单控制器
  * 处理与库存出库单相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/inventory/outbill')
+@Controller('/staff/web/userCenter/inventory/outbill', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterInventoryOutbillController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterInventoryOutbillController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterInventoryOutbillController {
    * @param id - 库存出库单ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用outbillService的getById方法根据ID查询库存出库单
     return await this?.outbillService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterInventoryOutbillController {
    * @param ids - 库存出库单ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用outbillService的del方法删除库存出库单
     await this?.outbillService?.del?.(ids);
@@ -89,7 +89,7 @@ export class StaffWebUserCenterInventoryOutbillController {
    * @param obj - 库存出库单对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Outbill): Promise<any> {
     // 调用outbillService的update方法更新库存出库单
     return await this?.outbillService?.update?.(obj);
@@ -100,7 +100,7 @@ export class StaffWebUserCenterInventoryOutbillController {
    * @param data - 消费出库数据
    * @returns 返回消费出库结果
    */
-  @All('/consumeOutstock.json', { middleware: [JwtPassportMiddleware] })
+  @All('/consumeOutstock.json', )
   public async consumeOutstock(@Body() data: any): Promise<any> {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;

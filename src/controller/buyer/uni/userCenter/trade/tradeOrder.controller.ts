@@ -20,7 +20,7 @@ import { Context } from '@midwayjs/koa';
 /**
  * 买家用户中心交易订单控制器
  */
-@Controller('/buyer/uni/userCenter/trade/tradeOrder')
+@Controller('/buyer/uni/userCenter/trade/tradeOrder', { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterTradeOrderTradeOrderController {
   /**
    * 注入上下文对象
@@ -48,7 +48,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('tradeState') tradeState = '',
     @Query('shopId') shopId,
@@ -80,7 +80,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param shopId - 店铺ID
    * @returns 返回统计结果
    */
-  @All('/countTradeState.json', { middleware: [JwtPassportMiddleware] })
+  @All('/countTradeState.json', )
   public async countTradeState(@Query('shopId') shopId, ): Promise<any> {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
@@ -96,7 +96,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param id - 交易订单ID
    * @returns 返回交易订单信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用交易订单服务的根据ID获取方法
     return await this?.tradeOrderService?.getById?.(id);
@@ -107,7 +107,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param obj - 交易订单对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Query() obj: TradeOrder): Promise<any> {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
@@ -123,7 +123,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param shopId - 店铺ID
    * @returns 返回创建结果
    */
-  @All('/createOrder.json', { middleware: [JwtPassportMiddleware] })
+  @All('/createOrder.json', )
   public async createOrder(
     @Body() cartItems: string[] = [],
     @Query('shopId') shopId,
@@ -146,7 +146,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param message - 留言
    * @returns 返回购买结果
    */
-  @All('/amountBuy.json', { middleware: [JwtPassportMiddleware] })
+  @All('/amountBuy.json', )
   public async amountBuy(
     @Query('totalAmount') totalAmount = 0.0,
     @Query('message') message = ''
@@ -169,7 +169,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param map - 参数映射
    * @returns 返回购买结果
    */
-  @All('/buy.json', { middleware: [JwtPassportMiddleware] })
+  @All('/buy.json', )
   public async buy(@Query() map: any): Promise<any> {
     // 记录日志
     this?.logger?.info?.('商品详情-立即购买');
@@ -189,7 +189,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param addressId - 地址ID
    * @returns 返回更新结果
    */
-  @All('/updateAddress.json', { middleware: [JwtPassportMiddleware] })
+  @All('/updateAddress.json', )
   public async updateAddress(
     @Query('id') id: string,
     @Query('addressId') addressId: string
@@ -207,7 +207,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param message - 留言
    * @returns 返回更新结果
    */
-  @All('/updateMessage.json', { middleware: [JwtPassportMiddleware] })
+  @All('/updateMessage.json', )
   public async updateMessage(
     @Query('id') id: string,
     @Query('message') message: string
@@ -224,7 +224,7 @@ export class BuyerUniUserCenterTradeOrderTradeOrderController {
    * @param id - 订单ID
    * @returns 返回下单结果
    */
-  @All('/wxpayUnifiedOrder.json', { middleware: [JwtPassportMiddleware] })
+  @All('/wxpayUnifiedOrder.json', )
   public async wxpayUnifiedOrder(@Query('id') id: string): Promise<any> {
     // 调用交易订单服务的微信支付统一下单方法
     return this?.

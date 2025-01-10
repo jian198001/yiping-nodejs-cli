@@ -21,7 +21,7 @@ import { Context } from "@midwayjs/koa";
  * 买家Web用户中心认证角色控制器
  * 处理与角色相关的HTTP请求，如分页查询、根据ID查询、删除、更新和更新数据范围
  */
-@Controller("/buyer/web/userCenter/auth/role")
+@Controller("/buyer/web/userCenter/auth/role", { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerWebUserCenterAuthRoleController {
   // 注入Context实例
   @Inject()
@@ -44,7 +44,7 @@ export class BuyerWebUserCenterAuthRoleController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All("/page.json", { middleware: [JwtPassportMiddleware] })
+  @All("/page.json", )
   public async page(
     @Query("userId") userId: string,
     @Query("query") query: string,
@@ -76,7 +76,7 @@ export class BuyerWebUserCenterAuthRoleController {
    * @param id - 角色ID
    * @returns 返回查询结果
    */
-  @All("/getById.json", { middleware: [JwtPassportMiddleware] })
+  @All("/getById.json", )
   public async getById(@Query("id") id: string): Promise<any> {
     // 调用roleService的getById方法根据ID查询角色
     return await this?.roleService?.getById?.(id);
@@ -87,7 +87,7 @@ export class BuyerWebUserCenterAuthRoleController {
    * @param ids - 角色ID数组
    * @returns 返回删除结果
    */
-  @All("/del.json", { middleware: [JwtPassportMiddleware] })
+  @All("/del.json", )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用roleService的del方法删除角色
     await this?.roleService?.del?.(ids);
@@ -99,7 +99,7 @@ export class BuyerWebUserCenterAuthRoleController {
    * @param obj - 角色对象
    * @returns 返回更新结果
    */
-  @All("/update.json", { middleware: [JwtPassportMiddleware] })
+  @All("/update.json", )
   public async update(@Body() obj: Role): Promise<any> {
     // 调用roleService的update方法更新角色
     return await this?.roleService?.update?.(obj);

@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心店铺商城控制器
  */
-@Controller('/staff/web/userCenter/shop/mall')
+@Controller('/staff/web/userCenter/shop/mall', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterShopMallController {
   /**
    * 注入上下文对象
@@ -46,7 +46,7 @@ export class StaffWebUserCenterShopMallController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -70,7 +70,7 @@ export class StaffWebUserCenterShopMallController {
    * @param id - 商城ID
    * @returns 返回商城信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用商城服务的根据ID获取方法
     return await this?.mallService?.getById?.(id);
@@ -81,7 +81,7 @@ export class StaffWebUserCenterShopMallController {
    * @param obj - 商城对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Mall): Promise<any> {
     // 调用商城服务的更新方法
     return await this?.mallService?.update?.(obj);

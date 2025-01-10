@@ -12,7 +12,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心买家控制器
  */
-@Controller('/staff/web/userCenter/trade/buyer/buyer')
+@Controller('/staff/web/userCenter/trade/buyer/buyer', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterTradeOrderBuyerBuyerController {
   /**
    * 注入上下文对象
@@ -38,7 +38,7 @@ export class StaffWebUserCenterTradeOrderBuyerBuyerController {
    * @param id - 用户ID
    * @returns 返回父关联用户信息
    */
-  @All('/getParent.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getParent.json', )
   public async getParent(@Query('id') id: string): Promise<any> {
     // 记录日志
     this?.logger?.info?.('取得当前用户的父关联用户');
@@ -78,7 +78,7 @@ export class StaffWebUserCenterTradeOrderBuyerBuyerController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('parentShopBuyerId') parentShopBuyerId: string = '',
     @Query('query') query: string,
@@ -108,7 +108,7 @@ export class StaffWebUserCenterTradeOrderBuyerBuyerController {
    * @param id - 买家ID
    * @returns 返回买家信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用店铺买家服务的根据ID获取方法
     return await this?.shopBuyerService?.getById?.(id);

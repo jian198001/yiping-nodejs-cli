@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心移动底部导航栏控制器
  * 处理与移动底部导航栏相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/mobile/tabbar')
+@Controller('/staff/web/userCenter/mobile/tabbar', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterMobileTabbarController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterMobileTabbarController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterMobileTabbarController {
    * @param id - 移动底部导航栏ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用tabbarService的getById方法根据ID查询移动底部导航栏
     return await this?.tabbarService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterMobileTabbarController {
    * @param ids - 移动底部导航栏ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用tabbarService的del方法删除移动底部导航栏
     await this?.tabbarService?.del?.(ids);
@@ -89,7 +89,7 @@ export class StaffWebUserCenterMobileTabbarController {
    * @param obj - 移动底部导航栏对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Tabbar): Promise<any> {
     // 调用tabbarService的update方法更新移动底部导航栏
     return await this?.tabbarService?.update?.(obj);

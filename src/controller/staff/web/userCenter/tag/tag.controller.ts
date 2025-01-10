@@ -19,7 +19,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
 /**
  * 员工用户中心标签控制器
  */
-@Controller('/staff/web/userCenter/tag/tag')
+@Controller('/staff/web/userCenter/tag/tag', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterTagTagController {
   /**
    * 注入上下文对象
@@ -45,7 +45,7 @@ export class StaffWebUserCenterTagTagController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -69,7 +69,7 @@ export class StaffWebUserCenterTagTagController {
    * @param id - 标签ID
    * @returns 返回标签信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用标签服务的根据ID获取方法
     return await this?.tagService?.getById?.(id);
@@ -80,7 +80,7 @@ export class StaffWebUserCenterTagTagController {
    * @param ids - 标签ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用标签服务的删除方法
     await this?.tagService?.del?.(ids);
@@ -93,7 +93,7 @@ export class StaffWebUserCenterTagTagController {
    * @param obj - 标签对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Tag): Promise<any> {
     // 调用标签服务的更新方法
     return await this?.tagService?.update?.(obj);

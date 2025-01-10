@@ -19,7 +19,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心内容文章控制器
  * 处理与文章相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/content/article')
+@Controller('/staff/web/userCenter/content/article', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterContentArticleController {
   // 注入Context实例
   @Inject()
@@ -39,7 +39,7 @@ export class StaffWebUserCenterContentArticleController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('categoryId') categoryId = '',
     @Query('query') query: string,
@@ -72,7 +72,7 @@ export class StaffWebUserCenterContentArticleController {
    * @param id - 文章ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用articleService的getById方法根据ID查询文章
     return await this?.articleService?.getById?.(id);
@@ -83,7 +83,7 @@ export class StaffWebUserCenterContentArticleController {
    * @param ids - 文章ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用articleService的del方法删除文章
     await this?.articleService?.del?.(ids);
@@ -94,7 +94,7 @@ export class StaffWebUserCenterContentArticleController {
    * @param obj - 文章对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Article): Promise<any> {
     // 调用articleService的update方法更新文章
     return await this?.articleService?.update?.(obj);

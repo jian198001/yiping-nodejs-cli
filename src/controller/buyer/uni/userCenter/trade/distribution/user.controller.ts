@@ -9,7 +9,7 @@ import { Context } from '@midwayjs/koa';
 /**
  * 买家用户中心交易订单分销用户控制器
  */
-@Controller('/buyer/uni/userCenter/trade/distribution/user')
+@Controller('/buyer/uni/userCenter/trade/distribution/user', { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterTradeOrderDistributionUserController {
   /**
    * 注入上下文对象
@@ -31,7 +31,7 @@ export class BuyerUniUserCenterTradeOrderDistributionUserController {
    * 
    * @returns 返回父关联用户信息
    */
-  @All('/getParent.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getParent.json', )
   public async getParent(): Promise<any> {
     // 记录日志
     this?.logger?.info?.('取得当前用户的父关联用户');
@@ -45,7 +45,7 @@ export class BuyerUniUserCenterTradeOrderDistributionUserController {
    * 
    * @returns 返回子一级关联用户信息
    */
-  @All('/getChildren.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getChildren.json', )
   public async getChildren(): Promise<any> {
     // 记录日志
     this?.logger?.info?.('取得当前用户的子一级关联用户');

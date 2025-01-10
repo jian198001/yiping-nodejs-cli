@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心商品品牌控制器
  */
-@Controller('/staff/web/userCenter/goods/brand')
+@Controller('/staff/web/userCenter/goods/brand', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterGoodsBrandController {
   /**
    * 注入上下文对象
@@ -46,7 +46,7 @@ export class StaffWebUserCenterGoodsBrandController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -70,7 +70,7 @@ export class StaffWebUserCenterGoodsBrandController {
    * @param id - 品牌ID
    * @returns 返回品牌信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用品牌服务的根据ID获取方法
     return await this?.brandService?.getById?.(id);
@@ -81,7 +81,7 @@ export class StaffWebUserCenterGoodsBrandController {
    * @param ids - 品牌ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用品牌服务的删除方法
     await this?.brandService?.del?.(ids);
@@ -92,7 +92,7 @@ export class StaffWebUserCenterGoodsBrandController {
    * @param obj - 品牌对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Brand): Promise<any> {
     // 调用品牌服务的更新方法
     return await this?.brandService?.update?.(obj);

@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心折扣卡控制器
  */
-@Controller('/staff/web/userCenter/card/discountCard')
+@Controller('/staff/web/userCenter/card/discountCard', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterCardDiscountCardController {
   /**
    * 注入上下文对象
@@ -46,7 +46,7 @@ export class StaffWebUserCenterCardDiscountCardController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -75,7 +75,7 @@ export class StaffWebUserCenterCardDiscountCardController {
    * @param id - 折扣卡ID
    * @returns 返回折扣卡信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用折扣卡服务的根据ID获取方法
     return await this?.discountCardService?.getById?.(id);
@@ -87,7 +87,7 @@ export class StaffWebUserCenterCardDiscountCardController {
    * @param ids - 折扣卡ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用折扣卡服务的删除方法
     await this?.discountCardService?.del?.(ids);
@@ -102,7 +102,7 @@ export class StaffWebUserCenterCardDiscountCardController {
    * @param obj - 折扣卡对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: DiscountCard): Promise<any> {
     // 调用折扣卡服务的更新方法
     return await this?.discountCardService?.update?.(obj);

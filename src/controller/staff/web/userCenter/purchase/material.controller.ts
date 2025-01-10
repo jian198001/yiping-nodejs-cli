@@ -19,7 +19,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
 /**
  * 员工用户中心采购物料控制器
  */
-@Controller('/staff/web/userCenter/purchase/material')
+@Controller('/staff/web/userCenter/purchase/material', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterPurchaseMaterialController {
   /**
    * 注入上下文对象
@@ -45,7 +45,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -69,7 +69,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
    * @param id - 物料ID
    * @returns 返回物料信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用物料服务的根据ID获取方法
     return await this?.materialService?.getById?.(id, );
@@ -80,7 +80,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
    * @param ids - 物料ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用物料服务的删除方法
     await this?.materialService?.del?.(ids);
@@ -93,7 +93,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
    * @param obj - 物料对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Material): Promise<any> {
     // 调用物料服务的更新方法
     return await this?.materialService?.update?.(obj);

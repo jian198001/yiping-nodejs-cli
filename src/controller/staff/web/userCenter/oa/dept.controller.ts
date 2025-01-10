@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心OA部门控制器
  * 处理与部门相关的HTTP请求，如分页查询、根据ID查询、更新
  */
-@Controller('/staff/web/userCenter/oa/dept')
+@Controller('/staff/web/userCenter/oa/dept', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterDeptDeptController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterDeptDeptController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterDeptDeptController {
    * @param id - 部门ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用deptService的getById方法根据ID查询部门
     return await this?.deptService?.getById?.(id);
@@ -78,7 +78,7 @@ export class StaffWebUserCenterDeptDeptController {
    * @param obj - 部门对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Dept): Promise<any> {
     // 调用deptService的update方法更新部门
     return await this?.deptService?.update?.(obj);

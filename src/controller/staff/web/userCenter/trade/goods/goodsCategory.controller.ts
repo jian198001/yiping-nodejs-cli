@@ -21,7 +21,7 @@ import { JwtPassportMiddleware } from '../../../../../../middleware/jwt.passport
 /**
  * 员工用户中心商品分类控制器
  */
-@Controller('/staff/web/userCenter/goods/goodsCategory')
+@Controller('/staff/web/userCenter/goods/goodsCategory', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterGoodsGoodsCategoryController {
   /**
    * 注入上下文对象
@@ -48,7 +48,7 @@ export class StaffWebUserCenterGoodsGoodsCategoryController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('shopId') shopId,
     @Query('query') query: string,
@@ -79,7 +79,7 @@ export class StaffWebUserCenterGoodsGoodsCategoryController {
    * @param id - 商品分类ID
    * @returns 返回商品分类信息
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用商品分类服务的根据ID获取方法
     return await this?.goodsCategoryService?.getById?.(id);
@@ -90,7 +90,7 @@ export class StaffWebUserCenterGoodsGoodsCategoryController {
    * @param ids - 商品分类ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用商品分类服务的删除方法
     await this?.goodsCategoryService?.del?.(ids);
@@ -101,7 +101,7 @@ export class StaffWebUserCenterGoodsGoodsCategoryController {
    * @param obj - 商品分类对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: GoodsCategory): Promise<any> {
     // 调用商品分类服务的更新方法
     return await this?.goodsCategoryService?.update?.(obj);

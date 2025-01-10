@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心OA组织控制器
  * 处理与组织相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/oa/org')
+@Controller('/staff/web/userCenter/oa/org', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterDeptOrgController {
   // 注入Context实例
   @Inject()
@@ -42,7 +42,7 @@ export class StaffWebUserCenterDeptOrgController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -67,7 +67,7 @@ export class StaffWebUserCenterDeptOrgController {
    * @param id - 组织ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用orgService的getById方法根据ID查询组织
     let data: any = await this?.orgService?.getById?.(id);
@@ -84,7 +84,7 @@ export class StaffWebUserCenterDeptOrgController {
    * @param ids - 组织ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用orgService的del方法删除组织
     await this?.orgService?.del?.(ids);
@@ -95,7 +95,7 @@ export class StaffWebUserCenterDeptOrgController {
    * @param obj - 组织对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Org): Promise<any> {
     // 调用orgService的update方法更新组织
     return await this?.orgService?.update?.(obj);

@@ -13,7 +13,7 @@ import { InbillService } from '../../../../../module/inventory/inbill.service';
  * 员工Web用户中心库存入库单控制器
  * 处理与库存入库单相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/inventory/inbill')
+@Controller('/staff/web/userCenter/inventory/inbill', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterInventoryInbillController {
   // 注入Context实例
   @Inject()
@@ -39,7 +39,7 @@ export class StaffWebUserCenterInventoryInbillController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -71,7 +71,7 @@ export class StaffWebUserCenterInventoryInbillController {
    * @param id - 库存入库单ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用purchaseOrderService的getById方法根据ID查询库存入库单
     return await this?.purchaseOrderService?.getById?.(id);
@@ -82,7 +82,7 @@ export class StaffWebUserCenterInventoryInbillController {
    * @param ids - 库存入库单ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用purchaseOrderService的del方法删除库存入库单
     await this?.purchaseOrderService?.del?.(ids);

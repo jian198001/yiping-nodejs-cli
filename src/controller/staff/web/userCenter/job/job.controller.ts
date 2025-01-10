@@ -20,7 +20,7 @@ import { JwtPassportMiddleware } from '../../../../../middleware/jwt.passport.mi
  * 员工Web用户中心作业控制器
  * 处理与作业相关的HTTP请求，如分页查询、根据ID查询、删除和更新
  */
-@Controller('/staff/web/userCenter/job/job')
+@Controller('/staff/web/userCenter/job/job', { middleware: [JwtPassportMiddleware,], }, )
 export class StaffWebUserCenterJobJobController {
   // 注入Context实例
   @Inject()
@@ -39,7 +39,7 @@ export class StaffWebUserCenterJobJobController {
    * @param page - 分页信息
    * @returns 返回分页查询结果
    */
-  @All('/page.json', { middleware: [JwtPassportMiddleware] })
+  @All('/page.json', )
   public async page(
     @Query('query') query: string,
     @Query('params') params: any,
@@ -65,7 +65,7 @@ export class StaffWebUserCenterJobJobController {
    * @param id - 作业ID
    * @returns 返回查询结果
    */
-  @All('/getById.json', { middleware: [JwtPassportMiddleware] })
+  @All('/getById.json', )
   public async getById(@Query('id') id: string): Promise<any> {
     // 调用jobService的getById方法根据ID查询作业
     return await this?.jobService?.getById?.(id);
@@ -76,7 +76,7 @@ export class StaffWebUserCenterJobJobController {
    * @param ids - 作业ID数组
    * @returns 返回删除结果
    */
-  @All('/del.json', { middleware: [JwtPassportMiddleware] })
+  @All('/del.json', )
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用jobService的del方法删除作业
     await this?.jobService?.del?.(ids);
@@ -87,7 +87,7 @@ export class StaffWebUserCenterJobJobController {
    * @param obj - 作业对象
    * @returns 返回更新结果
    */
-  @All('/update.json', { middleware: [JwtPassportMiddleware] })
+  @All('/update.json', )
   public async update(@Body() obj: Job): Promise<any> {
     // 调用jobService的update方法更新作业
     return await this?.jobService?.update?.(obj);

@@ -13,7 +13,7 @@ import { Context } from "@midwayjs/koa";
 /**
  * 买家用户中心通知控制器
  */
-@Controller("/buyer/uni/userCenter/notice/notice")
+@Controller("/buyer/uni/userCenter/notice/notice", { middleware: [JwtPassportMiddleware,], }, )
 export class BuyerUniUserCenterNoticeNoticeController {
   /**
    * 注入上下文对象
@@ -39,7 +39,7 @@ export class BuyerUniUserCenterNoticeNoticeController {
    * @param page - 分页信息
    * @returns 返回分页结果
    */
-  @All("/page.json", { middleware: [JwtPassportMiddleware] })
+  @All("/page.json", )
   public async page(
     @Query("query") query: string,
     @Query() params: any,
@@ -68,7 +68,7 @@ export class BuyerUniUserCenterNoticeNoticeController {
    * @param id - 通知ID
    * @returns 返回通知信息
    */
-  @All("/getById.json", { middleware: [JwtPassportMiddleware] })
+  @All("/getById.json", )
   public async getById(@Query("id") id: string): Promise<any> {
     // 调用通知服务的根据ID获取方法
     return await this?.noticeService?.getById?.(id);
@@ -79,7 +79,7 @@ export class BuyerUniUserCenterNoticeNoticeController {
    * @param obj - 通知对象
    * @returns 返回更新结果
    */
-  @All("/update.json", { middleware: [JwtPassportMiddleware] })
+  @All("/update.json", )
   public async update(@Query() obj: Notice): Promise<any> {
     // 调用通知服务的更新方法
     return this?.noticeService?.update?.(obj);
