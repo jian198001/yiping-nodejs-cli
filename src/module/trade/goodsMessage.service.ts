@@ -1,20 +1,20 @@
 // 导入所需的模块和装饰器
-import { Inject, Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { GoodsMessage } from '../../entity/GoodsMessage';
+import { Inject, Logger, Provide } from "@midwayjs/decorator";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { GoodsMessage } from "../../entity/GoodsMessage";
 
-import { ILogger } from '@midwayjs/logger';
-import { SkuService } from './sku.service';
+import { ILogger } from "@midwayjs/logger";
+import { SkuService } from "./sku.service";
 
-import { Zero0Error } from '../common/model/Zero0Error';
+import { Zero0Error } from "../common/model/Zero0Error";
 
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
-import _ = require('lodash');
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
+import _ = require("lodash");
 
 /**
  * 商品消息服务类
@@ -26,7 +26,7 @@ export class GoodsMessageService extends BaseService {
   private logger: ILogger = null;
 
   // 查询的数据库表名称
-  private static TABLE_NAME = 'goods_message';
+  private static TABLE_NAME = "goods_message";
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${GoodsMessageService?.TABLE_NAME} t `;
@@ -52,18 +52,28 @@ export class GoodsMessageService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    query = '', params: string, reqParam: ReqParam,
-    page: Page,
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = ' '; // 查询条件字符串
+    let whereSql = " "; // 查询条件字符串
 
     // 处理前端的搜索字符串的搜索需求
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue,); 
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue);
 
     // 处理前端的表格中筛选需求
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize',])) + sqlUtils?.query?.(query);  
+    whereSql +=
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(JSON?.parse?.(params), [
+          "current",
+          "pageSize",
+        ])
+      ) +
+      sqlUtils?.query?.(query);
 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
@@ -71,19 +81,19 @@ export class GoodsMessageService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
     }
-  
+
     if (page?.pageSize < 1) {
       // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
@@ -94,13 +104,9 @@ export class GoodsMessageService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
-
 
   /**
    * 根据ID查询商品消息数据
@@ -108,12 +114,11 @@ export class GoodsMessageService extends BaseService {
    * @returns 查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = GoodsMessageService.TABLE_NAME + `:${id}`;
@@ -122,12 +127,10 @@ export class GoodsMessageService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -151,7 +154,7 @@ export class GoodsMessageService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    await this?.repository?.delete?.(ids,);
+    await this?.repository?.delete?.(ids);
   }
 
   /**
@@ -159,11 +162,11 @@ export class GoodsMessageService extends BaseService {
    * @param obj - 商品消息对象
    * @returns 更新后的商品消息对象
    */
-  public async update(obj: GoodsMessage): Promise<GoodsMessage> {
+  public async update(obj: GoodsMessage): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = '';
-// 删除redis缓存
+    let log = "";
+    // 删除redis缓存
 
     const key = GoodsMessageService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -176,11 +179,11 @@ export class GoodsMessageService extends BaseService {
       obj?.id
     );
 
-    if (uniqueText) { 
+    if (uniqueText) {
       // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
+      log = uniqueText + "已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
@@ -188,7 +191,7 @@ export class GoodsMessageService extends BaseService {
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
       delete obj?.id;
 
@@ -240,16 +243,16 @@ export class GoodsMessageService extends BaseService {
    */
   public async getCnStrFromCart(cartMessages: string): Promise<string> {
     if (!cartMessages) {
-      return '';
+      return "";
     }
 
     cartMessages = await this?.skuService?.json2CnStr(cartMessages);
 
     if (!cartMessages) {
-      return '';
+      return "";
     }
 
-    cartMessages = '买家留言: ' + cartMessages;
+    cartMessages = "买家留言: " + cartMessages;
 
     return cartMessages;
   }

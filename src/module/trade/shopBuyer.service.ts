@@ -16,7 +16,7 @@ import * as strUtils from "../common/utils/strUtils";
 import { UserService } from "../partcApi/tencent/wx/ma/service/user.service";
 import { ShopService } from "./shop.service";
 import { Shop } from "../../entity/Shop";
-import _ = require('lodash');
+import _ = require("lodash");
 @Provide()
 export class ShopBuyerService extends BaseService {
   // 消费者服务
@@ -27,7 +27,7 @@ export class ShopBuyerService extends BaseService {
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${ShopBuyerService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
 
   , ( SELECT username FROM buyer WHERE buyer.id = t.buyer_id ) AS username
@@ -82,53 +82,51 @@ export class ShopBuyerService extends BaseService {
     }
 
     // 使用sqlUtils?.like处理前端的搜索字符串的搜索需求
-    whereSql += sqlUtils?.like?.(["code"], reqParam?.searchValue, ); // 处理前端的搜索字符串的搜索需求
-// sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
+    whereSql += sqlUtils?.like?.(["code"], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
+    // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
+    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
     // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
     // 使用sqlUtils?.whereOrFilters处理前端的表格中筛选需求
     whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters); // 处理前端的表格中筛选需求
     // 使用sqlUtils?.mulColumnLike处理pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
-    whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ]));
+    whereSql += sqlUtils?.mulColumnLike?.(
+      strUtils?.antParams2Arr?.(JSON?.parse?.(params), ["current", "pageSize"])
+    );
     // 使用sqlUtils?.query处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
     whereSql += sqlUtils?.query?.(query);
-// 执行查询语句并返回page对象结果
+    // 执行查询语句并返回page对象结果
     // 执行分页查询
     const data: any = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       // 返回分页数据
-      return data
+      return data;
     }
-  
+
     if (page?.pageSize < 1) {
       // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, 'value',)
+      return _?.keyBy?.(data?.list, "value");
     }
-  
   }
-  
+
   private async getToRedis(ids) {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
 
   /**
@@ -170,11 +168,11 @@ export class ShopBuyerService extends BaseService {
    * @returns Promise<ShopBuyer> - 返回更新后的店铺买家对象
    * @description 根据提供的店铺买家对象，更新店铺买家信息，如果店铺买家不存在则新增，存在则修改
    */
-  public async update(obj: ShopBuyer): Promise<ShopBuyer> {
+  public async update(obj: ShopBuyer): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
-// 删除redis缓存
+    // 删除redis缓存
 
     const key = ShopBuyerService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -254,7 +252,9 @@ export class ShopBuyerService extends BaseService {
     let data = "";
 
     // 根据店铺买家ID查询店铺买家信息
-    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(shopBuyerId);
+    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(
+      shopBuyerId
+    );
 
     // 如果店铺买家的场景信息已存在，则返回"myScene"
     if (shopBuyer?.scene) {
@@ -269,7 +269,7 @@ export class ShopBuyerService extends BaseService {
     });
 
     // 如果父级店铺买家不存在或与当前店铺买家相同，则返回"sceneIsError"
-    if (!(parent) || shopBuyerId === parent?.id) {
+    if (!parent || shopBuyerId === parent?.id) {
       data = "sceneIsError";
 
       return data;
@@ -313,7 +313,9 @@ export class ShopBuyerService extends BaseService {
     }
 
     // 根据店铺买家ID查询店铺买家信息
-    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(shopBuyerId);
+    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(
+      shopBuyerId
+    );
 
     // 如果店铺买家不存在，则返回null
     if (!shopBuyer) {
@@ -345,13 +347,18 @@ export class ShopBuyerService extends BaseService {
     const shop: Shop = await this?.shopService.getById?.(shopId);
 
     // 获取店铺的访问令牌
-    const accessToken: string = await this?.userService?.getAccessToken?.(shopId);
+    const accessToken: string = await this?.userService?.getAccessToken?.(
+      shopId
+    );
 
     // 构建场景字符串
     const scene = `s=${shop.code}&b=${shopBuyer.code}`;
 
     // 根据场景字符串和访问令牌生成二维码图片
-    const img: string = await this?.userService?.getwxacodeunlimit?.(scene, accessToken);
+    const img: string = await this?.userService?.getwxacodeunlimit?.(
+      scene,
+      accessToken
+    );
 
     // 将生成的二维码图片保存到店铺买家信息中
     shopBuyer.img = img;
@@ -372,21 +379,31 @@ export class ShopBuyerService extends BaseService {
    */
   public async getParent(shopBuyerId = ""): Promise<any> {
     // 根据id查询一条数据
-    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(shopBuyerId);
+    const shopBuyer: ShopBuyer = await this?.repository?.findOneById?.(
+      shopBuyerId
+    );
 
     // 如果店铺买家不存在或场景为空，则返回null
-    if (!(shopBuyer) || !(shopBuyer?.scene)) {
+    if (!shopBuyer || !shopBuyer?.scene) {
       return null;
     }
 
     // 获取子场景
-    const childrenScene: string = shopBuyer?.scene?.substring?.(0, shopBuyer.scene.length - 4);
+    const childrenScene: string = shopBuyer?.scene?.substring?.(
+      0,
+      shopBuyer.scene.length - 4
+    );
 
     // 构建SQL查询语句
     const whereSql = ` AND t.scene = '${childrenScene}' `;
 
     // 执行SQL查询
-    const arr: any[] = await super.arrBase?.(null, this?.selectSql, this?.fromSql, whereSql);
+    const arr: any[] = await super.arrBase?.(
+      null,
+      this?.selectSql,
+      this?.fromSql,
+      whereSql
+    );
 
     // 如果查询结果为空，则返回null
     if (!arr) {
@@ -402,7 +419,7 @@ export class ShopBuyerService extends BaseService {
    * @returns Promise<any[]> - 返回查询到的子级店铺买家列表
    * @description 根据店铺买家ID查询其所有子级店铺买家，如果未找到则返回空数组
    */
-  public async getChildren(shopBuyerId = ""): Promise<any[]> { 
+  public async getChildren(shopBuyerId = ""): Promise<any[]> {
     // 返回一个空数组
     return [];
   }

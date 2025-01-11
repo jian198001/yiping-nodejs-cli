@@ -1,20 +1,20 @@
-import { Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Outbill } from '../../entity/Outbill';
-import { Zero0Error } from '../common/model/Zero0Error';
-import { ILogger } from '@midwayjs/logger';
+import { Logger, Provide } from "@midwayjs/decorator";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { Outbill } from "../../entity/Outbill";
+import { Zero0Error } from "../common/model/Zero0Error";
+import { ILogger } from "@midwayjs/logger";
 
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
 
-import { OutbillItem } from '../../entity/OutbillItem';
-import { Stock } from '../../entity/Stock';
-import { Consume } from '../../entity/Consume';
-import _ = require('lodash');
+import { OutbillItem } from "../../entity/OutbillItem";
+import { Stock } from "../../entity/Stock";
+import { Consume } from "../../entity/Consume";
+import _ = require("lodash");
 
 /**
  * 出库单服务类
@@ -26,7 +26,7 @@ export class OutbillService extends BaseService {
   @Logger()
   private logger: ILogger = null;
   // 查询的数据库表名称
-  private static TABLE_NAME = 'outbill';
+  private static TABLE_NAME = "outbill";
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${OutbillService?.TABLE_NAME} t `;
   // 查询的字段名称及头部的SELECT语句
@@ -53,16 +53,26 @@ export class OutbillService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    query = '', params: string, reqParam: ReqParam, 
-    page: Page, 
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
-    let whereSql = ' '; // 查询条件字符串
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
+    let whereSql = " "; // 查询条件字符串
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
     // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
+    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
     // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize'])) + sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
+    whereSql +=
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(JSON?.parse?.(params), [
+          "current",
+          "pageSize",
+        ])
+      ) +
+      sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
@@ -71,8 +81,8 @@ export class OutbillService extends BaseService {
       reqParam,
       page
     );
-    
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -87,11 +97,8 @@ export class OutbillService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
 
   /**
@@ -100,12 +107,11 @@ export class OutbillService extends BaseService {
    * @returns 查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = OutbillService.TABLE_NAME + `:${id}`;
@@ -114,12 +120,10 @@ export class OutbillService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -142,25 +146,24 @@ export class OutbillService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = OutbillService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = OutbillService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
   /**
    * 更新出库单
    * @param obj - 出库单对象
    * @returns 更新后的出库单对象
    */
-  public async update(obj: Outbill): Promise<Outbill> {
+  public async update(obj: Outbill): Promise<any> {
     // 一个表进行操作 typeORM
-    let log = '';// 删除redis缓存
+    let log = ""; // 删除redis缓存
 
     const key = OutbillService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -172,20 +175,26 @@ export class OutbillService extends BaseService {
       null,
       obj?.id
     );
-    if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+    if (uniqueText) {
+      // 某unique字段值已存在，抛出异常，程序处理终止
+      log = uniqueText + "已存在，操作失败";
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
       delete obj?.id;
       await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, OutbillService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          OutbillService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
       return null;
     }
@@ -194,7 +203,12 @@ export class OutbillService extends BaseService {
       // 新增数据，主键id的随机字符串值，由前端页面提供
       await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, OutbillService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          OutbillService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
       return null;
     }
@@ -212,9 +226,13 @@ export class OutbillService extends BaseService {
    * @param staffId - 员工ID
    * @returns 更新后的出库单对象
    */
-  public async consume(obj: Outbill, items: OutbillItem[], staffId: string): Promise<Outbill> {
+  public async consume(
+    obj: Outbill,
+    items: OutbillItem[],
+    staffId: string
+  ): Promise<Outbill> {
     // 一个表进行操作 typeORM 物料领用
-    let log = '';// 删除redis缓存
+    let log = ""; // 删除redis缓存
 
     const key = OutbillService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -226,9 +244,10 @@ export class OutbillService extends BaseService {
       null,
       obj?.id
     );
-    if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+    if (uniqueText) {
+      // 某unique字段值已存在，抛出异常，程序处理终止
+      log = uniqueText + "已存在，操作失败";
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
@@ -239,50 +258,66 @@ export class OutbillService extends BaseService {
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
-      delete obj?.id
-      await this?.repository?.save?.(obj) // insert update
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
+      delete obj?.id;
+      await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, OutbillService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          OutbillService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null
+      return null;
     }
-    let old: Outbill = await this?.repository?.findOneById?.(obj?.id) // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+    let old: Outbill = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, OutbillService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          OutbillService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null
+      return null;
     }
-    delete obj?.id
+    delete obj?.id;
     old = {
       ...old,
       ...obj,
     };
-    await this?.repository?.save?.(old) // 修改数据
+    await this?.repository?.save?.(old); // 修改数据
   }
-  private async updateItems(items: any[], staffId: string,): Promise<void> {
+  private async updateItems(items: any[], staffId: string): Promise<void> {
     if (!items) {
-      return
+      return;
     }
     for (const item of items) {
-      await this?.outbillItemRepository?.save?.(item)
+      await this?.outbillItemRepository?.save?.(item);
       // 减少相应库存
-      const stock = await this?.stockRepository?.findOneById?.(item?.id)
-      stock.quantity = stock?.quantity - item?.consumeQuantity
-      await this?.stockRepository?.save?.(stock)
+      const stock = await this?.stockRepository?.findOneById?.(item?.id);
+      stock.quantity = stock?.quantity - item?.consumeQuantity;
+      await this?.stockRepository?.save?.(stock);
       // 领用人信息中增加此物料数量
-      let consumeNew = { materialId: item?.materialId, staffId: staffId, quantity: item?.consumeQuantity }
-      const consume = await this?.consumeRepository.findOne?.({ where: { materialId: consumeNew?.materialId, staffId: staffId }, })
+      let consumeNew = {
+        materialId: item?.materialId,
+        staffId: staffId,
+        quantity: item?.consumeQuantity,
+      };
+      const consume = await this?.consumeRepository.findOne?.({
+        where: { materialId: consumeNew?.materialId, staffId: staffId },
+      });
       if (!consume) {
-        await this?.consumeRepository?.save?.(consumeNew)
-        continue
+        await this?.consumeRepository?.save?.(consumeNew);
+        continue;
       }
-      consume.quantity = consume?.quantity + item?.consumeQuantity
-      await this?.consumeRepository?.save?.(consume)
-      continue
+      consume.quantity = consume?.quantity + item?.consumeQuantity;
+      await this?.consumeRepository?.save?.(consume);
+      continue;
     }
   }
   // 采购入库->purchase采购信息->inbill->形成入库单，记录入库信息->stock库存信息

@@ -1,16 +1,16 @@
 // 引入必要的模块和装饰器
-import { Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Not, Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { ILogger } from '@midwayjs/logger';
-import { Job } from '../../entity/Job';
-import { Zero0Error } from '../common/model/Zero0Error';
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
-import _ = require('lodash');
+import { Logger, Provide } from "@midwayjs/decorator";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Not, Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { ILogger } from "@midwayjs/logger";
+import { Job } from "../../entity/Job";
+import { Zero0Error } from "../common/model/Zero0Error";
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
+import _ = require("lodash");
 
 /**
  * 作业服务类
@@ -23,7 +23,7 @@ export class JobService extends BaseService {
   private logger: ILogger = null;
 
   // 查询的数据库表名称
-  private static TABLE_NAME = 'job';
+  private static TABLE_NAME = "job";
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${JobService?.TABLE_NAME} t `;
@@ -45,15 +45,17 @@ export class JobService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    query = '', params: string, reqParam: ReqParam, 
-    page: Page, 
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = ' '; // 查询条件字符串
+    let whereSql = " "; // 查询条件字符串
 
     whereSql += sqlUtils?.like?.(
-      ['name', 'job_key', 'job_val'],
+      ["name", "job_key", "job_val"],
       reqParam?.searchValue
     ); // 处理前端的搜索字符串的搜索需求
 
@@ -63,7 +65,12 @@ export class JobService extends BaseService {
       parameters = JSON?.parse?.(params);
     }
 
-    whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(parameters, ['current', 'pageSize'])) + sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
+    whereSql +=
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
+      ) +
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
@@ -71,14 +78,14 @@ export class JobService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -94,11 +101,8 @@ export class JobService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
 
   /**
@@ -107,12 +111,11 @@ export class JobService extends BaseService {
    * @returns 查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = JobService.TABLE_NAME + `:${id}`;
@@ -121,12 +124,10 @@ export class JobService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -150,27 +151,26 @@ export class JobService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = JobService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = JobService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新作业
    * @param obj - 作业对象
    * @returns 更新后的作业对象
    */
-  public async update(obj: Job): Promise<Job> {
+  public async update(obj: Job): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = '';
+    let log = "";
     let uniqueWhere: any = {};
 
     if (obj?.id) {
@@ -180,9 +180,9 @@ export class JobService extends BaseService {
     const count: number = await this?.repository?.count({ where: uniqueWhere });
 
     if (count > 999999) {
-      log = '名称已存在，操作失败';
+      log = "名称已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
@@ -190,7 +190,7 @@ export class JobService extends BaseService {
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
       delete obj?.id;
 

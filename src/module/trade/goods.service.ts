@@ -222,7 +222,7 @@ export class GoodsService extends BaseService {
    * @param imgs - 商品图片
    * @returns 更新后的商品对象
    */
-  public async update(obj: Goods, imgs = ""): Promise<Goods> {
+  public async update(obj: Goods, imgs = ""): Promise<any> {
     // 删除redis缓存
 
     const key = GoodsService?.TABLE_NAME + `:${obj?.id}`;

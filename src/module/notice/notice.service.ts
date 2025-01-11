@@ -173,7 +173,7 @@ export class NoticeService extends BaseService {
    * @param obj - 通知消息对象
    * @returns 更新后的通知消息对象
    */
-  public async update(obj: Notice): Promise<Notice> {
+  public async update(obj: Notice): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
@@ -187,7 +187,7 @@ export class NoticeService extends BaseService {
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
       NoticeService?.TABLE_NAME,
-      [{ label: "title", value: obj?.title, text: "标题" }],
+      [],
       obj?.id
     );
 
@@ -207,8 +207,7 @@ export class NoticeService extends BaseService {
       await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, NoticeService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
-      }
-      return null;
+      } 
     }
 
     let old: Notice = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -218,8 +217,7 @@ export class NoticeService extends BaseService {
       await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, NoticeService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
-      }
-      return null;
+      } 
     }
     delete obj?.id;
 

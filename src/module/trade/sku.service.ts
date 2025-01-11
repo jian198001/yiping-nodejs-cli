@@ -74,14 +74,14 @@ export class SkuService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -97,11 +97,8 @@ export class SkuService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
 
   /**
@@ -110,12 +107,11 @@ export class SkuService extends BaseService {
    * @returns Promise<any> - 返回查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = SkuService.TABLE_NAME + `:${id}`;
@@ -124,12 +120,10 @@ export class SkuService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -160,11 +154,11 @@ export class SkuService extends BaseService {
    * @param obj - 包含SKU规格信息的对象
    * @returns Promise<SkuKey> - 返回更新后的SKU规格信息对象
    */
-  public async update(obj: SkuKey): Promise<SkuKey> {
+  public async update(obj: SkuKey): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
-// 删除redis缓存
+    // 删除redis缓存
 
     const key = SkuService?.TABLE_NAME + `:${obj?.id}`;
 

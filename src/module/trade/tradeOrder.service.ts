@@ -239,7 +239,7 @@ export class TradeOrderService extends BaseService {
     await this?.repository?.delete?.(ids);
   }
 
-  public async update(obj: TradeOrder): Promise<TradeOrder> {
+  public async update(obj: TradeOrder): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";

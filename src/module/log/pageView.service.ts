@@ -1,16 +1,16 @@
 // 引入必要的模块和装饰器
-import { Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { PageView } from '../../entity/PageView';
-import { ILogger } from '@midwayjs/logger';
-import { Zero0Error } from '../common/model/Zero0Error';
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
-import _ = require('lodash');
+import { Logger, Provide } from "@midwayjs/decorator";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { PageView } from "../../entity/PageView";
+import { ILogger } from "@midwayjs/logger";
+import { Zero0Error } from "../common/model/Zero0Error";
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
+import _ = require("lodash");
 
 /**
  * 页面视图服务类
@@ -23,7 +23,7 @@ export class PageViewService extends BaseService {
   private logger: ILogger = null;
 
   // 查询的数据库表名称
-  private static TABLE_NAME = 'page_view';
+  private static TABLE_NAME = "page_view";
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${PageViewService?.TABLE_NAME} t `;
@@ -45,12 +45,14 @@ export class PageViewService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    query = '', params: string, reqParam: ReqParam, 
-    page: Page, 
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = ' '; // 查询条件字符串
+    let whereSql = " "; // 查询条件字符串
 
     let parameters: any[] = [];
 
@@ -59,7 +61,13 @@ export class PageViewService extends BaseService {
     }
 
     // 处理前端的表格中筛选需求
-    whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(parameters, ['current', 'pageSize'])) + sqlUtils?.like?.(['name'], reqParam?.searchValue) + sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.query?.(query);
+    whereSql +=
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
+      ) +
+      sqlUtils?.like?.(["name"], reqParam?.searchValue) +
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.query?.(query);
 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
@@ -67,14 +75,14 @@ export class PageViewService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -90,13 +98,9 @@ export class PageViewService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
-
 
   /**
    * 根据ID查询页面视图
@@ -104,12 +108,11 @@ export class PageViewService extends BaseService {
    * @returns 查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = PageViewService.TABLE_NAME + `:${id}`;
@@ -118,12 +121,10 @@ export class PageViewService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -147,28 +148,27 @@ export class PageViewService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = PageViewService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = PageViewService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新页面视图
    * @param obj - 页面视图对象
    * @returns 更新后的页面视图对象
    */
-  public async update(obj: PageView): Promise<PageView> {
+  public async update(obj: PageView): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = '';
-// 删除redis缓存
+    let log = "";
+    // 删除redis缓存
 
     const key = PageViewService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -183,23 +183,28 @@ export class PageViewService extends BaseService {
 
     if (uniqueText) {
       // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
+      log = uniqueText + "已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
 
     // 新增数据，主键id的随机字符串值，由后端typeorm提供
     if (!obj?.id) {
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
       delete obj?.id;
 
       await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, PageViewService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          PageViewService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
       return null;
     }
@@ -212,7 +217,12 @@ export class PageViewService extends BaseService {
       await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, PageViewService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          PageViewService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
       return null;
     }

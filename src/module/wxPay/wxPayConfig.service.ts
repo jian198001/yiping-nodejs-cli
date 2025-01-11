@@ -171,7 +171,7 @@ export class WxPayConfigService extends BaseService {
    * @param obj - 微信支付配置对象
    * @returns 更新后的微信支付配置对象
    */
-  public async update(obj: WxPayConfig): Promise<WxPayConfig> {
+  public async update(obj: WxPayConfig): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";

@@ -88,14 +88,14 @@ export class GoodsPropertiesService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -111,13 +111,9 @@ export class GoodsPropertiesService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
-
 
   /**
    * 根据ID查询商品属性数据
@@ -125,12 +121,11 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = GoodsPropertiesService.TABLE_NAME + `:${id}`;
@@ -139,12 +134,10 @@ export class GoodsPropertiesService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -168,28 +161,27 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = GoodsPropertiesService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = GoodsPropertiesService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新商品属性数据
    * @param obj - 商品属性对象
    * @returns 更新后的商品属性对象
    */
-  public async update(obj: GoodsPropertiesKey): Promise<GoodsPropertiesKey> {
+  public async update(obj: GoodsPropertiesKey): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
-// 删除redis缓存
+    // 删除redis缓存
 
     const key = GoodsPropertiesService?.TABLE_NAME + `:${obj?.id}`;
 

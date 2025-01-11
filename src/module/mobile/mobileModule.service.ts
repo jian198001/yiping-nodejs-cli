@@ -1,25 +1,25 @@
 // 引入必要的模块和装饰器
-import { Provide, Logger } from '@midwayjs/decorator';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { MobileModule } from '../../entity/MobileModule';
-import { Zero0Error } from '../common/model/Zero0Error';
-import { ILogger } from '@midwayjs/logger';
+import { Provide, Logger } from "@midwayjs/decorator";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { MobileModule } from "../../entity/MobileModule";
+import { Zero0Error } from "../common/model/Zero0Error";
+import { ILogger } from "@midwayjs/logger";
 
 // 引入路径模块
-import * as path from 'path';
-import _ = require('lodash');
+import * as path from "path";
+import _ = require("lodash");
 
 // 引入SQL和字符串工具函数
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
 
 // 引入文件系统扩展模块和日期处理模块
-const fse: any = require('fs-extra'),
-  moment: any = require('moment');
+const fse: any = require("fs-extra"),
+  moment: any = require("moment");
 
 /**
  * 移动模块服务类
@@ -32,7 +32,7 @@ export class MobileModuleService extends BaseService {
   private logger: ILogger = null;
 
   // 查询的数据库表名称
-  private static TABLE_NAME = 'mobile_module';
+  private static TABLE_NAME = "mobile_module";
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${MobileModuleService?.TABLE_NAME} t `;
@@ -54,12 +54,14 @@ export class MobileModuleService extends BaseService {
    * @returns 分页查询结果
    */
   public async page(
-    query = '', params: string, reqParam: ReqParam,
-    page: Page,
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = ' '; // 查询条件字符串
+    let whereSql = " "; // 查询条件字符串
 
     let parameters: any[] = [];
 
@@ -68,7 +70,13 @@ export class MobileModuleService extends BaseService {
     }
 
     // 处理前端的表格中筛选需求
-    whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(parameters, ['current', 'pageSize'])) + sqlUtils?.like?.(['name'], reqParam?.searchValue) + sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.query?.(query);
+    whereSql +=
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
+      ) +
+      sqlUtils?.like?.(["name"], reqParam?.searchValue) +
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.query?.(query);
 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
@@ -76,14 +84,14 @@ export class MobileModuleService extends BaseService {
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -99,13 +107,9 @@ export class MobileModuleService extends BaseService {
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
-
 
   /**
    * 根据ID查询移动模块
@@ -113,12 +117,11 @@ export class MobileModuleService extends BaseService {
    * @returns 查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = MobileModuleService.TABLE_NAME + `:${id}`;
@@ -127,12 +130,10 @@ export class MobileModuleService extends BaseService {
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -156,28 +157,27 @@ export class MobileModuleService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = MobileModuleService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = MobileModuleService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新移动模块
    * @param obj - 移动模块对象
    * @returns 更新后的移动模块对象
    */
-  public async update(obj: MobileModule): Promise<MobileModule> {
+  public async update(obj: MobileModule): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = '';
-// 删除redis缓存
+    let log = "";
+    // 删除redis缓存
 
     const key = MobileModuleService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -192,23 +192,28 @@ export class MobileModuleService extends BaseService {
 
     if (uniqueText) {
       // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
+      log = uniqueText + "已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000');
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
 
     // 新增数据，主键id的随机字符串值，由后端typeorm提供
     if (!obj?.id) {
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供';
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
       delete obj?.id;
 
       await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, MobileModuleService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          MobileModuleService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
       return null;
     }
@@ -221,7 +226,12 @@ export class MobileModuleService extends BaseService {
       await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
-        await super.sortOrder?.(obj?.id, null, null, MobileModuleService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+        await super.sortOrder?.(
+          obj?.id,
+          null,
+          null,
+          MobileModuleService?.TABLE_NAME
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
       return null;
     }
@@ -247,30 +257,30 @@ export class MobileModuleService extends BaseService {
     packageUview2: string,
     pathModule: string
   ): Promise<void> {
-    const join: string = path?.join?.(packageUview2, '..', 'pages.json');
+    const join: string = path?.join?.(packageUview2, "..", "pages.json");
 
-    const readFileSync = fse?.readFileSync(join, 'UTF-8');
+    const readFileSync = fse?.readFileSync(join, "UTF-8");
 
     const evalObj: any = JSON?.parse?.(readFileSync);
 
     let pages: any[] = evalObj.pages;
 
-    pages = await this?.forEachPages(pages, 'pages/' + pathModule + '/page');
+    pages = await this?.forEachPages(pages, "pages/" + pathModule + "/page");
 
-    pages = await this?.forEachPages(pages, 'pages/' + pathModule + '/detail');
+    pages = await this?.forEachPages(pages, "pages/" + pathModule + "/detail");
 
-    pages = await this?.forEachPages(pages, 'pages/' + pathModule + '/update');
+    pages = await this?.forEachPages(pages, "pages/" + pathModule + "/update");
 
     evalObj.pages = pages;
 
     const joinBak: string =
-      join + '_' + new moment().format?.('YYYYMMDDHHmmss') + '_bak';
+      join + "_" + new moment().format?.("YYYYMMDDHHmmss") + "_bak";
 
     fse?.ensureFileSync(joinBak);
 
     fse?.copySync(join, joinBak);
 
-    fse?.writeFileSync(join, JSON?.stringify(evalObj), 'UTF-8');
+    fse?.writeFileSync(join, JSON?.stringify(evalObj), "UTF-8");
   }
 
   /**

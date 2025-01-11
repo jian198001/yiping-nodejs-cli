@@ -137,7 +137,7 @@ export class AlipayConfigService extends BaseService {
    * @param obj - 支付宝配置对象
    * @returns 更新后的支付宝配置对象
    */
-  public async update(obj: AlipayConfig): Promise<AlipayConfig> {
+  public async update(obj: AlipayConfig): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";

@@ -149,7 +149,7 @@ export class MallService extends BaseService {
    * @param obj - 商城对象
    * @returns 更新后的商城对象
    */
-  public async update(obj: Mall): Promise<Mall> {
+  public async update(obj: Mall): Promise<any> {
     // 一个表进行操作 typeORM
     let log = ""; // 删除redis缓存
 
