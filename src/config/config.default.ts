@@ -116,6 +116,7 @@ import { Job } from "../entity/Job";
 import { WxPayConfig } from "../entity/WxPayConfig";
 import { Withdrawal } from "../entity/Withdrawal";
 import { WechatConfig } from "../entity/WechatConfig";
+import { User } from "../module/common/model/User";
 
 /**
  * 默认配置文件
@@ -264,6 +265,7 @@ export default {
           WechatConfig,
           Withdrawal,
           WxPayConfig,
+          User,
           "*/entity/*.ts",
           "*/module/*/model/*.ts",
         ],
