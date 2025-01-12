@@ -174,7 +174,7 @@ export class UserService extends BaseService {
    * @param id - 用户ID
    * @returns 无返回值
    */
-  public async resetPwd(id: string): Promise<void> {
+  public async resetPwd(id: string): Promise<any> {
     // 一个表进行操作 typeORM
 
     let old: User = await this?.repository?.findOneById?.(id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -192,7 +192,7 @@ export class UserService extends BaseService {
    * @param obj - 用户对象
    * @returns 无返回值
    */
-  public async updatePwd(obj: any): Promise<void> {
+  public async updatePwd(obj: any): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
@@ -266,7 +266,7 @@ export class UserService extends BaseService {
 
         await this?.updateRoles?.(obj?.id, roleIds);
 
-        return null;
+        return;
       }
 
       let old: User = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -283,7 +283,7 @@ export class UserService extends BaseService {
         if (!obj?.orderNum) {
           await super.sortOrder?.(obj?.id, null, null, UserService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
         }
-        return null;
+        return;
       }
       delete obj?.id;
 
@@ -398,7 +398,7 @@ export class UserService extends BaseService {
     const result: any[] = await super.query?.(sql);
 
     if (!result) {
-      return null;
+      return " ";
     }
 
     return result?.[0]?.openId;

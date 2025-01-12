@@ -86,7 +86,7 @@ export class StaffWebUserCenterCardGiftCardController {
     // 调用礼品卡服务的删除方法
     await this?.giftCardService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新礼品卡信息

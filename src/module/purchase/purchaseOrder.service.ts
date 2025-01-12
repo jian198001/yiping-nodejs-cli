@@ -235,7 +235,7 @@ export class PurchaseOrderService extends BaseService {
           PurchaseOrderService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+      return {};
     }
 
     let old: PurchaseOrder = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -253,7 +253,7 @@ export class PurchaseOrderService extends BaseService {
           PurchaseOrderService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+      return {};
     }
     delete obj?.id;
 
@@ -270,7 +270,7 @@ export class PurchaseOrderService extends BaseService {
     obj: Material,
     purchaseOrderItem: PurchaseOrderItem,
     type: string
-  ): Promise<PurchaseOrderItem> {
+  ): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
@@ -322,7 +322,7 @@ export class PurchaseOrderService extends BaseService {
 
     await this?.purchaseOrderItemRepository?.save?.(purchaseOrderItem);
 
-    return null;
+    return {};
   }
 
   public async buy(

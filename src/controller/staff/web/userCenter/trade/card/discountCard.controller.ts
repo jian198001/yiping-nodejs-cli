@@ -93,7 +93,7 @@ export class StaffWebUserCenterCardDiscountCardController {
     await this?.discountCardService?.del?.(ids);
 
     // 返回空值
-    return null;
+     return {} ;
   }
 
   /**

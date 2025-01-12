@@ -141,6 +141,6 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
     // 调用采购订单服务的删除方法
     await this?.purchaseOrderService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
 }

@@ -413,7 +413,7 @@ export class ShopService extends BaseService { // 店铺服务
    */
   public async login(usernamePasswordToken: any): Promise<Shop> {
     // 返回null表示登录失败
-    return null;
+     return;
   }
 
   /**

@@ -191,6 +191,6 @@ export class FavorService extends BaseService {
       await super.sortOrder?.(obj?.id, null, null, FavorService?.TABLE_NAME);
     }
 
-    return null;
+     return {} ;
   }
 }

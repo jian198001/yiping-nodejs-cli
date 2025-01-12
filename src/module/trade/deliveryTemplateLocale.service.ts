@@ -1,83 +1,85 @@
-import { Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from '../common/service/base.service';
-import { ReqParam } from '../common/model/ReqParam';
-import { Page } from '../common/model/Page';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { DeliveryTemplateLocale } from '../../entity/DeliveryTemplateLocale';
+import { Logger, Provide } from "@midwayjs/decorator";
+import { BaseService } from "../common/service/base.service";
+import { ReqParam } from "../common/model/ReqParam";
+import { Page } from "../common/model/Page";
+import { Repository } from "typeorm";
+import { InjectEntityModel } from "@midwayjs/typeorm";
+import { DeliveryTemplateLocale } from "../../entity/DeliveryTemplateLocale";
 
-import { ILogger } from '@midwayjs/logger';
+import { ILogger } from "@midwayjs/logger";
 
-import { Zero0Error } from '../common/model/Zero0Error';
+import { Zero0Error } from "../common/model/Zero0Error";
 
-import _ = require('lodash');
+import _ = require("lodash");
 
-
-import * as sqlUtils from '../common/utils/sqlUtils';
-import * as strUtils from '../common/utils/strUtils';
-
+import * as sqlUtils from "../common/utils/sqlUtils";
+import * as strUtils from "../common/utils/strUtils";
 
 @Provide()
-export class DeliveryTemplateLocaleService extends BaseService { // 本地物流模版服务
-  
+export class DeliveryTemplateLocaleService extends BaseService {
+  // 本地物流模版服务
+
   @Logger()
-  private logger: ILogger = null
+  private logger: ILogger = null;
 
-// 查询的数据库表名称
-  private static TABLE_NAME = 'delivery_template_locale';
+  // 查询的数据库表名称
+  private static TABLE_NAME = "delivery_template_locale";
 
-// 查询的数据库表名称及别名
+  // 查询的数据库表名称及别名
   private fromSql = ` FROM ${DeliveryTemplateLocaleService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   
-     `
+     `;
 
   @InjectEntityModel(DeliveryTemplateLocale)
   private repository: Repository<DeliveryTemplateLocale> = null;
 
   public async page(
-    query = '', params: string, reqParam: ReqParam, 
-    page: Page, 
+    query = "",
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = ' ' // 查询条件字符串
+    let whereSql = " "; // 查询条件字符串
 
-    
-      let parameters: any[] = []
+    let parameters: any[] = [];
 
-      if (params && params.length > 3) {
-      
-        parameters = JSON?.parse?.(params)
+    if (params && params.length > 3) {
+      parameters = JSON?.parse?.(params);
+    }
 
-      }
-
-      whereSql += sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(parameters, ['current', 'pageSize',])) + sqlUtils?.like?.(['name'], reqParam?.searchValue, ) + sqlUtils?.whereOrFilters?.(reqParam?.filters) +  sqlUtils?.query?.(query)   // 处理前端的表格中筛选需求
-// 执行查询语句并返回page对象结果
+    whereSql +=
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
+      ) +
+      sqlUtils?.like?.(["name"], reqParam?.searchValue) +
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
+    // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
-      
-        return data
-  
-      }
-  
-      if (page?.pageSize < 1) {
-        // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-        return _?.keyBy?.(data?.list, "value");
+      return data;
+    }
+
+    if (page?.pageSize < 1) {
+      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+      return _?.keyBy?.(data?.list, "value");
     }
   }
 
@@ -85,21 +87,16 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
 
-
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = DeliveryTemplateLocaleService.TABLE_NAME + `:${id}`;
@@ -108,12 +105,10 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -132,47 +127,45 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
   }
 
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = DeliveryTemplateLocaleService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = DeliveryTemplateLocaleService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
-  public async update(
-    obj: DeliveryTemplateLocale
-  ): Promise<DeliveryTemplateLocale> {
+  public async update(obj: DeliveryTemplateLocale): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = '';
+    let log = "";
 
-   // 字段非重复性验证
-   const uniqueText = await super.unique?.(
+    // 字段非重复性验证
+    const uniqueText = await super.unique?.(
       DeliveryTemplateLocaleService?.TABLE_NAME,
       null,
       obj?.id
     );
 
-    if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
+    if (uniqueText) {
+      // 某unique字段值已存在，抛出异常，程序处理终止
+      log = uniqueText + "已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000')
-      this?.logger?.error?.(log, zero0Error)
-      throw zero0Error
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
+      this?.logger?.error?.(log, zero0Error);
+      throw zero0Error;
     }
-// 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
-      delete obj?.id
+      delete obj?.id;
 
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
         await super.sortOrder?.(
@@ -180,9 +173,9 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
           null,
           null,
           DeliveryTemplateLocaleService?.TABLE_NAME
-        ) // 新增数据时，设置此条数据的orderNum排序值
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null
+      return {};
     }
 
     let old: DeliveryTemplateLocale = await this?.repository?.findOneById?.(
@@ -192,7 +185,7 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
 
-      await this?.repository?.save?.(obj) // insert update
+      await this?.repository?.save?.(obj); // insert update
 
       if (!obj?.orderNum) {
         await super.sortOrder?.(
@@ -200,11 +193,11 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
           null,
           null,
           DeliveryTemplateLocaleService?.TABLE_NAME
-        ) // 新增数据时，设置此条数据的orderNum排序值
+        ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null
+      return {};
     }
-    delete obj?.id
+    delete obj?.id;
 
     old = {
       ...old,
@@ -212,11 +205,11 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
       ...obj,
     };
 
-    await this?.repository?.save?.(old) // 修改数据
+    await this?.repository?.save?.(old); // 修改数据
   }
 
   public async getDeliveryTotalAmount(list: any[]): Promise<number> {
-    this?.logger?.info?.('计算订单运费金额');
+    this?.logger?.info?.("计算订单运费金额");
 
     let totalAmount = 0.0;
 
@@ -248,7 +241,7 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
 
     const freightPayerFirst: string = firstMap.freightPayer;
 
-    if (freightPayerFirst !== 'buyer') {
+    if (freightPayerFirst !== "buyer") {
       startStandardsFirst = 0;
 
       firstMap.startStandardsFirst = startStandardsFirst;
@@ -267,7 +260,7 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
     }
 
     if (!valuationFirst) {
-      valuationFirst = 'quantity';
+      valuationFirst = "quantity";
     }
 
     if (!startStandardsFirst) {
@@ -290,8 +283,7 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
 
     let maxStartFeesMap: any = firstMap; // 所有订单中拥有最大首费价格的那个订单
 
-    for (const  listElement of  list )  {
-
+    for (const listElement of list) {
       const valuation: string = listElement.valuation;
 
       const quantity: number = listElement.quantity;
@@ -328,7 +320,7 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
 
       let addFees: number = listElement.addFees;
 
-      if (freightPayer !== 'buyer') {
+      if (freightPayer !== "buyer") {
         startStandards = 0;
 
         listElement.startStandards = startStandards;
@@ -347,7 +339,7 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
       }
 
       this?.logger?.info?.(
-        '如果此子订单不是最大首费的订单,则很可能完全按照续费价格进行整体计费,这里计算按续费价格整体计费的(元)'
+        "如果此子订单不是最大首费的订单,则很可能完全按照续费价格进行整体计费,这里计算按续费价格整体计费的(元)"
       );
 
       let totalAmountOrderItem = 0;
@@ -371,12 +363,12 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
 
         listElement.maxStartFeesMap = true;
 
-        if (valuation === 'mass') {
+        if (valuation === "mass") {
           totalAmountOrderItem = _?.multiply?.(
             _?.subtract?.(mass, startStandards),
             addFees
           );
-        } else if (valuation === 'volume') {
+        } else if (valuation === "volume") {
           totalAmountOrderItem = _?.multiply?.(
             _?.subtract?.(volume, startStandards),
             addFees
@@ -390,12 +382,12 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
       } else {
         listElement.maxStartFeesMap = false;
 
-        if (valuation === 'mass') {
+        if (valuation === "mass") {
           totalAmountOrderItem = _?.multiply?.(
             _?.divide?.(mass, startStandards),
             addFees
           );
-        } else if (valuation === 'volume') {
+        } else if (valuation === "volume") {
           totalAmountOrderItem = _?.multiply?.(
             _?.divide?.(volume, startStandards),
             addFees
@@ -422,22 +414,22 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
 
     totalAmount = _?.add(totalAmount, maxStartFees);
 
-    this?.logger?.info?.('所有订单中最大的那个首费价格:' + totalAmount);
+    this?.logger?.info?.("所有订单中最大的那个首费价格:" + totalAmount);
 
     this?.logger?.info?.(
-      '代表订单中所有子订单对应的商品的运费计价方式和价格完全相同'
+      "代表订单中所有子订单对应的商品的运费计价方式和价格完全相同"
     );
 
     this?.logger?.info?.(
-      '当我同时购买2件商品A和2件商品B,因为这两款商品都使用同一个运费模板,则只使用其中一款商品的首件运费,其余商品直接按照续件的运费进行计算,即购买2件商品A和2件商品B时'
+      "当我同时购买2件商品A和2件商品B,因为这两款商品都使用同一个运费模板,则只使用其中一款商品的首件运费,其余商品直接按照续件的运费进行计算,即购买2件商品A和2件商品B时"
     );
 
     if (templateSame && valuationSame) {
       this?.logger?.info?.(
-        '订单中所有子订单对应的商品的运费计价方式和价格完全相同'
+        "订单中所有子订单对应的商品的运费计价方式和价格完全相同"
       );
 
-      if (valuationFirst === 'mass') {
+      if (valuationFirst === "mass") {
         const otherMass: number = _?.subtract?.(
           totalMass,
           maxStartFeesMap.startStandards
@@ -447,12 +439,15 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
           return totalAmount;
         }
 
-        totalAmount = _?.add(totalAmount, _?.multiply?.(otherMass, addFeesFirst));
+        totalAmount = _?.add(
+          totalAmount,
+          _?.multiply?.(otherMass, addFeesFirst)
+        );
 
         return totalAmount;
       }
 
-      if (valuationFirst === 'volume') {
+      if (valuationFirst === "volume") {
         const otherVolume: number = _?.subtract?.(
           totalVolume,
           maxStartFeesMap.startStandards
@@ -488,19 +483,18 @@ export class DeliveryTemplateLocaleService extends BaseService { // 本地物流
     }
 
     this?.logger?.info?.(
-      '当我同时购买2件商品A和2件商品C,这两款商品都是按照件数计算运费,但使用的是不同的运费模板,则会比较这两款商品中首件的运费,选择首件运费最大的费用作为首件费用（商品C首件运费20元）,然后忽略商品A的首件运费,商品A全部按照该商品的续件费用进行计算运费'
+      "当我同时购买2件商品A和2件商品C,这两款商品都是按照件数计算运费,但使用的是不同的运费模板,则会比较这两款商品中首件的运费,选择首件运费最大的费用作为首件费用（商品C首件运费20元）,然后忽略商品A的首件运费,商品A全部按照该商品的续件费用进行计算运费"
     );
 
     this?.logger?.info?.(
-      '当我同时购买2件商品A和2kg商品D,商品A按照件数计算运费,商品D按照重量计算运费,则会比较这两款商品中首件（首公斤）的运费,选择首件（首公斤）运费最大的费用作为首件（首公斤）费用（商品D首公斤运费12元）,然后忽略商品A的首件运费,商品A全部按照该商品的续件费用进行计算运费'
+      "当我同时购买2件商品A和2kg商品D,商品A按照件数计算运费,商品D按照重量计算运费,则会比较这两款商品中首件（首公斤）的运费,选择首件（首公斤）运费最大的费用作为首件（首公斤）费用（商品D首公斤运费12元）,然后忽略商品A的首件运费,商品A全部按照该商品的续件费用进行计算运费"
     );
 
     this?.logger?.info?.(
-      '订单中所有子订单对应的商品的运费计价方式相同,但是价格不同.或者,订单中所有子订单对应的商品的运费计价方式不同'
+      "订单中所有子订单对应的商品的运费计价方式相同,但是价格不同.或者,订单中所有子订单对应的商品的运费计价方式不同"
     );
 
-    for (const any of list )  {
-
+    for (const any of list) {
       totalAmount = _?.add(totalAmount, any.totalAmountOrderItem);
     }
 

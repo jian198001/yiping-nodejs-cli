@@ -196,7 +196,7 @@ export class OutbillService extends BaseService {
           OutbillService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     let old: Outbill = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
     if (!old) {
@@ -210,7 +210,7 @@ export class OutbillService extends BaseService {
           OutbillService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     delete obj?.id;
     old = {
@@ -230,7 +230,7 @@ export class OutbillService extends BaseService {
     obj: Outbill,
     items: OutbillItem[],
     staffId: string
-  ): Promise<Outbill> {
+  ): Promise<any> {
     // 一个表进行操作 typeORM 物料领用
     let log = ""; // 删除redis缓存
 
@@ -269,7 +269,7 @@ export class OutbillService extends BaseService {
           OutbillService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     let old: Outbill = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
     if (!old) {
@@ -283,7 +283,7 @@ export class OutbillService extends BaseService {
           OutbillService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     delete obj?.id;
     old = {

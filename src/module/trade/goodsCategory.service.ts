@@ -281,7 +281,7 @@ export class GoodsCategoryService extends BaseService {
         await this?.updateCode(obj);
       }
 
-      return obj;
+      return;
     }
 
     let old: GoodsCategory = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -301,7 +301,7 @@ export class GoodsCategoryService extends BaseService {
         await this?.updateCode(obj);
       }
 
-      return obj;
+      return;
     }
 
     delete obj?.id;
@@ -316,7 +316,7 @@ export class GoodsCategoryService extends BaseService {
     if (!old?.code) {
       await this?.updateCode(old);
     }
-    return old;
+    return;
   }
 
   private async updateCode(obj: GoodsCategory): Promise<void> {

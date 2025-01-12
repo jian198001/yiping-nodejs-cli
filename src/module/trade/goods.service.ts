@@ -157,7 +157,7 @@ export class GoodsService extends BaseService {
     );
 
     if (!goods) {
-      return null;
+       return {} ;
     }
 
     const skus: any = {};
@@ -291,7 +291,7 @@ export class GoodsService extends BaseService {
 
       await this?.imgUpdate(imgs, obj?.id);
 
-      return null;
+       return {} ;
     }
 
     let old: Goods = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -307,7 +307,7 @@ export class GoodsService extends BaseService {
 
       await this?.imgUpdate(imgs, obj?.id);
 
-      return null;
+       return {} ;
     }
 
     delete obj?.id;
@@ -328,7 +328,7 @@ export class GoodsService extends BaseService {
    * @returns 更新后的商品对象
    */
   public async updateApproveStatus(id: string): Promise<object> {
-    return null;
+     return {} ;
   }
 
   /**
@@ -371,7 +371,7 @@ export class GoodsService extends BaseService {
    * @returns 商品数量
    */
   public async goodsCount(shopId: string): Promise<number> {
-    return null;
+     return 0;
   }
 
   /**
@@ -413,7 +413,7 @@ export class GoodsService extends BaseService {
   ): Promise<void> {
     this?.logger?.info?.("增加库存");
 
-    return null;
+     return
   }
 
   /**
@@ -430,7 +430,7 @@ export class GoodsService extends BaseService {
   ): Promise<void> {
     this?.logger?.info?.("减少库存");
 
-    return null;
+     return
   }
 
   private async imgUpdate(imgs = "", goodsId = ""): Promise<void> {

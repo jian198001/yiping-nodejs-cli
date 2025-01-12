@@ -1,5 +1,5 @@
 // 引入必要的模块和装饰器
-import { Logger, Provide, } from "@midwayjs/decorator";
+import { Logger, Provide } from "@midwayjs/decorator";
 import { BaseService } from "../common/service/base.service";
 import { ReqParam } from "../common/model/ReqParam";
 import { Page } from "../common/model/Page";
@@ -83,7 +83,7 @@ export class NoticeService extends BaseService {
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
       return data;
@@ -95,14 +95,10 @@ export class NoticeService extends BaseService {
     }
   }
 
-  private async getToRedis(ids) { 
-    
+  private async getToRedis(ids) {
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
 
   /**
@@ -114,7 +110,7 @@ export class NoticeService extends BaseService {
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
-    console.log('getById');
+    console.log("getById");
 
     // 根据id查询一条数据
 
@@ -127,8 +123,7 @@ export class NoticeService extends BaseService {
     // 缓存中有此数据，直接返回
 
     if (data) {
-
-      this?.logger?.info?.('缓存中有此数据，直接返回')
+      this?.logger?.info?.("缓存中有此数据，直接返回");
 
       const parse = JSON.parse(data);
 
@@ -207,7 +202,9 @@ export class NoticeService extends BaseService {
       await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, NoticeService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
-      } 
+      }
+
+      return {};
     }
 
     let old: Notice = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -217,7 +214,9 @@ export class NoticeService extends BaseService {
       await this?.repository?.save?.(obj); // insert update
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, NoticeService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
-      } 
+      }
+
+      return {};
     }
     delete obj?.id;
 

@@ -203,7 +203,7 @@ export class TabbarService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, TabbarService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
 
     let old: Tabbar = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -216,7 +216,7 @@ export class TabbarService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, TabbarService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
 
     delete obj?.id;

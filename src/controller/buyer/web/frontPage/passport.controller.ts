@@ -120,7 +120,7 @@ export class BuyerUniFrontPagePassportPassportController {
    */
   @All('/logout.json')
   public async logout(@Query('accessToken') accessToken: string): Promise<any> {
-    return null;
+     return {} ;
   }
   
   /**

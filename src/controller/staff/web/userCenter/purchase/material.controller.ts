@@ -85,7 +85,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
     // 调用物料服务的删除方法
     await this?.materialService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新物料信息
@@ -109,7 +109,7 @@ export class StaffWebUserCenterPurchaseMaterialController {
     // 调用物料服务的上架方法
     await this?.materialService?.onsale(id);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 下架物料
@@ -122,6 +122,6 @@ export class StaffWebUserCenterPurchaseMaterialController {
     // 调用物料服务的下架方法
     await this?.materialService?.instock(id);
     // 返回空值
-    return null;
+     return {} ;
   }
 }

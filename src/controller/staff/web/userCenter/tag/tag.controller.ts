@@ -85,7 +85,7 @@ export class StaffWebUserCenterTagTagController {
     // 调用标签服务的删除方法
     await this?.tagService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新标签信息

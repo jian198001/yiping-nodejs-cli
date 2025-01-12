@@ -91,7 +91,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateGlobalController 
     // 调用配送模板全局服务的删除方法
     await this?.deliveryTemplateGlobalService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新配送模板全局信息

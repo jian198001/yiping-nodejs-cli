@@ -88,7 +88,7 @@ export class BuyerWebUserCenterDeptPostController {
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用postService的del方法删除岗位
     await this?.postService?.del?.(ids);
-    return null;
+     return {} ;
   }
   
   /**

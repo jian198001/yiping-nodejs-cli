@@ -189,7 +189,7 @@ export class BuyerUniFrontPagePassportPassportController {
   @All("/logout.json")
   public async logout(@Query("accessToken") accessToken: string): Promise<any> {
     // 返回注销结果
-    return null;
+     return {} ;
   }
   /**
    * 获取验证码图片

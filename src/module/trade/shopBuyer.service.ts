@@ -211,7 +211,7 @@ export class ShopBuyerService extends BaseService {
           ShopBuyerService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
 
     let old: ShopBuyer = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -229,7 +229,7 @@ export class ShopBuyerService extends BaseService {
           ShopBuyerService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     delete obj?.id;
 
@@ -309,7 +309,7 @@ export class ShopBuyerService extends BaseService {
   public async getQrcode(shopId = "", shopBuyerId: string): Promise<any> {
     // 如果店铺买家ID为空，则返回null
     if (!shopBuyerId) {
-      return null;
+       return {} ;
     }
 
     // 根据店铺买家ID查询店铺买家信息
@@ -319,7 +319,7 @@ export class ShopBuyerService extends BaseService {
 
     // 如果店铺买家不存在，则返回null
     if (!shopBuyer) {
-      return null;
+       return {} ;
     }
 
     // 初始化返回数据对象
@@ -385,7 +385,7 @@ export class ShopBuyerService extends BaseService {
 
     // 如果店铺买家不存在或场景为空，则返回null
     if (!shopBuyer || !shopBuyer?.scene) {
-      return null;
+       return {} ;
     }
 
     // 获取子场景
@@ -407,7 +407,7 @@ export class ShopBuyerService extends BaseService {
 
     // 如果查询结果为空，则返回null
     if (!arr) {
-      return null;
+       return {} ;
     }
 
     // 返回查询结果

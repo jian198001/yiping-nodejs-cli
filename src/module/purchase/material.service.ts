@@ -218,7 +218,7 @@ export class MaterialService extends BaseService {
     if (!obj?.orderNum) {
       await super.sortOrder?.(obj?.id, null, null, MaterialService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
     }
-    return null;
+     return {} ;
   }
 
   /**
@@ -227,7 +227,7 @@ export class MaterialService extends BaseService {
    * @returns 更新后的物料对象
    */
   public async updateApproveStatus(id: string): Promise<object> {
-    return null;
+     return {} ;
   }
 
   /**
@@ -274,7 +274,7 @@ export class MaterialService extends BaseService {
    * @returns 物料数量
    */
   public async materialCount(shopId: string): Promise<number> {
-    return null;
+     return 0;
   }
 
   /**
@@ -325,10 +325,10 @@ export class MaterialService extends BaseService {
     materialId: string,
     materialSkuId: string,
     quantity: number
-  ): Promise<void> {
+  ): Promise<any> {
     this?.logger?.info?.("增加库存");
 
-    return null;
+     return {} ;
   }
 
   /**
@@ -342,9 +342,9 @@ export class MaterialService extends BaseService {
     materialId: string,
     materialSkuId: string,
     quantity: number
-  ): Promise<void> {
+  ): Promise<any> {
     this?.logger?.info?.("减少库存");
 
-    return null;
+     return {} ;
   }
 }

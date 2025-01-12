@@ -232,7 +232,7 @@ export class CartItemService extends BaseService {
           CartItemService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
 
     // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -253,7 +253,7 @@ export class CartItemService extends BaseService {
           CartItemService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     delete obj?.id;
 
@@ -449,7 +449,7 @@ export class CartItemService extends BaseService {
     priceUnit: number
   ): Promise<any[]> {
     if (!list) {
-      return null;
+       return [];
     }
 
     for (const property of list) {
@@ -483,7 +483,7 @@ export class CartItemService extends BaseService {
 
       this?.repository?.save?.(cartItem);
 
-      return null;
+       return;
     }
 
     this?.logger?.info?.("此商品在购物车中已存在");
@@ -515,7 +515,7 @@ export class CartItemService extends BaseService {
     if (!cartItems) {
       this?.logger?.info?.("此商品在购物车中不存在");
 
-      return null;
+       return;
     }
 
     this?.logger?.info?.("此商品在购物车中已存在");

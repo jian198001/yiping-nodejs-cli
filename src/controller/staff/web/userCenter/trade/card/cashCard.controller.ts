@@ -86,7 +86,7 @@ export class StaffWebUserCenterCardCashCardController {
     // 调用现金卡服务的删除方法
     await this?.cashCardService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新现金卡信息

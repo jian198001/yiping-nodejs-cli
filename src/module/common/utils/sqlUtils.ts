@@ -18,7 +18,7 @@ export function mypairs(obj: any = {}): any {
    */
 
   if (!obj) {
-    return null
+     return {} 
   }
 
   obj = objUtils?.snakeCase?.(obj);
@@ -26,7 +26,7 @@ export function mypairs(obj: any = {}): any {
   let pairs: any = _?.toPairs(obj);
 
   if (!pairs) {
-    return null
+     return {} 
   }
 
   pairs.forEach(item => {
@@ -38,7 +38,7 @@ export function mypairs(obj: any = {}): any {
   });
 
   if (!pairs) {
-    return null
+     return {} 
   }
 
   return pairs;
@@ -209,11 +209,11 @@ export function getStart(pageNum = 1, pageSize = 20): number {
 
 export function toStrOrNum(obj = ''): string {
   if (_?.isNil?.(obj)) {
-    return null
+     return  ' '
   }
 
   if (_?.isNull?.(obj) || _?.isUndefined?.(obj)) {
-    return null
+     return  ' '
   }
 
   if (_?.isBoolean?.(obj)) {
@@ -237,11 +237,11 @@ export function toStrOrNum(obj = ''): string {
   }
 
   if (_?.isNaN?.(obj)) {
-    return null
+     return  ' '
   }
 
   if (_?.isNative?.(obj)) {
-    return null
+     return  ' '
   }
 
   if (_?.isNumber?.(obj)) {
@@ -257,10 +257,10 @@ export function toStrOrNum(obj = ''): string {
   }
 
   if (_?.isSymbol?.(obj)) {
-    return null
+     return  ' ' 
   }
 
-  return null
+   return  ' '
 }
 
 export function whereOr(columnName = 'id', columnIds: any[] = []): string {

@@ -1,78 +1,79 @@
 /**
  * 导入MidwayJS的依赖注入和日志装饰器
  */
-import { Inject, Logger, Provide } from '@midwayjs/decorator';
+import { Inject, Logger, Provide } from "@midwayjs/decorator";
 /**
  * 导入自定义的基础服务类
  */
-import { BaseService } from '../common/service/base.service';
+import { BaseService } from "../common/service/base.service";
 /**
  * 导入请求参数模型
  */
-import { ReqParam } from '../common/model/ReqParam';
+import { ReqParam } from "../common/model/ReqParam";
 /**
  * 导入分页模型
  */
-import { Page } from '../common/model/Page';
+import { Page } from "../common/model/Page";
 /**
  * 导入TypeORM的Repository类
  */
-import { Repository } from 'typeorm';
+import { Repository } from "typeorm";
 /**
  * 导入MidwayJS的实体模型注入装饰器
  */
-import { InjectEntityModel } from '@midwayjs/typeorm';
+import { InjectEntityModel } from "@midwayjs/typeorm";
 /**
  * 导入买家收货地址实体类
  */
-import { BuyerReceiveAddress } from '../../entity/BuyerReceiveAddress';
+import { BuyerReceiveAddress } from "../../entity/BuyerReceiveAddress";
 /**
  * 导入MidwayJS的日志接口
  */
-import { ILogger } from '@midwayjs/logger';
+import { ILogger } from "@midwayjs/logger";
 /**
  * 导入店铺实体类
  */
-import { Shop } from '../../entity/Shop';
+import { Shop } from "../../entity/Shop";
 /**
  * 导入自定义的错误类
  */
-import { Zero0Error } from '../common/model/Zero0Error';
+import { Zero0Error } from "../common/model/Zero0Error";
 /**
  * 导入Lodash库
  */
-import _ = require('lodash');
+import _ = require("lodash");
 /**
  * 导入自定义的SQL工具类
  */
-import * as sqlUtils from '../common/utils/sqlUtils';
+import * as sqlUtils from "../common/utils/sqlUtils";
 /**
  * 导入自定义的字符串工具类
  */
-import * as strUtils from '../common/utils/strUtils';
+import * as strUtils from "../common/utils/strUtils";
 /**
  * 导入店铺买家服务类
  */
-import { ShopBuyerService } from './shopBuyer.service';
+import { ShopBuyerService } from "./shopBuyer.service";
 
 /**
  * 买家收货地址服务类
  */
 @Provide()
-export class BuyerReceiveAddressService extends BaseService { // 买家收货地址服务
+export class BuyerReceiveAddressService extends BaseService {
+  // 买家收货地址服务
 
   @Logger()
-  private logger: ILogger = null
+  private logger: ILogger = null;
 
   // 查询的数据库表名称
-  private static TABLE_NAME = 'buyer_receive_address';
+  private static TABLE_NAME = "buyer_receive_address";
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${BuyerReceiveAddressService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   
-     `
+     `;
 
   @InjectEntityModel(BuyerReceiveAddress)
   private repository: Repository<BuyerReceiveAddress> = null;
@@ -93,19 +94,29 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
    * @returns Promise<any> - 返回分页查询结果
    */
   public async page(
-    shopBuyerId = '',
-    query: string, params: string, reqParam: ReqParam, 
-    page: Page, 
+    shopBuyerId = "",
+    query: string,
+    params: string,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
 
-    let whereSql = ' ' // 查询条件字符串
+    let whereSql = " "; // 查询条件字符串
 
     // 处理前端的搜索字符串的搜索需求
-    whereSql += sqlUtils?.like?.(['name'], reqParam?.searchValue, ) 
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue);
 
     // 处理前端的表格中筛选需求
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters) + sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr?.(JSON?.parse?.(params), ['current', 'pageSize', ])) + sqlUtils?.query?.(query)  
+    whereSql +=
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(JSON?.parse?.(params), [
+          "current",
+          "pageSize",
+        ])
+      ) +
+      sqlUtils?.query?.(query);
 
     const shopBuyer: any = await this?.shopBuyerService.getById?.(shopBuyerId);
 
@@ -118,22 +129,22 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
       this?.fromSql,
       whereSql,
       reqParam,
-      page,
+      page
     );
 
     // 遍历查询结果,将查询结果异步读取到redis
 
     // 遍历查询结果,将查询结果中异步读取到redis
 
-    this?.getToRedis?.(_?.map?.(data?.list, 'id'))
+    this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
     if (page?.pageSize > 0) {
-        return data
+      return data;
     }
-  
+
     if (page?.pageSize < 1) {
-        // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-        return _?.keyBy?.(data?.list, "value");
+      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+      return _?.keyBy?.(data?.list, "value");
     }
   }
 
@@ -141,13 +152,9 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
     // 根据id查询一条数据
 
     for (const id of ids) {
-
-      await this?.getById?.(id)
-
+      await this?.getById?.(id);
     }
-  
   }
-
 
   /**
    * 根据ID查询买家收货地址
@@ -155,12 +162,11 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
    * @returns Promise<any> - 返回查询结果
    */
   public async getById(id = ""): Promise<any> {
-
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
     // 根据id查询一条数据
-    
+
     // 查看缓存中是否有此数据
 
     const key = BuyerReceiveAddressService.TABLE_NAME + `:${id}`;
@@ -169,12 +175,10 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
 
     // 缓存中有此数据，直接返回
 
-    if (data) { 
+    if (data) {
+      const parse = JSON.parse(data);
 
-        const parse = JSON.parse(data);
-  
-        return parse;
-   
+      return parse;
     }
 
     // 缓存中没有此数据，查询数据库
@@ -198,17 +202,16 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
    * @returns Promise<void> - 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = BuyerReceiveAddressService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = BuyerReceiveAddressService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+  }
 
   /**
    * 更新买家收货地址
@@ -226,8 +229,8 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
 
     obj.buyerId = shopBuyer.buyerId;
 
-    let log = '';
-// 删除redis缓存
+    let log = "";
+    // 删除redis缓存
 
     const key = BuyerReceiveAddressService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -240,28 +243,29 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
       obj?.id
     ); // 新增或修改数据时，判断某字段值在数据库中是否已重复
 
-    if (uniqueText) { // 某unique字段值已存在，抛出异常，程序处理终止
-      log = uniqueText + '已存在，操作失败';
+    if (uniqueText) {
+      // 某unique字段值已存在，抛出异常，程序处理终止
+      log = uniqueText + "已存在，操作失败";
 
-      const zero0Error: Zero0Error = new Zero0Error(log, '5000')
-      this?.logger?.error?.(log, zero0Error)
-      throw zero0Error
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
+      this?.logger?.error?.(log, zero0Error);
+      throw zero0Error;
     }
 
     // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
-      log = '新增数据，主键id的随机字符串值，由后端typeorm提供'
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
 
-      delete obj?.id
+      delete obj?.id;
     }
 
-    this?.logger?.info?.('首先判断此地址是否已存在');
+    this?.logger?.info?.("首先判断此地址是否已存在");
 
-    this?.logger?.info?.('此买家没有设置任何地址信息,此地址将保存为默认地址');
+    this?.logger?.info?.("此买家没有设置任何地址信息,此地址将保存为默认地址");
 
     // 通过buyerId取得buyerId
-    const buyerId = '';
+    const buyerId = "";
 
     const number: number = await this?.repository?.countBy({
       buyerId: buyerId,
@@ -276,14 +280,14 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
     }
 
     if (obj.defaultStatus === 0) {
-      this?.logger?.info?.('此地址不是默认地址');
+      this?.logger?.info?.("此地址不是默认地址");
 
       this?.repository?.save?.(obj);
 
       return;
     }
 
-    this?.logger?.info?.('此地址是默认地址');
+    this?.logger?.info?.("此地址是默认地址");
 
     // 将此会员的所有其它地址都设置为非默认地址，然后再将此地址设置为默认地址
     const sql = ` UPDATE buyer_receive_address SET default_status = '0' WHERE buyer_id = '${buyerId}' `;
@@ -299,18 +303,14 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
    * @param shopId - 店铺ID
    * @returns Promise<BuyerReceiveAddress> - 返回默认收货地址对象
    */
-  public async getDefalut(
-    buyerId: string,
-    shopId = ''
-  ): Promise<BuyerReceiveAddress> {
+  public async getDefalut(buyerId: string, shopId = ""): Promise<any> {
     // 记录日志，确定此店铺的物流范围是全球还是本地
-    this
     const shop: Shop = await this?.shopRepository?.findOneById?.(shopId); // 店铺信息
     const deliveryArea: string = shop.deliveryArea; // 本店铺对应的运营区域TODO
     let sql = ` SELECT t.* FROM buyer_receive_address t WHERE t.buyer_id = '${buyerId}' `;
 
-    if ((shop) && deliveryArea !== 'global') {
-      this?.logger?.info?.('此店铺的物流范围是本地');
+    if (shop && deliveryArea !== "global") {
+      this?.logger?.info?.("此店铺的物流范围是本地");
 
       sql =
         sql +
@@ -321,7 +321,7 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
       }
     }
 
-    const order = ' ORDER BY t.default_status DESC, order_num DESC ';
+    const order = " ORDER BY t.default_status DESC, order_num DESC ";
 
     const sqlAddress: string = sql + order;
 
@@ -331,6 +331,6 @@ export class BuyerReceiveAddressService extends BaseService { // 买家收货地
       return _?.head?.(addressList);
     }
 
-    return null
+    return {};
   }
 }

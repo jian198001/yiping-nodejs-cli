@@ -19,7 +19,7 @@ export function getChildren(treeData, value) {
     }
   }
 
-  return null
+   return {} 
 }
 
 export function getIds(treeData, ids) {

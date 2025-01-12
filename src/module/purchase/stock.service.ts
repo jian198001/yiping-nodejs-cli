@@ -184,14 +184,14 @@ export class StockService extends BaseService {
     if (!obj?.orderNum) {
       await super.sortOrder?.(obj?.id, null, null, StockService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
     }
-    return null;
+     return {} ;
   }
   /**
    * 增加库存
    * @param obj - 库存对象
    * @returns 增加后的库存对象
    */
-  public async add(obj: Stock): Promise<Stock> {
+  public async add(obj: Stock): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
@@ -232,6 +232,6 @@ export class StockService extends BaseService {
     if (!obj?.orderNum) {
       await super.sortOrder?.(obj?.id, null, null, StockService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
     }
-    return null;
+     return {} ;
   }
 }

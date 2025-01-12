@@ -148,7 +148,7 @@ export class StaffService extends BaseService {
     );
 
     if (!object) {
-      return null;
+       return {} ;
     }
 
     return object;
@@ -216,7 +216,7 @@ export class StaffService extends BaseService {
       if (!staff) {
         await this?.repository?.save?.(obj); // insert update
 
-        return null;
+         return {} ;
       }
 
       staff = {

@@ -60,7 +60,7 @@ export class CredentialsService extends BaseService {
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
       // 返回null，表示插入操作成功
-      return null;
+       return {} ;
     }
 
     // 如果obj.id不为空，说明这是一个更新操作
@@ -86,7 +86,7 @@ export class CredentialsService extends BaseService {
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
       // 返回null，表示插入操作成功
-      return null;
+       return {} ;
     }
     // 删除obj中的id属性，因为id不应该被更新
     delete obj?.id;

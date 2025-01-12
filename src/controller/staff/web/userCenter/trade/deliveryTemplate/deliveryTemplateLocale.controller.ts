@@ -98,7 +98,7 @@ export class StaffWebUserCenterDeliveryTemplateDeliveryTemplateLocaleController 
     await this?.deliveryTemplateLocaleService?.del?.(ids);
 
     // 返回空值
-    return null;
+     return {} ;
   }
 
   /**

@@ -125,7 +125,7 @@ export class <%= data.formNameUpperFirst %>Service extends BaseService {
 
     }
 
-    public async update(obj: <%= data.formNameUpperFirst %>,): Promise<any> { // 一个表进行操作 typeORM
+    public async update(obj: <%= data.formNameUpperFirst %>,): Promise<void> { // 一个表进行操作 typeORM
 
         let log: string = '', uniqueWhere: any = { id: Equal(obj?.id,), };
 

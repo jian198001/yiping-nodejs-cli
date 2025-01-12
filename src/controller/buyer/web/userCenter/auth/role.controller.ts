@@ -91,7 +91,7 @@ export class BuyerWebUserCenterAuthRoleController {
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用roleService的del方法删除角色
     await this?.roleService?.del?.(ids);
-    return null;
+     return {} ;
   }
   
   /**

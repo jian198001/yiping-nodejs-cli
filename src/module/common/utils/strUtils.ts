@@ -129,7 +129,7 @@ export function antParams2Arr(params: any, exclude: string[] = [], ): any[] {
 
   if (!params) {
     
-    return null
+     return []
 
   }
 

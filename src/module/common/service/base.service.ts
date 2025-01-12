@@ -122,7 +122,7 @@ export abstract class BaseService {
     const result: any[] = await this?.query?.(sql);
 
     if (!result) {
-      return null;
+       return {} ;
     }
 
     // 将查询结果的字段名转换为驼峰命名
@@ -443,7 +443,7 @@ export abstract class BaseService {
     const sql = ` SELECT COUNT(*) AS count_0 FROM ${tableName} t WHERE 1>0 `;
 
     if (!columnArr) {
-      return null;
+       return '';
     }
 
     let sqlId = ` `;
@@ -472,6 +472,6 @@ export abstract class BaseService {
       }
     }
 
-    return null;
+     return '';
   }
 }

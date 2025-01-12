@@ -83,7 +83,7 @@ export class StaffWebFrontPageFormFormSubmitController {
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用formSubmitService的del方法删除表单提交记录
     await this?.formSubmitService?.del?.(ids);
-    return null;
+     return {} ;
   }
   
   /**

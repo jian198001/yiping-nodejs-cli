@@ -88,7 +88,7 @@ export class BuyerWebUserCenterDeptOrgController {
   public async del(@Body() ids: string[]): Promise<any> {
     // 调用orgService的del方法删除组织
     await this?.orgService?.del?.(ids);
-    return null;
+     return {} ;
   }
   
   /**

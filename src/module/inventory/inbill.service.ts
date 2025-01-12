@@ -188,7 +188,7 @@ export class InbillService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, InbillService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+      return {};
     }
     let old: Inbill = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
     if (!old) {
@@ -197,7 +197,7 @@ export class InbillService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, InbillService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+      return {};
     }
     delete obj?.id;
     old = {
@@ -212,10 +212,7 @@ export class InbillService extends BaseService {
    * @param purchaseOrderId - 采购订单ID
    * @returns 更新后的入库单对象
    */
-  public async purchaseInbill(
-    obj: Inbill,
-    purchaseOrderId = ""
-  ): Promise<Inbill> {
+  public async purchaseInbill(obj: Inbill, purchaseOrderId = ""): Promise<any> {
     // 采购入库
     // 一个表进行操作 typeORM 采购入库
     let log = ""; // 删除redis缓存
@@ -242,7 +239,7 @@ export class InbillService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, "stock"); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+      return {};
     }
     let old: Stock = await this?.stockRepository?.findOneById?.(obj?.id); //
     if (!old) {
@@ -251,7 +248,7 @@ export class InbillService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, "stock"); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+      return {};
     }
     delete obj?.id;
     old = {
@@ -288,7 +285,7 @@ export class InbillService extends BaseService {
     //   if (!obj?.orderNum) {
     //     await super.sortOrder?.(obj?.id, null, null, 'stock') // 新增数据时，设置此条数据的orderNum排序值
     //   }
-    //   return null
+    //    return {}
     // }
     // let old: Stock = await this?.stockRepository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
     // if (!old) {
@@ -297,7 +294,7 @@ export class InbillService extends BaseService {
     //   if (!obj?.orderNum) {
     //     await super.sortOrder?.(obj?.id, null, null, 'stock') // 新增数据时，设置此条数据的orderNum排序值
     //   }
-    //   return null
+    //    return {}
     // }
     // delete obj?.id
     // old = {

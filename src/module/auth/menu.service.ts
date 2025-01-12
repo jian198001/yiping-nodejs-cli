@@ -25,7 +25,7 @@ export class MenuService extends BaseService {
 
       await this?.menuModel?.create(obj);
 
-      return obj;
+      return;
     } else if (obj?.level === 1) {
       // 修改一级菜单
 

@@ -91,6 +91,9 @@ export class StaffWebUserCenterNoticeNoticeController {
    */
   @All('/update.json', )
   public async update(@Body() obj: Notice): Promise<any> {
+
+    console.log('更新通知');
+
     // 调用noticeService的update方法更新通知
     return await this?.noticeService?.update?.(obj);
   }

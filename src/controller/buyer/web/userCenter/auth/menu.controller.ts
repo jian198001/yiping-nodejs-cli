@@ -43,7 +43,7 @@ export class BuyerWebUserCenterAuthMenuController {
   ): Promise<any> {
     // 调用menuService的del方法根据ID和级别删除菜单
     await this?.menuService?.del?.(id, level);
-    return null;
+     return {} ;
   }
 
   /**

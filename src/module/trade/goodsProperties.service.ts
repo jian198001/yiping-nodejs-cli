@@ -219,7 +219,7 @@ export class GoodsPropertiesService extends BaseService {
           GoodsPropertiesService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
 
     let old: GoodsPropertiesKey = await this?.repository?.findOneById?.(
@@ -239,7 +239,7 @@ export class GoodsPropertiesService extends BaseService {
           GoodsPropertiesService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-      return null;
+       return {} ;
     }
     delete obj?.id;
 
@@ -258,7 +258,7 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 中文描述字符串
    */
   public async getCnStrFromCart(properties: string): Promise<string> {
-    return null;
+     return  ' '
   }
 
   /**
@@ -267,7 +267,7 @@ export class GoodsPropertiesService extends BaseService {
    * @returns 初始SKU对象
    */
   public async getInitialSkuFromCart(properties: string): Promise<object> {
-    return null;
+     return {} ;
   }
 
   /**

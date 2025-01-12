@@ -217,7 +217,7 @@ export class RoleService extends BaseService {
         if (!obj?.orderNum) {
           await super.sortOrder?.(obj?.id, null, null, RoleService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
         }
-        return null;
+        return;
       }
       role.name = obj?.name;
       role.roleKey = obj?.roleKey;
@@ -240,7 +240,7 @@ export class RoleService extends BaseService {
       roleMenuMapNew.menuId = menuId;
       await this?.roleMenuMapRepository?.save?.(roleMenuMapNew);
     }
-    return role;
+    return;
   }
   /**
    * 更新角色的数据范围

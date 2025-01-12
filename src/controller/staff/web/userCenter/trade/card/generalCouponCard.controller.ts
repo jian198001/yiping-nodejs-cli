@@ -91,7 +91,7 @@ export class StaffWebUserCenterCardGeneralCouponCardController {
     // 调用通用优惠券卡服务的删除方法
     await this?.generalCouponCardService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新通用优惠券卡信息

@@ -86,7 +86,7 @@ export class StaffWebUserCenterCardGrouponCardController {
     // 调用团购卡服务的删除方法
     await this?.grouponCardService?.del?.(ids);
     // 返回空值
-    return null;
+     return {} ;
   }
   /**
    * 更新团购卡信息

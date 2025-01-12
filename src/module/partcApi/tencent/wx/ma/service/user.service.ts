@@ -146,7 +146,7 @@ export class UserService extends BaseService {
   
     // 如果查询结果为空，返回null
     if (!result) {
-      return null;
+       return ' '
     }
   
     return result?.[0]?.openId;
