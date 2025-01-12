@@ -49,6 +49,9 @@ export class StaffWebUserCenterNoticeNoticeController {
     @Query() reqParam: ReqParam,
     @Query() page: Page,
   ): Promise<any> {
+
+    console.log('page: ', page);    
+
     // 记录日志
     this?.logger?.info?.('分页列表controller');
     
@@ -91,8 +94,6 @@ export class StaffWebUserCenterNoticeNoticeController {
    */
   @All('/update.json', )
   public async update(@Body() obj: Notice): Promise<any> {
-
-    console.log('更新通知');
 
     // 调用noticeService的update方法更新通知
     return await this?.noticeService?.update?.(obj);

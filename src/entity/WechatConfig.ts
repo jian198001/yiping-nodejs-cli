@@ -7,7 +7,7 @@ import { BaseModel, } from "../module/common/model/BaseModel";
  * 继承自BaseModel，包含微信相关的各种配置信息
  */
 @Entity()
-export class wechatConfig extends BaseModel {
+export class WechatConfig extends BaseModel {
   /**
    * 网页授权回调地址
    * 用于微信网页授权回调

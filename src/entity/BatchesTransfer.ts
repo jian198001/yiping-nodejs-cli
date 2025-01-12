@@ -6,7 +6,7 @@ import { BaseModel, } from "../module/common/model/BaseModel";
  * 继承自BaseModel，包含商家转账相关的各种信息
  */
 @Entity()
-export class TransferDetailList extends BaseModel {
+export class BatchesTransfer extends BaseModel {
     // 直连商户的appid，不传默认使用初始化数据
     @Column({ nullable: true, comment: '直连商户的appid -不传 默认使用初始化数据', })
     appid: string 
