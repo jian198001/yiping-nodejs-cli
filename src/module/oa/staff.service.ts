@@ -30,7 +30,6 @@ export class StaffService extends BaseService {
   // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
   
-  , ( SELECT name FROM dept WHERE dept.id = t.dept_id ) AS dept_name
   , '' AS title
   , mobile AS phone
      `;
@@ -81,10 +80,6 @@ export class StaffService extends BaseService {
     page: Page
   ): Promise<any> {
     let whereSql = " "; // 查询条件字符串
-
-    if (deptId) {
-      whereSql += ` AND t.dept_id = '${deptId}' `;
-    }
 
     // 处理前端的搜索字符串的搜索需求
     whereSql += sqlUtils?.like?.(["name", "mobile"], reqParam?.searchValue);
@@ -148,7 +143,7 @@ export class StaffService extends BaseService {
     );
 
     if (!object) {
-       return {} ;
+      return {};
     }
 
     return object;
@@ -216,7 +211,7 @@ export class StaffService extends BaseService {
       if (!staff) {
         await this?.repository?.save?.(obj); // insert update
 
-         return {} ;
+        return {};
       }
 
       staff = {
