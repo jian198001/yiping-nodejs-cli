@@ -95,18 +95,24 @@ export class PurchaseOrderService extends BaseService {
     }
 
     whereSql += sqlUtils?.like?.(["title"], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
+
+    let parameters: any[] = [];
+    if (params && params?.length > 3) {
+      // 解析前端传递的参数
+      parameters = JSON?.parse?.(params);
+    }
+    // 处理前端的表格中筛选需求
+
     // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
-    // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
+    // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
     whereSql +=
-      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
       sqlUtils?.mulColumnLike?.(
-        strUtils?.antParams2Arr?.(JSON?.parse?.(params), [
-          "current",
-          "pageSize",
-        ])
+        strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
       ) +
-      sqlUtils?.query?.(query); // 处理前端的表格中筛选需求
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.query?.(query);
+
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,

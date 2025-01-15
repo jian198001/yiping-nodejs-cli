@@ -83,17 +83,24 @@ export class ShopBuyerService extends BaseService {
 
     // 使用sqlUtils?.like处理前端的搜索字符串的搜索需求
     whereSql += sqlUtils?.like?.(["code"], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
+
+    let parameters: any[] = [];
+    if (params && params?.length > 3) {
+      // 解析前端传递的参数
+      parameters = JSON?.parse?.(params);
+    }
+    // 处理前端的表格中筛选需求
+
     // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
-    // // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    // 使用sqlUtils?.whereOrFilters处理前端的表格中筛选需求
-    whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters); // 处理前端的表格中筛选需求
-    // 使用sqlUtils?.mulColumnLike处理pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
-    whereSql += sqlUtils?.mulColumnLike?.(
-      strUtils?.antParams2Arr?.(JSON?.parse?.(params), ["current", "pageSize"])
-    );
-    // 使用sqlUtils?.query处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
-    whereSql += sqlUtils?.query?.(query);
+    // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
+    whereSql +=
+      sqlUtils?.mulColumnLike?.(
+        strUtils?.antParams2Arr?.(parameters, ["current", "pageSize"])
+      ) +
+      sqlUtils?.whereOrFilters?.(reqParam?.filters) +
+      sqlUtils?.query?.(query);
+
     // 执行查询语句并返回page对象结果
     // 执行分页查询
     const data: any = await super.pageBase?.(
@@ -211,7 +218,7 @@ export class ShopBuyerService extends BaseService {
           ShopBuyerService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-       return {} ;
+      return {};
     }
 
     let old: ShopBuyer = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -229,7 +236,7 @@ export class ShopBuyerService extends BaseService {
           ShopBuyerService?.TABLE_NAME
         ); // 新增数据时，设置此条数据的orderNum排序值
       }
-       return {} ;
+      return {};
     }
     delete obj?.id;
 
@@ -309,7 +316,7 @@ export class ShopBuyerService extends BaseService {
   public async getQrcode(shopId = "", shopBuyerId: string): Promise<any> {
     // 如果店铺买家ID为空，则返回null
     if (!shopBuyerId) {
-       return {} ;
+      return {};
     }
 
     // 根据店铺买家ID查询店铺买家信息
@@ -319,7 +326,7 @@ export class ShopBuyerService extends BaseService {
 
     // 如果店铺买家不存在，则返回null
     if (!shopBuyer) {
-       return {} ;
+      return {};
     }
 
     // 初始化返回数据对象
@@ -385,7 +392,7 @@ export class ShopBuyerService extends BaseService {
 
     // 如果店铺买家不存在或场景为空，则返回null
     if (!shopBuyer || !shopBuyer?.scene) {
-       return {} ;
+      return {};
     }
 
     // 获取子场景
@@ -407,7 +414,7 @@ export class ShopBuyerService extends BaseService {
 
     // 如果查询结果为空，则返回null
     if (!arr) {
-       return {} ;
+      return {};
     }
 
     // 返回查询结果

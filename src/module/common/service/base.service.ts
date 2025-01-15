@@ -1,32 +1,74 @@
+// 引入Midway.js的装饰器，用于依赖注入和配置注入
 import { Config, Inject, Provide } from "@midwayjs/decorator";
+// 引入自定义的MySQL查询工具函数
 import { query } from "../dao/mysql";
+// 引入分页模型
 import { Page } from "../model/Page";
+// 引入请求参数模型
 import { ReqParam } from "../model/ReqParam";
 
+// 引入lodash库，用于处理数组、对象等数据
 import _ = require("lodash");
+// 引入Redis服务，用于缓存数据
 import { RedisService } from "@midwayjs/redis";
 
+/**
+ * SQL工具模块，包含各种SQL语句处理函数
+ * @module sqlUtils
+ */
 const sqlUtils: any = require("../utils/sqlUtils"),
+  /**
+   * 数组工具模块，包含各种数组处理函数
+   * @module arrayUtils
+   */
   arrayUtils: any = require("../utils/arrayUtils"),
+  /**
+   * 对象工具模块，包含各种对象处理函数
+   * @module objUtils
+   */
   objUtils: any = require("../utils/objUtils"),
+  /**
+   * 分页工具模块，包含各种分页处理函数
+   * @module pageUtils
+   */
   pageUtils: any = require("../utils/pageUtils");
 
+/**
+ * 基础服务类，提供通用的服务功能。
+ * 该类使用 Midway.js 的装饰器 `@Provide` 来标记为一个服务提供者，
+ * 可以被其他类通过依赖注入使用。
+ */
 @Provide()
 export abstract class BaseService {
-
+  /**
+   * 注入 Redis 服务实例，用于缓存数据。
+   * 该属性通过 Midway.js 的 `@Inject` 装饰器进行依赖注入。
+   */
   @Inject()
   protected redisService: RedisService;
 
+  /**
+   * 配置属性，用于存储 MySQL 数据库的配置信息。
+   * 该属性通过 Midway.js 的 `@Config` 装饰器注入，配置键为 "typeorm"。
+   */
   @Config("typeorm")
   private mysqlConf: any = null;
 
-  protected static selSql = ` SELECT t.*
-  , t.name AS label
-  , t.name AS text
-  , t.id AS value `;
+  /**
+   * 静态属性，定义了一个 SQL 查询语句模板。
+   * 该 SQL 语句用于查询表中的所有字段，并添加了一些别名，
+   * 如将 `name` 字段别名为 `label` 和 `text`，将 `id` 字段别名为 `value`。
+   */
+  protected static selSql = `
+    SELECT t.*
+    , t.name AS label
+    , t.name AS text
+    , t.id AS value
+  `;
+
   /**
    * 分页查询基础方法
-   * 
+   *
    * @param selectSql - 查询的字段
    * @param fromSql - 查询的表
    * @param whereSql - 查询的条件
@@ -46,7 +88,7 @@ export abstract class BaseService {
     }
 
     // 构造查询总条数的SQL
-    const sqlCount: string = sqlUtils?.selectCount?.(fromSql, whereSql); 
+    const sqlCount: string = sqlUtils?.selectCount?.(fromSql, whereSql);
 
     // 执行查询总条数的SQL
     const resultCount: any = await this?.query?.(sqlCount);
@@ -60,7 +102,7 @@ export abstract class BaseService {
     }
 
     // 设置分页对象的总条数
-    page.total = head?.count_0; 
+    page.total = head?.count_0;
 
     if (!reqParam) {
       reqParam = new ReqParam();
@@ -101,7 +143,7 @@ export abstract class BaseService {
 
   /**
    * 根据ID查询基础方法
-   * 
+   *
    * @param id - 查询的ID
    * @param selectSql - 查询的字段
    * @param fromSql - 查询的表
@@ -113,7 +155,7 @@ export abstract class BaseService {
     fromSql: string
   ): Promise<any> {
     // 构造查询条件
-    const whereSql: string = sqlUtils?.where?.({ id: id }, "t"); 
+    const whereSql: string = sqlUtils?.where?.({ id: id }, "t");
 
     // 构造查询的SQL
     const sql: string = sqlUtils?.selectPage?.(selectSql, fromSql, whereSql);
@@ -122,7 +164,7 @@ export abstract class BaseService {
     const result: any[] = await this?.query?.(sql);
 
     if (!result) {
-       return {} ;
+      return {};
     }
 
     // 将查询结果的字段名转换为驼峰命名
@@ -131,7 +173,7 @@ export abstract class BaseService {
 
   /**
    * 查询数组基础方法
-   * 
+   *
    * @param reqParam - 请求参数
    * @param selectSql - 查询的字段
    * @param fromSql - 查询的表
@@ -170,7 +212,7 @@ export abstract class BaseService {
 
   /**
    * 查询基础方法
-   * 
+   *
    * @param sql - 查询的SQL
    * @returns 返回查询结果数组
    */
@@ -190,7 +232,7 @@ export abstract class BaseService {
 
   /**
    * 排序基础方法
-   * 
+   *
    * @param id - 排序的ID
    * @param prevId - 前一个ID
    * @param nextId - 后一个ID
@@ -358,28 +400,48 @@ export abstract class BaseService {
 
     return orderNum;
   }
-
+  /**
+   * 获取排序序号
+   *
+   * @param {number} orderNumPrev - 前一个排序序号，默认为0
+   * @param {number} orderNumNext - 后一个排序序号，默认为0
+   * @returns {Promise<number>} 返回计算后的排序序号
+   */
   protected async getOrderNum(
     orderNumPrev = 0,
     orderNumNext = 0
   ): Promise<number> {
+    // 初始化排序序号差值
     let orderNumSub = 0;
 
+    // 根据前一个和后一个排序序号的大小关系计算差值
     if (orderNumPrev > orderNumNext) {
+      // 使用lodash的subtract方法计算差值
       orderNumSub = _?.subtract?.(orderNumPrev, orderNumNext);
     } else {
+      // 使用lodash的subtract方法计算差值
       orderNumSub = _?.subtract?.(orderNumNext, orderNumPrev);
     }
 
+    // 将差值除以2并向下取整
     const orderNumSubDec: number = _?.floor(_?.divide?.(orderNumSub, 2));
 
+    // 根据前一个和后一个排序序号的大小关系返回计算后的排序序号
     if (orderNumPrev > orderNumNext) {
       return orderNumPrev + orderNumSubDec;
     }
 
     return orderNumNext + orderNumSubDec;
   }
-
+  /**
+   * 为树形结构中的叶子节点生成唯一的代码值
+   *
+   * @param parentCode - 父节点的代码值，如果没有父节点则为空字符串
+   * @param tableName - 要查询的表名
+   * @param len - 代码的固定长度，默认为4
+   * @param columnName - 存储代码值的列名，默认为"code"
+   * @returns 生成的唯一代码值
+   */
   public async getCode(
     parentCode: string,
     tableName: string,
@@ -389,89 +451,79 @@ export abstract class BaseService {
     // 在树形结构中，为每一个叶子节点，生成对应的code值
     // 子节点生成的code值，会在父节点的code值基础上，增加固定长度的后缀
     // 方便数据库查询时，根据父节点找到对应的所有子孙节点，并根据子孙节点，快速找到对应的父节点
-
+    // 计算新的代码长度，如果有父节点，则长度为父节点代码长度加上固定长度
     let newCodeLen = len;
-
     if (parentCode) {
       newCodeLen = parentCode?.length + len;
     }
-
+    // 构建查询SQL，查找指定长度且符合父节点前缀的最大代码值
     let sql = ` SELECT MAX(t.${columnName}) AS max_code FROM ${tableName} t WHERE LENGTH(t.${columnName}) = ${newCodeLen} `;
-
     if (parentCode) {
       sql += ` AND ${columnName} LIKE '${parentCode}%' `;
     }
-
     const results = await this?.query?.(sql);
-
     const maxCode = results?.[0]?.max_code;
-
     if (!maxCode) {
       // TODO
-
       let code = _?.padStart?.("1", len, "0");
-
       if (parentCode) {
         code = parentCode + code;
       }
-
       return code;
     }
-
     // 取得当前parentCode下面的最大值的code的值
-
     const codeNew = parseInt?.(maxCode) + 1;
-
     // 设置当前的code为parentCode+code+1的值
-
     const code = _?.padStart?.(codeNew + "", newCodeLen, "0");
-
     return code;
   }
 
+  /**
+   * 检查给定表中的列值是否唯一
+   *
+   * @param tableName - 要检查的表名
+   * @param columnArr - 要检查的列数组，每个元素包含label和value属性
+   * @param id - 可选的ID，用于排除当前记录
+   * @returns 如果有重复的值，返回重复的文本，否则返回空字符串
+   */
   protected async unique(
     tableName = "",
     columnArr: any[] = [],
     id = ""
   ): Promise<string> {
     // 查询列值是否重复
-
+    // 将表名转换为小写并使用snake_case格式
     tableName = _?.lowerFirst?.(tableName);
-
     tableName = _?.snakeCase?.(tableName);
-
+    // 构建查询SQL
     const sql = ` SELECT COUNT(*) AS count_0 FROM ${tableName} t WHERE 1>0 `;
-
+    // 如果列数组为空，直接返回
     if (!columnArr) {
-       return '';
+      return "";
     }
-
+    // 构建ID条件
     let sqlId = ` `;
-
     if (id) {
       sqlId = ` AND t.id != '${id}' `;
     }
-
+    // 遍历列数组
     for (const element of columnArr) {
       let label = element?.label;
-
       const value = element?.value;
-
+      // 将列名转换为小写并使用snake_case格式
       label = _?.lowerFirst?.(label);
-
       label = _?.snakeCase?.(label);
-
+      // 构建查询条件
       const sqlWhere = sql + ` AND t.${label} = '${value}' ` + sqlId;
-
+      // 执行查询
       const arr = await this?.query?.(sqlWhere);
-
       const count = arr?.[0]?.count_0;
-
+      // 如果有重复值，返回重复的文本
       if (count > 0) {
         return element?.text;
       }
     }
-
-     return '';
+    // 如果没有重复值，返回空字符串
+    return "";
   }
 }
