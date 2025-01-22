@@ -71,6 +71,21 @@ export class ShopBuyerService extends BaseService {
   ): Promise<any> {
     // 分页列表查询数据
 
+    // 缓存中有此数据，直接返回
+    if (page?.pageSize < 1) {
+      // 查看缓存中是否有此数据
+
+      const key = ShopBuyerService?.TABLE_NAME + `:arr`;
+
+      const data = await this?.redisService?.get?.(key);  
+
+      if (data) {
+        const parse = JSON.parse(data);
+
+        return parse;
+      }
+    }  
+
     console?.log(this?.log);
 
     // 初始化查询条件字符串
@@ -122,10 +137,9 @@ export class ShopBuyerService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
-    }
+    
   }
 
   private async getToRedis(ids) {
@@ -167,7 +181,10 @@ export class ShopBuyerService extends BaseService {
    */
   public async del(ids: string[]): Promise<void> {
     // 使用TypeORM的delete方法删除指定ID的店铺买家
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(ShopBuyerService?.TABLE_NAME + `:arr`); 
   }
   /**
    * 更新店铺买家信息
@@ -183,7 +200,10 @@ export class ShopBuyerService extends BaseService {
 
     const key = ShopBuyerService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key);
+    await this?.redisService?.del?.(key);   
+
+    // 删除redis缓存
+    this?.redisService?.del?.(ShopBuyerService?.TABLE_NAME + `:arr`);     
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

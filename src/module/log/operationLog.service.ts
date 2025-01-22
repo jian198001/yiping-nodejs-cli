@@ -88,10 +88,12 @@ export class OperationLogService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, OperationLogService?.TABLE_NAME);           
+
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
-    }
+    
   }
 
   private async getToRedis(ids) {
@@ -135,7 +137,7 @@ export class OperationLogService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -156,7 +158,11 @@ export class OperationLogService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    // 删除redis缓存
+    this?.redisService?.del?.(OperationLogService?.TABLE_NAME + `:arr`);                
   }
 
   /**
@@ -172,7 +178,10 @@ export class OperationLogService extends BaseService {
 
     const key = OperationLogService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key);
+    await this?.redisService?.del?.(key);   
+
+    // 删除redis缓存
+    this?.redisService?.del?.(OperationLogService?.TABLE_NAME + `:arr`);                    
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

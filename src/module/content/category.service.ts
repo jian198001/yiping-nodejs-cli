@@ -51,8 +51,8 @@ export class CategoryService extends BaseService {
     reqParam: ReqParam,
     page: Page
   ): Promise<any> {
-    // 分页列表查询数据
-
+    // 分页列表查询数据 
+    
     let whereSql = " "; // 查询条件字符串
 
     whereSql += sqlUtils?.like?.(["title"], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
@@ -91,12 +91,14 @@ export class CategoryService extends BaseService {
       return data;
     }
 
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, CategoryService?.TABLE_NAME);
+
     console.log(data?.list);
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    }
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+        return _?.keyBy?.(data?.list, "value");
+    
   }
 
   private async getToRedis(ids) {
@@ -132,7 +134,10 @@ export class CategoryService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(CategoryService?.TABLE_NAME + `:arr`);                        
   }
 
   /**
@@ -143,7 +148,14 @@ export class CategoryService extends BaseService {
   public async update(obj: Category): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = "";
+    let log = ""; 
+
+    const key = CategoryService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key); 
+
+    // 删除redis缓存
+    this?.redisService?.del?.(CategoryService?.TABLE_NAME + `:arr`);     
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

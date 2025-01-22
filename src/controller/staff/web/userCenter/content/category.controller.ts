@@ -48,6 +48,7 @@ export class StaffWebUserCenterContentCategoryController {
     @Query() reqParam: ReqParam,
     @Query() page: Page
   ): Promise<any> {
+ 
     // 记录日志
     this?.logger?.info?.("分页列表controller");
 

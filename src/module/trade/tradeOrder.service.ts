@@ -236,7 +236,10 @@ export class TradeOrderService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+ 
+    // 删除redis缓存
+    this?.redisService?.del?.(TradeOrderService?.TABLE_NAME + `:arr`);
   }
 
   public async update(obj: TradeOrder): Promise<any> {
@@ -247,7 +250,10 @@ export class TradeOrderService extends BaseService {
 
     const key = TradeOrderService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key);
+    await this?.redisService?.del?.(key); 
+
+    // 删除redis缓存
+    this?.redisService?.del?.(TradeOrderService?.TABLE_NAME + `:arr`);      
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

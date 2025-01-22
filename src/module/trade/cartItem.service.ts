@@ -177,7 +177,7 @@ export class CartItemService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -191,7 +191,10 @@ export class CartItemService extends BaseService {
    */
   public async del(ids: string[]): Promise<void> {
     // 删除购物车项
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(CartItemService?.TABLE_NAME + `:arr`);       
   }
 
   /**
@@ -202,7 +205,14 @@ export class CartItemService extends BaseService {
   public async update(obj: CartItem): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = "";
+    let log = "";   
+
+    // 删除redis缓存
+    const key = CartItemService?.TABLE_NAME + `:${obj?.id}`;
+    await this?.redisService?.del?.(key);   
+
+    // 删除redis缓存
+    this?.redisService?.del?.(CartItemService?.TABLE_NAME + `:arr`);             
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

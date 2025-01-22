@@ -30,6 +30,8 @@ export class ArticleService extends BaseService {
 
   // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
+
+    , ( SELECT name FROM category WHERE category.id = t.category_id ) AS category_name
   
      `;
 
@@ -103,10 +105,12 @@ export class ArticleService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    }
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, ArticleService?.TABLE_NAME);
+
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+        return _?.keyBy?.(data?.list, "value");
+    
   }
 
   private async getToRedis(ids) {
@@ -142,7 +146,10 @@ export class ArticleService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(ArticleService?.TABLE_NAME + `:arr`);                         
   }
 
   /**

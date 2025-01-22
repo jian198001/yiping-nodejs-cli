@@ -66,6 +66,17 @@ export abstract class BaseService {
     , t.id AS value
   `;
 
+  
+  protected async setArrToRedis(list, tableName = 't') {
+    
+    const key = tableName + `:arr`;
+
+    // 将查询结果中的数据列表存入redis
+    this?.redisService?.set?.(key, JSON?.stringify?.(list));
+
+  }
+
+
   /**
    * 分页查询基础方法
    *

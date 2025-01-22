@@ -50,6 +50,21 @@ export class StockService extends BaseService {
   ): Promise<any> {
     // 分页列表查询数据
 
+    // 缓存中有此数据，直接返回
+    if (page?.pageSize < 1) {
+      // 查看缓存中是否有此数据
+
+      const key = StockService?.TABLE_NAME + `:arr`;
+
+      const data = await this?.redisService?.get?.(key);
+
+      if (data) {
+        const parse = JSON.parse(data);
+
+        return parse;
+      }
+    }
+
     let whereSql = " AND t.quantity > 0 "; // 查询条件字符串
 
     if (reqParam?.searchValue) {
@@ -84,7 +99,7 @@ export class StockService extends BaseService {
 
     console.log("test");
 
-    console.log(JSON.stringify(data));
+    console.log(JSON?.stringify?.(data));
 
     return data;
   }
@@ -121,7 +136,7 @@ export class StockService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -142,6 +157,10 @@ export class StockService extends BaseService {
     } // 调用delete方法，根据ID删除数据
 
     await this?.repository?.delete?.(ids);
+
+    // 删除redis缓存
+    // 删除redis缓存
+    this?.redisService?.del?.(StockService?.TABLE_NAME + `:arr`);
   }
   /**
    * 更新库存
@@ -157,6 +176,9 @@ export class StockService extends BaseService {
     const key = StockService?.TABLE_NAME + `:${obj?.id}`;
 
     await this?.redisService?.del?.(key);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(StockService?.TABLE_NAME + `:arr`);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
@@ -205,6 +227,9 @@ export class StockService extends BaseService {
     const key = StockService?.TABLE_NAME + `:${obj?.id}`;
 
     await this?.redisService?.del?.(key);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(StockService?.TABLE_NAME + `:arr`);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

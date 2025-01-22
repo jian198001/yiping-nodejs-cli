@@ -90,10 +90,12 @@ export class AlipayConfigService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, AlipayConfigService?.TABLE_NAME);
+
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
-    }
+    
   }
 
   private async getToRedis(ids) {
@@ -145,7 +147,10 @@ export class AlipayConfigService extends BaseService {
 
     const key = AlipayConfigService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key);
+    await this?.redisService?.del?.(key); 
+
+    // 删除redis缓存
+    this?.redisService?.del?.(AlipayConfigService?.TABLE_NAME + `:arr`);   
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

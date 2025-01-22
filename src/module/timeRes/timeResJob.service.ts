@@ -9,13 +9,13 @@ import { ILogger } from "@midwayjs/logger";
 import { TimeResJob } from "../../entity/TimeResJob";
 
 import { Zero0Error } from "../common/model/Zero0Error";
- 
+
 import * as sqlUtils from "../common/utils/sqlUtils";
 import { TimeRes } from "../../entity/TimeRes";
-import dayjs = require("dayjs"); 
+import dayjs = require("dayjs");
 import { ShopBuyer } from "../../entity/ShopBuyer";
 import { ShopBuyerService } from "../trade/shopBuyer.service";
-import _ = require('lodash');
+import _ = require("lodash");
 
 /**
  * 时间资源任务服务类
@@ -32,7 +32,7 @@ export class TimeResJobService extends BaseService {
 
   // 查询的数据库表名称及别名
   private fromSql = ` FROM ${TimeResJobService?.TABLE_NAME} t `;
- // 查询的字段名称及头部的SELECT语句
+  // 查询的字段名称及头部的SELECT语句
   private selectSql = ` ${BaseService.selSql}  
 
   , (DATE_format?.(t.time_start, '%H:%i') ) AS time_start_str -- 预定开始时间
@@ -80,11 +80,27 @@ export class TimeResJobService extends BaseService {
   public async page(
     sellerId: string, // 预约信息发布者id,发布者只能看到自己发布的信息,消费者只能看到指定发布者发布的信息
     user: string, // 用户类型，买家只可以看到可预约的时间段，无法看到已过期的时间段，卖家(排班生产者)可以看到全部时间段
-    query = "", params: any,
-    reqParam: ReqParam, 
-    page: Page, 
+    query = "",
+    params: any,
+    reqParam: ReqParam,
+    page: Page
   ): Promise<any> {
     // 分页列表查询数据
+
+    // 缓存中有此数据，直接返回
+    if (page?.pageSize < 1) {
+      // 查看缓存中是否有此数据
+
+      const key = TimeResJobService?.TABLE_NAME + `:arr`;
+
+      const data = await this?.redisService?.get?.(key);
+
+      if (data) {
+        const parse = JSON.parse(data);
+
+        return parse;
+      }
+    }
 
     let whereSql = " "; // 查询条件字符串
 
@@ -92,34 +108,31 @@ export class TimeResJobService extends BaseService {
       whereSql += ` AND t.time_end > NOW() `;
     }
 
-    whereSql += ` AND t.time_res_id IN ( SELECT id FROM time_res WHERE time_res.user_id = '${sellerId}' ) `
+    whereSql += ` AND t.time_res_id IN ( SELECT id FROM time_res WHERE time_res.user_id = '${sellerId}' ) `;
 
-    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue, ); // 处理前端的搜索字符串的搜索需求
-// sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
-    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句 
+    whereSql += sqlUtils?.like?.(["name"], reqParam?.searchValue); // 处理前端的搜索字符串的搜索需求
+    // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
+    // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
     // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
     whereSql += sqlUtils?.whereOrFilters?.(reqParam?.filters); // 处理前端的表格中筛选需求
     whereSql += sqlUtils?.query?.(query);
-// 执行查询语句并返回page对象结果
+    // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
       this?.fromSql,
       whereSql,
       reqParam,
       page
-    )
-        if (page?.pageSize > 0) {
-    
-          return data
-    
-        }
-    
-        if (page?.pageSize < 1) {
-          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-          return _?.keyBy?.(data?.list, 'value',)
-    
-        }
-    
+    );
+    if (page?.pageSize > 0) {
+      return data;
+    }
+
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, TimeResJobService?.TABLE_NAME);
+
+    // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    return _?.keyBy?.(data?.list, "value");
   }
 
   /**
@@ -130,12 +143,15 @@ export class TimeResJobService extends BaseService {
   public async getById(id = ""): Promise<any> {
     // 根据id查询一条数据
 
-    const data: any = await super.getByIdBase?.(id, this?.selectSql, this?.fromSql)
+    const data: any = await super.getByIdBase?.(
+      id,
+      this?.selectSql,
+      this?.fromSql
+    );
 
-    data.works = []
+    data.works = [];
 
-    return data
-
+    return data;
   }
 
   /**
@@ -144,17 +160,19 @@ export class TimeResJobService extends BaseService {
    * @returns 无返回值
    */
   public async del(ids: string[]): Promise<void> {
-    // 删除redis缓存
+    // 删除redis缓存
 
-    for (const id of ids) {
-      const key = TimeResJobService.TABLE_NAME + `:${id}`;
+    for (const id of ids) {
+      const key = TimeResJobService.TABLE_NAME + `:${id}`;
 
-      await this?.redisService?.del?.(key);
-    }
+      await this?.redisService?.del?.(key);
+    } // 调用delete方法，根据ID删除数据
 
-    // 调用delete方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
-  }
+    await this?.repository?.delete?.(ids);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(TimeResJobService?.TABLE_NAME + `:arr`);
+  }
 
   /**
    * 更新时间资源任务
@@ -255,7 +273,7 @@ export class TimeResJobService extends BaseService {
       this?.logger?.error?.(log, zero0Error);
       throw zero0Error;
     }
-// 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
     if (!obj?.id) {
       // 新增数据，主键id的随机字符串值，由后端typeorm提供
       log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
@@ -310,21 +328,23 @@ export class TimeResJobService extends BaseService {
 
   public async updateScene(
     username: string,
-    shopBuyerId: string,
+    shopBuyerId: string
   ): Promise<ShopBuyer> {
- 
     // TODO 根据预约信息发布者用户名,找到对应的发布者ID
 
-    const seller:any = await this?.shopBuyerService.findByUsername(username, '1')
+    const seller: any = await this?.shopBuyerService.findByUsername(
+      username,
+      "1"
+    );
 
-    let shopBuyer: any = await this?.shopBuyerRepository?.findOneById(shopBuyerId)
+    let shopBuyer: any = await this?.shopBuyerRepository?.findOneById(
+      shopBuyerId
+    );
 
-    shopBuyer.scene = seller?.id
+    shopBuyer.scene = seller?.id;
 
-    await this?.shopBuyerRepository?.save(shopBuyer)
+    await this?.shopBuyerRepository?.save(shopBuyer);
 
     return seller;
-
   }
-
 }

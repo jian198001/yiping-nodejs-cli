@@ -102,10 +102,12 @@ export class FormService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, FormService?.TABLE_NAME); 
+
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
-    }
+    
   }
 
   private async getToRedis(ids) {
@@ -163,7 +165,10 @@ export class FormService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(FormService?.TABLE_NAME + `:arr`);                      
   }
 
   /**
@@ -182,6 +187,13 @@ export class FormService extends BaseService {
     }
 
     console.log(obj.code);
+
+    const key = FormService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key); 
+
+    // 删除redis缓存
+    this?.redisService?.del?.(FormService?.TABLE_NAME + `:arr`);     
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
@@ -215,7 +227,7 @@ export class FormService extends BaseService {
 
     let old: Form = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
-    console.log(JSON.stringify(old));
+    console.log(JSON?.stringify?.(old));
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供

@@ -114,10 +114,11 @@ export class UserService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    }
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, UserService?.TABLE_NAME);
+
+    // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    return _?.keyBy?.(data?.list, "value");
   }
 
   private async getToRedis(ids) {
@@ -171,6 +172,9 @@ export class UserService extends BaseService {
     } // 调用delete方法，根据ID删除数据
 
     await this?.repository?.delete?.(ids);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(UserService?.TABLE_NAME + `:arr`);
   }
 
   /**
@@ -234,73 +238,77 @@ export class UserService extends BaseService {
 
     console.log(obj);
 
-    try {
-      if (obj?.password) {
-        obj.password = crypto?.md5?.(obj?.password);
+    if (obj?.password) {
+      obj.password = crypto?.md5?.(obj?.password);
+    }
+
+    let log = "";
+
+    // 删除redis缓存
+    const key = UserService?.TABLE_NAME + `:${obj?.id}`;
+
+    await this?.redisService?.del?.(key);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(UserService?.TABLE_NAME + `:arr`);
+
+    // 字段非重复性验证
+    const uniqueText = await super.unique?.(
+      UserService?.TABLE_NAME,
+      [],
+      obj?.id
+    );
+
+    if (uniqueText) {
+      // 某unique字段值已存在，抛出异常，程序处理终止
+      log = uniqueText + "已存在，操作失败";
+
+      const zero0Error: Zero0Error = new Zero0Error(log, "5000");
+      this?.logger?.error?.(log, zero0Error);
+      throw zero0Error;
+    }
+    // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
+    if (!obj?.id) {
+      // 新增数据，主键id的随机字符串值，由后端typeorm提供
+      log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
+
+      this?.logger?.info?.(log);
+      await this?.repository?.save?.(obj); // insert update
+
+      if (!obj?.orderNum) {
+        await super.sortOrder?.(obj?.id, null, null, UserService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-
-      let log = "";
-
-      // 字段非重复性验证
-      const uniqueText = await super.unique?.(
-        UserService?.TABLE_NAME,
-        [],
-        obj?.id
-      );
-
-      if (uniqueText) {
-        // 某unique字段值已存在，抛出异常，程序处理终止
-        log = uniqueText + "已存在，操作失败";
-
-        const zero0Error: Zero0Error = new Zero0Error(log, "5000");
-        this?.logger?.error?.(log, zero0Error);
-        throw zero0Error;
-      }
-      // 上面是验证，下面是数据更新 -- 支持3种情况: 1. 新增数据,主键由前端生成 2. 新增数据，主键由后端生成 3. 修改数据，主键由前端传递
-      if (!obj?.id) {
-        // 新增数据，主键id的随机字符串值，由后端typeorm提供
-        log = "新增数据，主键id的随机字符串值，由后端typeorm提供";
-
-        this?.logger?.info?.(log);
-        await this?.repository?.save?.(obj); // insert update
-
-        if (!obj?.orderNum) {
-          await super.sortOrder?.(obj?.id, null, null, UserService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
-        }
-
-        await this?.updateRoles?.(obj?.id, roleIds);
-
-        return;
-      }
-
-      let old: User = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
       await this?.updateRoles?.(obj?.id, roleIds);
 
-      if (!old) {
-        // 新增数据，主键id的随机字符串值，由前端页面提供
-
-        await this?.repository?.save?.(obj); // insert update
-
-        console.log("old");
-
-        if (!obj?.orderNum) {
-          await super.sortOrder?.(obj?.id, null, null, UserService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
-        }
-        return;
-      }
-      delete obj?.id;
-
-      old = {
-        ...old,
-
-        ...obj,
-      };
-
-      await this?.repository?.save?.(old); // 修改数据
-    } catch (e) {
-      console.log(e);
+      return;
     }
+
+    let old: User = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
+
+    await this?.updateRoles?.(obj?.id, roleIds);
+
+    if (!old) {
+      // 新增数据，主键id的随机字符串值，由前端页面提供
+
+      await this?.repository?.save?.(obj); // insert update
+
+      console.log("old");
+
+      if (!obj?.orderNum) {
+        await super.sortOrder?.(obj?.id, null, null, UserService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
+      }
+      return;
+    }
+    delete obj?.id;
+
+    old = {
+      ...old,
+
+      ...obj,
+    };
+
+    await this?.repository?.save?.(old); // 修改数据
   }
 
   private async updateRoles(userId: string, roleIds: string[]): Promise<any> {

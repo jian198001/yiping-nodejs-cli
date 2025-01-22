@@ -91,10 +91,11 @@ export class JobLogService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    }
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, JobLogService?.TABLE_NAME);
+
+    // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    return _?.keyBy?.(data?.list, "value");
   }
 
   private async getToRedis(ids) {
@@ -138,7 +139,7 @@ export class JobLogService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -159,7 +160,10 @@ export class JobLogService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(JobLogService?.TABLE_NAME + `:arr`);                  
   }
 
   /**
@@ -200,7 +204,7 @@ export class JobLogService extends BaseService {
         await super.sortOrder?.(obj?.id, null, null, JobLogService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
 
-       return {} ;
+      return {};
     }
 
     let old: JobLog = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -214,7 +218,7 @@ export class JobLogService extends BaseService {
         await super.sortOrder?.(obj?.id, null, null, JobLogService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
 
-       return {} ;
+      return {};
     }
 
     delete obj?.id;

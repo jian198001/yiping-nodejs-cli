@@ -117,7 +117,7 @@ export class ConsumeService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -138,7 +138,10 @@ export class ConsumeService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(ConsumeService?.TABLE_NAME + `:arr`);                    
   }
 
   /**
@@ -149,7 +152,14 @@ export class ConsumeService extends BaseService {
   public async update(obj: Consume): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = "";
+    let log = "";   
+
+    // 删除redis缓存
+    const key = ConsumeService?.TABLE_NAME + `:${obj?.id}`;
+    await this?.redisService?.del?.(key);   
+
+    // 删除redis缓存
+    this?.redisService?.del?.(ConsumeService?.TABLE_NAME + `:arr`);                      
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

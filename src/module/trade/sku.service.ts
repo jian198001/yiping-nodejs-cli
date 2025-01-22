@@ -53,6 +53,21 @@ export class SkuService extends BaseService {
   ): Promise<any> {
     // 分页列表查询数据
 
+    // 缓存中有此数据，直接返回
+    if (page?.pageSize < 1) {
+      // 查看缓存中是否有此数据
+
+      const key = SkuService?.TABLE_NAME + `:arr`;
+
+      const data = await this?.redisService?.get?.(key);    
+
+      if (data) {
+        const parse = JSON.parse(data);
+
+        return parse;
+      }
+    }  
+
     let whereSql = " "; // 查询条件字符串
 
     let parameters: any[] = [];
@@ -87,10 +102,12 @@ export class SkuService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, SkuService?.TABLE_NAME);
+
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
-    }
+    
   }
 
   private async getToRedis(ids) {
@@ -134,7 +151,7 @@ export class SkuService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -147,7 +164,10 @@ export class SkuService extends BaseService {
    */
   public async del(ids: string[]): Promise<void> {
     // 根据商品规格ID删除商品规格信息
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(SkuService?.TABLE_NAME + `:arr`); 
   }
   /**
    * 更新或插入SKU规格信息
@@ -162,7 +182,10 @@ export class SkuService extends BaseService {
 
     const key = SkuService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key);
+    await this?.redisService?.del?.(key); 
+
+    // 删除redis缓存
+    this?.redisService?.del?.(SkuService?.TABLE_NAME + `:arr`); 
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

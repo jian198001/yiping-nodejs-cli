@@ -39,7 +39,22 @@ export class GoodsPropertiesValueService extends BaseService {
     reqParam: ReqParam,
     page: Page
   ): Promise<any> {
-    // 分页列表查询数据
+    // 分页列表查询数据 
+
+    // 缓存中有此数据，直接返回
+    if (page?.pageSize < 1) {
+      // 查看缓存中是否有此数据
+
+      const key = GoodsPropertiesValueService?.TABLE_NAME + `:arr`;
+
+      const data = await this?.redisService?.get?.(key);      
+
+      if (data) {
+        const parse = JSON.parse(data);
+
+        return parse;
+      }
+    }   
 
     let whereSql = " "; // 查询条件字符串
 
@@ -51,7 +66,7 @@ export class GoodsPropertiesValueService extends BaseService {
       parameters = JSON?.parse?.(params);
     }
     // 处理前端的表格中筛选需求
-    
+
     // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
     // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
@@ -81,10 +96,11 @@ export class GoodsPropertiesValueService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    }
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, GoodsPropertiesValueService?.TABLE_NAME);
+
+    // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    return _?.keyBy?.(data?.list, "value");
   }
 
   private async getToRedis(ids) {
@@ -123,7 +139,7 @@ export class GoodsPropertiesValueService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -140,12 +156,22 @@ export class GoodsPropertiesValueService extends BaseService {
     } // 调用delete方法，根据ID删除数据
 
     await this?.repository?.delete?.(ids);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(GoodsPropertiesValueService?.TABLE_NAME + `:arr`);
   }
 
   public async update(obj: GoodsPropertiesValue): Promise<any> {
     // 一个表进行操作 typeORM
 
     let log = "";
+
+    // 删除redis缓存
+    const key = GoodsPropertiesValueService?.TABLE_NAME + `:${obj?.id}`;
+    await this?.redisService?.del?.(key);
+
+    // 删除redis缓存
+    this?.redisService?.del?.(GoodsPropertiesValueService?.TABLE_NAME + `:arr`);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(

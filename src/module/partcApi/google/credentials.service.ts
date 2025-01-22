@@ -66,12 +66,12 @@ export class CredentialsService extends BaseService {
     // 如果obj.id不为空，说明这是一个更新操作
     let old: GoogleCredentials = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
-    console.log("old: " + JSON.stringify(old));
+    console.log("old: " + JSON?.stringify?.(old));
 
     // 如果查询结果为空，说明这是一个新记录
     if (!old) {
       // 记录日志，表示这是一个新增数据操作，主键id由前端页面提供
-      console.log(JSON.stringify(obj));
+      console.log(JSON?.stringify?.(obj));
 
       // 调用repository.save方法插入新记录
       await this?.repository?.save?.(obj); // insert update

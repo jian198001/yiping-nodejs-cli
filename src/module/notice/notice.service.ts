@@ -53,8 +53,27 @@ export class NoticeService extends BaseService {
     reqParam: ReqParam,
     page: Page
   ): Promise<any> {
-    // 分页列表查询数据
-    console?.log(this?.log);
+    // 分页列表查询数据 
+
+    this.log = "分页列表查询数据";
+
+    this?.logger?.info?.(this.log);
+
+    // 缓存中有此数据，直接返回
+    if (page?.pageSize < 1) {
+      // 查看缓存中是否有此数据
+
+      const key = NoticeService?.TABLE_NAME + `:arr`;   
+
+      const data = await this?.redisService?.get?.(key);        
+
+      if (data) {
+        const parse = JSON.parse(data);
+
+        return parse;
+      }
+    }    
+
 
     let whereSql = " "; // 查询条件字符串
 
@@ -95,10 +114,12 @@ export class NoticeService extends BaseService {
       return data;
     }
 
-    if (page?.pageSize < 1) {
-      // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    // 将查询结果中的数据列表存入redis
+    this?.setArrToRedis?.(data?.list, NoticeService?.TABLE_NAME);                    
+
+          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
       return _?.keyBy?.(data?.list, "value");
-    }
+    
   }
 
   private async getToRedis(ids) {
@@ -144,7 +165,7 @@ export class NoticeService extends BaseService {
 
     // 查询数据库后，把数据放入缓存
 
-    await this?.redisService?.set?.(key, JSON.stringify(data));
+    this?.redisService?.set?.(key, JSON?.stringify?.(data));
 
     // 返回数据
 
@@ -166,7 +187,10 @@ export class NoticeService extends BaseService {
     }
 
     // 调用父类的delBase方法，根据ID删除数据
-    await this?.repository?.delete?.(ids);
+    await this?.repository?.delete?.(ids);  
+
+    // 删除redis缓存
+    this?.redisService?.del?.(NoticeService?.TABLE_NAME + `:arr`);                
   }
 
   /**
@@ -183,7 +207,10 @@ export class NoticeService extends BaseService {
 
     const key = NoticeService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key);
+    await this?.redisService?.del?.(key);   
+
+    // 删除redis缓存
+    this?.redisService?.del?.(NoticeService?.TABLE_NAME + `:arr`);                
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
