@@ -106,7 +106,7 @@ export class GoodsService extends BaseService {
       parameters = JSON?.parse?.(params);
     }
     // 处理前端的表格中筛选需求
-    
+
     // sqlUtils?.whereOrFilters处理element-plus表格筛选功能提交的筛选数据
     // sqlUtils?.mulColumnLike?.(strUtils?.antParams2Arr将pro.ant.design表格筛选栏提交的对象形式的数据，转化成SQL LIKE 语句
     // sqlUtils?.query 处理华为OpenTiny框架的组合条件查询组件(此组件已过期不可用)提交的查询数据
@@ -116,7 +116,7 @@ export class GoodsService extends BaseService {
       ) +
       sqlUtils?.whereOrFilters?.(reqParam?.filters) +
       sqlUtils?.query?.(query);
-
+ 
     // 执行查询语句并返回page对象结果
     const data: any = await super.pageBase?.(
       this?.selectSql,
@@ -135,11 +135,10 @@ export class GoodsService extends BaseService {
     }
 
     // 将查询结果中的数据列表存入redis
-    this?.setArrToRedis?.(data?.list, GoodsService?.TABLE_NAME);                       
+    this?.setArrToRedis?.(data?.list, GoodsService?.TABLE_NAME);
 
-          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    
+    // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    return _?.keyBy?.(data?.list, "value");
   }
 
   private async getToRedis(ids) {
@@ -164,20 +163,26 @@ export class GoodsService extends BaseService {
       this?.fromSql
     );
 
+    // 如果商品不存在，则返回空对象
     if (!goods) {
-       return {} ;
+      return {};
     }
 
+    // 初始化一个空对象用于存储商品的SKU信息
     const skus: any = {};
+    // 初始化一个空数组用于存储商品的属性信息
     const properties: any[] = [];
+    // 初始化一个布尔变量，用于判断是否显示添加购物车按钮，默认为true
     let showAddCart = true;
 
-    // 获取店铺信息
-    const shop: Shop = await this?.shopService?.getById?.(goods?.shopId);
+    if (goods?.shopId) {
+      // 获取店铺信息
+      const shop: Shop = await this?.shopService?.getById?.(goods?.shopId);
 
-    // 判断是否显示添加购物车按钮
-    if (shop?.cart === "0") {
-      showAddCart = false;
+      // 判断是否显示添加购物车按钮
+      if (shop?.cart === "0") {
+        showAddCart = false;
+      }
     }
 
     goods.skus = skus;
@@ -221,10 +226,10 @@ export class GoodsService extends BaseService {
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
 
-    await this?.repository?.delete?.(ids);  
+    await this?.repository?.delete?.(ids);
 
     // 删除redis缓存
-    this?.redisService?.del?.(GoodsService?.TABLE_NAME + `:arr`);   
+    this?.redisService?.del?.(GoodsService?.TABLE_NAME + `:arr`);
   }
 
   /**
@@ -238,11 +243,11 @@ export class GoodsService extends BaseService {
 
     const key = GoodsService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key); 
+    await this?.redisService?.del?.(key);
 
     // 删除redis缓存
-    this?.redisService?.del?.(GoodsService?.TABLE_NAME + `:arr`);     
-    
+    this?.redisService?.del?.(GoodsService?.TABLE_NAME + `:arr`);
+
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
       GoodsService?.TABLE_NAME,
@@ -305,7 +310,7 @@ export class GoodsService extends BaseService {
 
       await this?.imgUpdate(imgs, obj?.id);
 
-       return {} ;
+      return {};
     }
 
     let old: Goods = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -321,7 +326,7 @@ export class GoodsService extends BaseService {
 
       await this?.imgUpdate(imgs, obj?.id);
 
-       return {} ;
+      return {};
     }
 
     delete obj?.id;
@@ -342,7 +347,7 @@ export class GoodsService extends BaseService {
    * @returns 更新后的商品对象
    */
   public async updateApproveStatus(id: string): Promise<object> {
-     return {} ;
+    return {};
   }
 
   /**
@@ -385,7 +390,7 @@ export class GoodsService extends BaseService {
    * @returns 商品数量
    */
   public async goodsCount(shopId: string): Promise<number> {
-     return 0;
+    return 0;
   }
 
   /**
@@ -427,7 +432,7 @@ export class GoodsService extends BaseService {
   ): Promise<void> {
     this?.logger?.info?.("增加库存");
 
-     return
+    return;
   }
 
   /**
@@ -444,7 +449,7 @@ export class GoodsService extends BaseService {
   ): Promise<void> {
     this?.logger?.info?.("减少库存");
 
-     return
+    return;
   }
 
   private async imgUpdate(imgs = "", goodsId = ""): Promise<void> {
