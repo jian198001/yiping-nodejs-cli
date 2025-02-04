@@ -200,43 +200,44 @@ export class MaterialService extends BaseService {
 
       delete obj?.id;
     }
+    // 记录日志，表示正在新增或修改物料
+    this?.logger?.info?.("新增或修改物料");
 
-    this?.logger?.info?.("新增或修改商品");
-
-    if (!obj?.name || !obj?.materialCategoryId || !obj?.materialSn) {
-      log = "商品名称/商品分类/商品货号某些内容为空";
-
+    // 检查物料名称是否为空，如果为空则抛出异常
+    if (!obj?.name) {
+      log = "物料名称内容为空";
       throw new Zero0Error(log, "5000");
     }
 
-    if (!obj.price || obj?.price < 0.01) {
-      log = "商品价格设置错误";
-
-      throw new Zero0Error(log, "5000");
-    }
-
+    // 如果审批状态为空，则设置为默认值"instock"
     if (!obj?.approveStatus) {
       obj.approveStatus = "instock";
     }
 
+    // 如果标题为空，则设置为物料名称
     if (!obj?.title) {
       obj.title = obj?.name;
     }
 
+    // 如果原价为空，则设置为价格
     if (!obj?.originPrice) {
       obj.originPrice = obj?.price;
     }
 
+    // 如果配额为空或小于1，则设置为默认值1000000000
     if (!obj?.quota || obj?.quota < 1) {
       obj.quota = 1000000000;
     }
 
+    // 如果起始销售数量为空或小于1，则设置为默认值1
     if (!obj?.startSaleNum || obj?.startSaleNum < 1) {
       obj.startSaleNum = 1;
     }
 
+    // 保存物料对象到数据库
     await this?.repository?.save?.(obj); // insert update
 
+    // 如果订单号为空，则调用sortOrder方法设置排序值
     if (!obj?.orderNum) {
       await super.sortOrder?.(obj?.id, null, null, MaterialService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
     }
@@ -258,7 +259,7 @@ export class MaterialService extends BaseService {
    * @returns 无返回值
    */
   public async instock(materialId: string): Promise<void> {
-    this?.logger?.info?.("商品下架");
+    this?.logger?.info?.("物料下架");
 
     const material: Material = await this?.repository?.findOneById?.(
       materialId
@@ -277,7 +278,7 @@ export class MaterialService extends BaseService {
    * @returns 无返回值
    */
   public async onsale(materialId: string): Promise<void> {
-    this?.logger?.info?.("商品上架");
+    this?.logger?.info?.("物料上架");
 
     const material: Material = await this?.repository?.findOneById?.(
       materialId
@@ -315,20 +316,20 @@ export class MaterialService extends BaseService {
   ): Promise<void> {
     let log = "";
 
-    this?.logger?.info?.("判断商品库存是否充足,是否能满足此次购买所需库存");
+    this?.logger?.info?.("判断物料库存是否充足,是否能满足此次购买所需库存");
 
     const material: Material = await this?.repository?.findOneById?.(
       materialId
     );
 
-    this?.logger?.info?.("多规格商品");
+    this?.logger?.info?.("多规格物料");
 
     // TODO
 
-    this?.logger?.info?.("单规格商品");
+    this?.logger?.info?.("单规格物料");
 
     if (quantity > material.stock) {
-      log = "商品" + material.name + "库存不足";
+      log = "物料" + material.name + "库存不足";
 
       const zero0Error: Zero0Error = new Zero0Error(log, "5000");
       this?.logger?.error?.(log, zero0Error);
