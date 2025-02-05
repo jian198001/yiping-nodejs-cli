@@ -61,7 +61,7 @@ export class AddressService extends BaseService {
       const data = await this?.redisService?.get?.(key);        
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }
@@ -71,7 +71,7 @@ export class AddressService extends BaseService {
 
     let parameters: any[] = [];
 
-    if (params && params.length > 3) {
+    if (params && params?.length > 3) {
       parameters = JSON?.parse?.(params);
     }
 

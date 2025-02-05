@@ -62,7 +62,7 @@ export class AuctionService extends BaseService {
       const data = await this?.redisService?.get?.(key);        
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }
@@ -147,7 +147,7 @@ export class AuctionService extends BaseService {
     // 缓存中有此数据，直接返回
 
     if (data) {
-      const parse = JSON.parse(data);
+      const parse = JSON?.parse?.(data);
 
       return parse;
     }

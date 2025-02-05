@@ -68,7 +68,7 @@ export class NoticeService extends BaseService {
       const data = await this?.redisService?.get?.(key);        
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }
@@ -152,7 +152,7 @@ export class NoticeService extends BaseService {
     if (data) {
       this?.logger?.info?.("缓存中有此数据，直接返回");
 
-      const parse = JSON.parse(data);
+      const parse = JSON?.parse?.(data);
 
       return parse;
     }

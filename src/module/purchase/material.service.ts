@@ -60,28 +60,29 @@ export class MaterialService extends BaseService {
   ): Promise<any> {
     // 分页列表查询数据
 
+    console.log('query');
+    
+
     // 缓存中有此数据，直接返回
-    if (page?.pageSize < 1) {
-      // 查看缓存中是否有此数据
+    // if (page?.pageSize < 1) {
+    //   // 查看缓存中是否有此数据
 
-      const key = MaterialService?.TABLE_NAME + `:arr`;
+    //   const key = MaterialService?.TABLE_NAME + `:arr`;
 
-      const data = await this?.redisService?.get?.(key);
+    //   const data = await this?.redisService?.get?.(key);
 
-      if (data) {
-        const parse = JSON.parse(data);
+    //   if (data) {
+    //     const parse = JSON?.parse?.(data);
 
-        return parse;
-      }
-    }
-
-    console.log("test page");
+    //     return parse;
+    //   }
+    // }
 
     let whereSql = " "; // 查询条件字符串
 
     let parameters: any[] = [];
 
-    if (params && params.length > 3) {
+    if (params && params?.length > 3) {
       parameters = JSON?.parse?.(params);
     }
 
@@ -106,6 +107,9 @@ export class MaterialService extends BaseService {
     // 遍历查询结果,将查询结果中异步读取到redis
 
     this?.getToRedis?.(_?.map?.(data?.list, "id"));
+
+    console.log('data?.list', data?.list);
+    
 
     if (page?.pageSize > 0) {
       return data;

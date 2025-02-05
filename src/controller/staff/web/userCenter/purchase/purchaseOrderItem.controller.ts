@@ -68,6 +68,12 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
       reqParam,
       page
     );
+
+    // 打印分页结果
+    console.log('test');
+    // 打印分页结果
+    console.log(data);
+
     // 返回分页结果
     return data;
   }

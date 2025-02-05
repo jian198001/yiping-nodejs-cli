@@ -87,7 +87,7 @@ export class PurchaseOrderService extends BaseService {
       const data = await this?.redisService?.get?.(key);
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }
@@ -177,7 +177,7 @@ export class PurchaseOrderService extends BaseService {
     // 缓存中有此数据，直接返回
 
     if (data) {
-      const parse = JSON.parse(data);
+      const parse = JSON?.parse?.(data);
 
       return parse;
     }
@@ -298,30 +298,8 @@ export class PurchaseOrderService extends BaseService {
   ): Promise<any> {
     // 一个表进行操作 typeORM
 
-    let log = "";
-
-    if (type === "input") {
-      // 新增新物料
-
-      // 判断物料名称及规格型号是否重复
-
-      const countUnique: number = await this?.materialRepository?.countBy({
-        name: obj.name,
-        sku: obj.sku,
-      });
-
-      if (countUnique > 0) {
-        log = "同名称及规格型号物料已存在,操作失败";
-
-        const zero0Error: Zero0Error = new Zero0Error(log, "5000");
-        this?.logger?.error?.(log, zero0Error);
-        throw zero0Error;
-      }
-
-      await this?.materialRepository?.save?.(obj);
-
-      purchaseOrderItem.materialId = obj?.id;
-    }
+    console.log('data', purchaseOrderItem);
+    
 
     // 判断此物料id在此采购单的其它明细中是否已存在，如存在，则累加
 

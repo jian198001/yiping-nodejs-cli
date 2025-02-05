@@ -130,7 +130,7 @@ export class TradeOrderService extends BaseService {
 
     let parameters: any[] = [];
 
-    if (params && params.length > 3) {
+    if (params && params?.length > 3) {
       parameters = JSON?.parse?.(params);
     }
 

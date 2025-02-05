@@ -100,7 +100,7 @@ export class ShopService extends BaseService {
       const data = await this?.redisService?.get?.(key);    
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }

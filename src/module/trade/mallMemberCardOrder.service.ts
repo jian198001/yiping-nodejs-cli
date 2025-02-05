@@ -58,7 +58,7 @@ export class MallMemberCardService extends BaseService {
       const data = await this?.redisService?.get?.(key);
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }
@@ -66,7 +66,7 @@ export class MallMemberCardService extends BaseService {
 
     let whereSql = " "; // 查询条件字符串
     let parameters: any[] = [];
-    if (params && params.length > 3) {
+    if (params && params?.length > 3) {
       parameters = JSON?.parse?.(params);
     }
     // 构建查询条件
@@ -131,7 +131,7 @@ export class MallMemberCardService extends BaseService {
     // 缓存中有此数据，直接返回
 
     if (data) {
-      const parse = JSON.parse(data);
+      const parse = JSON?.parse?.(data);
 
       return parse;
     }

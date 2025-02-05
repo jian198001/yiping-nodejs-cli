@@ -58,7 +58,7 @@ export class DiscountCardService extends BaseService {
       const data = await this?.redisService?.get?.(key);      
 
       if (data) {
-        const parse = JSON.parse(data);
+        const parse = JSON?.parse?.(data);
 
         return parse;
       }
@@ -68,7 +68,7 @@ export class DiscountCardService extends BaseService {
 
     let parameters: any[] = [];
 
-    if (params && params.length > 3) {
+    if (params && params?.length > 3) {
       parameters = JSON?.parse?.(params);
     }
 
@@ -136,7 +136,7 @@ export class DiscountCardService extends BaseService {
     // 缓存中有此数据，直接返回
 
     if (data) {
-      const parse = JSON.parse(data);
+      const parse = JSON?.parse?.(data);
 
       return parse;
     }
