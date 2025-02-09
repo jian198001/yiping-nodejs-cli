@@ -137,13 +137,13 @@ export class NoticeService extends BaseService {
     // 记录日志
     this?.logger?.info?.("根据ID查询通知消息");
 
-    console.log("getById");
+    console?.log?.("getById");
 
     // 根据id查询一条数据
 
     // 查看缓存中是否有此数据
 
-    const key = NoticeService.TABLE_NAME + `:${id}`;
+    const key = NoticeService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 
@@ -181,7 +181,7 @@ export class NoticeService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = NoticeService.TABLE_NAME + `:${id}`;
+      const key = NoticeService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     }

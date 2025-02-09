@@ -60,7 +60,7 @@ export class StaffWebUserCenterCardDiscountCardController {
     const staffId: string = this?.ctx?.state?.user?.id;
 
     // 打印当前用户的ID
-    console.log(staffId);
+    console?.log?.(staffId);
 
     // 调用折扣卡服务的分页方法
     const data = await this?.discountCardService?.page?.(query, params, reqParam, page);

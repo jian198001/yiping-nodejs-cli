@@ -70,7 +70,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
       page
     );
 
-    console.log("data", data);
+    console?.log?.("data", data);
 
     // 返回分页结果
     return data;

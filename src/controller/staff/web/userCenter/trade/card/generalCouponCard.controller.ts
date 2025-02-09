@@ -58,7 +58,7 @@ export class StaffWebUserCenterCardGeneralCouponCardController {
     // 获取当前用户的ID
     const staffId: string = this?.ctx?.state?.user?.id;
     // 打印当前用户的ID
-    console.log(staffId);
+    console?.log?.(staffId);
     // 调用通用优惠券卡服务的分页方法
     const data = await this?.generalCouponCardService?.page?.(
       query,

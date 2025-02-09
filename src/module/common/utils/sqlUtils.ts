@@ -328,7 +328,7 @@ function ruleStr(rule: any = {}): string {
     
   }
 
-  console.log(valueSource);
+  console?.log?.(valueSource);
 
   whereSql += ` ( ${field} ${operator} '${value}' ) `;
 

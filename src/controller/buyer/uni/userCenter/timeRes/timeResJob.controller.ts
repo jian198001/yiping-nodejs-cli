@@ -94,7 +94,7 @@ export class BuyerUniUserCenterTimeResTimeResJobController {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
     // 打印当前用户的ID
-    console.log(shopBuyerId);
+    console?.log?.(shopBuyerId);
     // 调用可预约时间段管理服务的更新方法
     return await this?.timeResJobService?.update(
       obj,

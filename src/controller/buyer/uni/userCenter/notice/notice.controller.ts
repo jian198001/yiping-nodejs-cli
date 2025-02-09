@@ -51,7 +51,7 @@ export class BuyerUniUserCenterNoticeNoticeController {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
     // 打印当前用户的ID
-    console.log(shopBuyerId);
+    console?.log?.(shopBuyerId);
     // 调用通知服务的分页方法
     const data = await this?.noticeService?.page?.(
       query,

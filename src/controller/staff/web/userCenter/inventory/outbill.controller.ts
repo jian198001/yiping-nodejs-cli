@@ -55,7 +55,7 @@ export class StaffWebUserCenterInventoryOutbillController {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 调用outbillService的page方法进行分页查询
     const data = await this?.outbillService?.page?.(query, params, reqParam, page);
@@ -113,7 +113,7 @@ export class StaffWebUserCenterInventoryOutbillController {
       billId: data?.id,
       staffId: staffId,
     }];
-    console.log('staffId: ', staffId);
+    console?.log?.('staffId: ', staffId);
     // 调用outbillService的consume方法进行消费出库
     await this?.outbillService?.consume(data, list, staffId);
   }

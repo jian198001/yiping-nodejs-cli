@@ -39,7 +39,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(username, password) {
     let log = '';
 
-    console.log(username, password);
+    console?.log?.(username, password);
 
     const pwd = crypto?.md5?.(password);
 
@@ -48,7 +48,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       password: pwd,
     });
 
-    console.log(users);
+    console?.log?.(users);
 
     if (!users || users?.length < 1) {
       log = '用户名或密码错误';

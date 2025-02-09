@@ -50,7 +50,7 @@ export class BuyerUniFrontPageGoodsGoodsCategoryController {
     // 获取当前用户的ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
 
-    console.log(shopBuyerId);
+    console?.log?.(shopBuyerId);
 
     // 记录日志
     this?.logger?.info?.("分页列表controller");

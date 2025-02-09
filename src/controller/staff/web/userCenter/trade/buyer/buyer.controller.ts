@@ -47,7 +47,7 @@ export class StaffWebUserCenterTradeOrderBuyerBuyerController {
     const staffId: string = this?.ctx?.state?.user?.id;
     
     // 打印当前用户的ID
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 调用店铺买家服务的获取父关联用户方法
     return await this?.shopBuyerService?.getParent?.(id);

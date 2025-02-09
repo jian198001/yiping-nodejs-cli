@@ -56,7 +56,7 @@ export class StaffWebFrontPageFormFormSubmitController {
     // 获取当前员工ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 调用formSubmitService的page方法进行分页查询
     const data = await this?.formSubmitService?.page?.(query, params, reqParam, page);

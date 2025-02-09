@@ -35,7 +35,7 @@ export class BuyerUniFrontPageGoodsShopBuyerController {
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
 
     // 记录日志
-    console.log(shopBuyerId);
+    console?.log?.(shopBuyerId);
 
     // 调用店铺买家服务的根据ID获取方法
     return await this?.shopBuyerService?.getById?.(id);

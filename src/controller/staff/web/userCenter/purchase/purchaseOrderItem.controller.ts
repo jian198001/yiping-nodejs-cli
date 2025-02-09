@@ -59,7 +59,7 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
     // 获取当前用户的ID
     const staffId: string = this?.ctx?.state?.user?.id;
     // 打印当前用户的ID
-    console.log(staffId);
+    console?.log?.(staffId);
     // 调用采购订单项服务的分页方法
     const data = await this?.purchaseOrderItemService?.page?.(
       orderId,
@@ -70,9 +70,9 @@ export class StaffWebUserCenterPurchaseOrderPurchaseOrderController {
     );
 
     // 打印分页结果
-    console.log('test');
+    console?.log?.('test');
     // 打印分页结果
-    console.log(data);
+    console?.log?.(data);
 
     // 返回分页结果
     return data;

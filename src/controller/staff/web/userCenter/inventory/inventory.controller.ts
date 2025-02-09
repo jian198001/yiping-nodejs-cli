@@ -55,7 +55,7 @@ export class StaffWebUserCenterInventoryInventoryController {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 调用inventoryService的page方法进行分页查询
     const data = await this?.inventoryService?.page?.(query, params, reqParam, page);

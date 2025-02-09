@@ -141,7 +141,7 @@ export class OrgService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = OrgService.TABLE_NAME + `:${id}`;
+    const key = OrgService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 

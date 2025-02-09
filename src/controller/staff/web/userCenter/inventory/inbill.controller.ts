@@ -52,7 +52,7 @@ export class StaffWebUserCenterInventoryInbillController {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 获取当前用户角色ID
     const roleId = staffId;

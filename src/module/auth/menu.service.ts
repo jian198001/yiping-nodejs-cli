@@ -12,10 +12,10 @@ export class MenuService extends BaseService {
   private menuModel: ReturnModelType<typeof Menu>;
 
   public async update(obj: Menu): Promise<any> {
-    console.log(obj);
+    console?.log?.(obj);
 
     if (!obj?.pid && !obj?.level && !obj?.parentId) {
-      console.log('新增一级菜单');
+      console?.log?.('新增一级菜单');
 
       // 新增一级菜单
 
@@ -29,10 +29,10 @@ export class MenuService extends BaseService {
     } else if (obj?.level === 1) {
       // 修改一级菜单
 
-      console.log('修改一级菜单');
+      console?.log?.('修改一级菜单');
     } else if (obj?.parentId) {
       // 新增或修改二级菜单
-      console.log('新增或修改二级菜单');
+      console?.log?.('新增或修改二级菜单');
 
       if (!obj?.pid) {
         await this?.menuModel?.updateMany(

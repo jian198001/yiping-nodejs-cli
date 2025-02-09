@@ -127,8 +127,8 @@ export async function zip(targetFile = 'a.zip', files: string[]) {
 
   // 监听输出流关闭事件
   output.on('close', () => {
-    console.log(archive.pointer() + ' total bytes');
-    console.log('压缩完成，文件大小：' + archive.pointer() + ' bytes');
+    console?.log?.(archive.pointer() + ' total bytes');
+    console?.log?.('压缩完成，文件大小：' + archive.pointer() + ' bytes');
   });
 
   // 监听压缩过程中的警告

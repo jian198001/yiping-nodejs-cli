@@ -170,7 +170,7 @@ export class PurchaseOrderService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = PurchaseOrderService.TABLE_NAME + `:${id}`;
+    const key = PurchaseOrderService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 
@@ -298,7 +298,7 @@ export class PurchaseOrderService extends BaseService {
   ): Promise<any> {
     // 一个表进行操作 typeORM
 
-    console.log('data', purchaseOrderItem);
+    console?.log?.('data', purchaseOrderItem);
     
 
     // 判断此物料id在此采购单的其它明细中是否已存在，如存在，则累加

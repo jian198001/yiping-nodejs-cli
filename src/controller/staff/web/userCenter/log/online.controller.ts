@@ -42,7 +42,7 @@ export class StaffWebUserCenterLogAccessLogController {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 返回空对象，待实现具体逻辑
     return {};

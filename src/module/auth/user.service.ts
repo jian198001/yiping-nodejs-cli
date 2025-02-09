@@ -166,7 +166,7 @@ export class UserService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = UserService.TABLE_NAME + `:${id}`;
+      const key = UserService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
@@ -236,7 +236,7 @@ export class UserService extends BaseService {
   public async update(obj: User, roleIds: string[]): Promise<any> {
     // 一个表进行操作 typeORM
 
-    console.log(obj);
+    console?.log?.(obj);
 
     if (obj?.password) {
       obj.password = crypto?.md5?.(obj?.password);
@@ -293,7 +293,7 @@ export class UserService extends BaseService {
 
       await this?.repository?.save?.(obj); // insert update
 
-      console.log("old");
+      console?.log?.("old");
 
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, UserService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值

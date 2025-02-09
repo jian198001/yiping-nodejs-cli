@@ -231,7 +231,7 @@ export class TradeOrderService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = TradeOrderService.TABLE_NAME + `:${id}`;
+      const key = TradeOrderService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
@@ -1173,7 +1173,7 @@ export class TradeOrderService extends BaseService {
 
       const record: any = await wxpay?.refunds?.(refunds);
 
-      console.log(record);
+      console?.log?.(record);
 
       // TODO
     } else if (payType === "alipay") {

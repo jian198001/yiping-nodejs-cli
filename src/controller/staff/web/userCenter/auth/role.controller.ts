@@ -57,7 +57,7 @@ export class StaffWebUserCenterAuthRoleController {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 调用roleService的page方法进行分页查询
     const data = await this?.roleService?.page?.(

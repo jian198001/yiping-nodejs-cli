@@ -56,7 +56,7 @@ export class BuyerUniUserCenterSignInSignInController {
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
     
     // 打印当前用户的ID
-    console.log(shopBuyerId);
+    console?.log?.(shopBuyerId);
     
     // 调用签到服务的分页方法
     const data = await this?.signInService?.page?.(query, params, reqParam, page);

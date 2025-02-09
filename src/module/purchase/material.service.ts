@@ -60,7 +60,7 @@ export class MaterialService extends BaseService {
   ): Promise<any> {
     // 分页列表查询数据
 
-    console.log('query');
+    console?.log?.('query');
     
 
     // 缓存中有此数据，直接返回
@@ -108,7 +108,7 @@ export class MaterialService extends BaseService {
 
     this?.getToRedis?.(_?.map?.(data?.list, "id"));
 
-    console.log('data?.list', data?.list);
+    console?.log?.('data?.list', data?.list);
     
 
     if (page?.pageSize > 0) {
@@ -151,7 +151,7 @@ export class MaterialService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = MaterialService.TABLE_NAME + `:${id}`;
+      const key = MaterialService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据

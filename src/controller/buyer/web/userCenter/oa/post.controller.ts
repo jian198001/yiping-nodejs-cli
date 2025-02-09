@@ -55,7 +55,7 @@ export class BuyerWebUserCenterDeptPostController {
     // 获取当前用户ID
     const shopBuyerId: string = this?.ctx?.state?.user?.id;
     
-    console.log(shopBuyerId);
+    console?.log?.(shopBuyerId);
     
     // 调用postService的page方法进行分页查询
     const data = await this?.postService?.page?.(query, params, reqParam, page);

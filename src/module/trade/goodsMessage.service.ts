@@ -146,7 +146,7 @@ export class GoodsMessageService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = GoodsMessageService.TABLE_NAME + `:${id}`;
+    const key = GoodsMessageService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 

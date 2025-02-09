@@ -94,7 +94,7 @@ export class CategoryService extends BaseService {
     // 将查询结果中的数据列表存入redis
     this?.setArrToRedis?.(data?.list, CategoryService?.TABLE_NAME);
 
-    console.log(data?.list);
+    console?.log?.(data?.list);
 
           // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
         return _?.keyBy?.(data?.list, "value");
@@ -129,7 +129,7 @@ export class CategoryService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = CategoryService.TABLE_NAME + `:${id}`;
+      const key = CategoryService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据

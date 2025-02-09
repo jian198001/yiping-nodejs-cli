@@ -170,7 +170,7 @@ export class PostService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = PostService.TABLE_NAME + `:${id}`;
+      const key = PostService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据

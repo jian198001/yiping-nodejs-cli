@@ -38,7 +38,7 @@ export class StaffWebUserCenterUploadController {
     this?.logger?.info?.('文件上传');
 
     // 打印上传的文件信息
-    console.log(files);
+    console?.log?.(files);
 
     // 复制上传的文件到指定目录，并返回文件路径
     const data =

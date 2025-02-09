@@ -59,14 +59,14 @@ export class SkuService extends BaseService {
 
       const key = SkuService?.TABLE_NAME + `:arr`;
 
-      const data = await this?.redisService?.get?.(key);    
+      const data = await this?.redisService?.get?.(key);
 
       if (data) {
         const parse = JSON?.parse?.(data);
 
         return parse;
       }
-    }  
+    }
 
     let whereSql = " "; // 查询条件字符串
 
@@ -105,9 +105,8 @@ export class SkuService extends BaseService {
     // 将查询结果中的数据列表存入redis
     this?.setArrToRedis?.(data?.list, SkuService?.TABLE_NAME);
 
-          // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
-      return _?.keyBy?.(data?.list, "value");
-    
+    // pro.ant.design的select组件中的options,是valueEnum形式,不是数组而是对象,此处把page.list中数组转换成对象
+    return _?.keyBy?.(data?.list, "value");
   }
 
   private async getToRedis(ids) {
@@ -131,7 +130,7 @@ export class SkuService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = SkuService.TABLE_NAME + `:${id}`;
+    const key = SkuService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 
@@ -164,10 +163,10 @@ export class SkuService extends BaseService {
    */
   public async del(ids: string[]): Promise<void> {
     // 根据商品规格ID删除商品规格信息
-    await this?.repository?.delete?.(ids);  
+    await this?.repository?.delete?.(ids);
 
     // 删除redis缓存
-    this?.redisService?.del?.(SkuService?.TABLE_NAME + `:arr`); 
+    this?.redisService?.del?.(SkuService?.TABLE_NAME + `:arr`);
   }
   /**
    * 更新或插入SKU规格信息
@@ -182,10 +181,10 @@ export class SkuService extends BaseService {
 
     const key = SkuService?.TABLE_NAME + `:${obj?.id}`;
 
-    await this?.redisService?.del?.(key); 
+    await this?.redisService?.del?.(key);
 
     // 删除redis缓存
-    this?.redisService?.del?.(SkuService?.TABLE_NAME + `:arr`); 
+    this?.redisService?.del?.(SkuService?.TABLE_NAME + `:arr`);
 
     // 字段非重复性验证
     const uniqueText = await super.unique?.(
@@ -214,7 +213,7 @@ export class SkuService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, SkuService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-       return {} ;
+      return {};
     }
 
     let old: SkuKey = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
@@ -227,7 +226,7 @@ export class SkuService extends BaseService {
       if (!obj?.orderNum) {
         await super.sortOrder?.(obj?.id, null, null, SkuService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
-       return {} ;
+      return {};
     }
     delete obj?.id;
 
@@ -260,7 +259,7 @@ export class SkuService extends BaseService {
    */
   public async changeSkuList(jsonArray: any[]): Promise<any[]> {
     // 提取出购买信息中的SKU规格信息
-     return [];
+    return [];
   }
   /**
    * 根据id查询一条商品规格数据

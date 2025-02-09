@@ -94,7 +94,7 @@ export class CartItemService extends BaseService {
       sqlUtils?.whereOrFilters?.(reqParam?.filters) +
       sqlUtils?.query?.(query);
 
-    console.log(whereSql);
+    console?.log?.(whereSql);
 
     // 执行分页查询
     const pageBase = await super.pageBase?.(
@@ -105,9 +105,9 @@ export class CartItemService extends BaseService {
       page
     );
 
-    console.log("test");
+    console?.log?.("test");
 
-    console.log(pageBase);
+    console?.log?.(pageBase);
 
     // 返回分页查询结果
     return pageBase;
@@ -157,7 +157,7 @@ export class CartItemService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = CartItemService.TABLE_NAME + `:${id}`;
+    const key = CartItemService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 

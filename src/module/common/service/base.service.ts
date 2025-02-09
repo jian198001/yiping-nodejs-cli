@@ -139,7 +139,7 @@ export abstract class BaseService {
       )
     );
 
-    console.log(sql);
+    console?.log?.(sql);
 
     // 执行分页查询的SQL
     const result: any[] = await this?.query?.(sql);
@@ -210,7 +210,7 @@ export abstract class BaseService {
       " "
     );
 
-    console.log(sql);
+    console?.log?.(sql);
 
     // 执行查询的SQL
     let result: any[] = await this?.query?.(sql);

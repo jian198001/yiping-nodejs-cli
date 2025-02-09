@@ -198,13 +198,13 @@ export class GoodsService extends BaseService {
     if (multipartFiles) {
       for (const multipartFile of multipartFiles) {
         // 拼接图片URL
-        imgs.push?.("https://" + this?.domain.domainName + multipartFile.uri);
+        imgs.push?.("https://" + this?.domain?.domainName + multipartFile?.uri);
       }
       // 拼接商品主图URL
-      goods.img = "https://" + this?.domain.domainName + goods.img;
+      goods.img = "https://" + this?.domain?.domainName + goods?.img;
     } else {
       // 添加默认图片
-      imgs.push?.(GoodsService.emptyGoodsImg);
+      imgs.push?.(GoodsService?.emptyGoodsImg);
     }
 
     goods.imgs = imgs;
@@ -221,7 +221,7 @@ export class GoodsService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = GoodsService.TABLE_NAME + `:${id}`;
+      const key = GoodsService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
@@ -308,7 +308,7 @@ export class GoodsService extends BaseService {
         await super.sortOrder?.(obj?.id, null, null, GoodsService?.TABLE_NAME); // 新增数据时，设置此条数据的orderNum排序值
       }
 
-      await this?.imgUpdate(imgs, obj?.id);
+      await this?.imgUpdate?.(imgs, obj?.id);
 
       return {};
     }

@@ -50,7 +50,7 @@ export class StaffWebUserCenterNoticeNoticeController {
     @Query() page: Page,
   ): Promise<any> {
 
-    console.log('page: ', page);    
+    console?.log?.('page: ', page);    
 
     // 记录日志
     this?.logger?.info?.('分页列表controller');
@@ -58,7 +58,7 @@ export class StaffWebUserCenterNoticeNoticeController {
     // 获取当前用户ID
     const staffId: string = this?.ctx?.state?.user?.id;
     
-    console.log(staffId);
+    console?.log?.(staffId);
     
     // 调用noticeService的page方法进行分页查询
     const data = await this?.noticeService?.page?.(query, params, reqParam, page);

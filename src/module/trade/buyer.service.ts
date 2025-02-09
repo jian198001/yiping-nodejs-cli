@@ -144,7 +144,7 @@ export class BuyerService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = BuyerService.TABLE_NAME + `:${id}`;
+    const key = BuyerService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 
@@ -175,7 +175,7 @@ export class BuyerService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = BuyerService.TABLE_NAME + `:${id}`;
+      const key = BuyerService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
@@ -264,7 +264,7 @@ export class BuyerService extends BaseService {
     if (count < 1) {
       log = "用户名不存在，将直接新建用户";
 
-      console.log(log);
+      console?.log?.(log);
 
       delete usernamePasswordToken.id;
 
@@ -289,7 +289,7 @@ export class BuyerService extends BaseService {
     if (count < 1) {
       log = "用户名不存在，将直接新建用户";
 
-      console.log(log);
+      console?.log?.(log);
 
       delete usernamePasswordToken.id;
 
@@ -304,7 +304,7 @@ export class BuyerService extends BaseService {
   public async login(usernamePasswordToken: Buyer, shopId = ""): Promise<any> {
     let log = "";
 
-    console.log("用户登陆");
+    console?.log?.("用户登陆");
 
     const password: string = crypto?.md5?.(usernamePasswordToken.password);
 
@@ -615,6 +615,6 @@ export class BuyerService extends BaseService {
 
     const dataOutput: any = await wxpay?.batches_transfer(input);
 
-    console.log(dataOutput);
+    console?.log?.(dataOutput);
   }
 }

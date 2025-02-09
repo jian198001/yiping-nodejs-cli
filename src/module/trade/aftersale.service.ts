@@ -125,7 +125,7 @@ export class AftersaleService extends BaseService {
 
     // 查看缓存中是否有此数据
 
-    const key = AftersaleService.TABLE_NAME + `:${id}`;
+    const key = AftersaleService?.TABLE_NAME + `:${id}`;
 
     let data: any = await this?.redisService?.get?.(key);
 
@@ -160,7 +160,7 @@ export class AftersaleService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = AftersaleService.TABLE_NAME + `:${id}`;
+      const key = AftersaleService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据

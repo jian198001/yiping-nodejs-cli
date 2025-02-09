@@ -160,7 +160,7 @@ export class FormService extends BaseService {
     // 删除redis缓存
 
     for (const id of ids) {
-      const key = FormService.TABLE_NAME + `:${id}`;
+      const key = FormService?.TABLE_NAME + `:${id}`;
 
       await this?.redisService?.del?.(key);
     } // 调用delete方法，根据ID删除数据
@@ -186,7 +186,7 @@ export class FormService extends BaseService {
         moment().format?.("YYYYMMDDHHmmss") + _?.random?.(10, 99, false);
     }
 
-    console.log(obj.code);
+    console?.log?.(obj.code);
 
     const key = FormService?.TABLE_NAME + `:${obj?.id}`;
 
@@ -227,7 +227,7 @@ export class FormService extends BaseService {
 
     let old: Form = await this?.repository?.findOneById?.(obj?.id); // 新增或修改数据时，先根据id查询,如此id在数据库中不存在，则是新增，如已存在，则是修改
 
-    console.log(JSON?.stringify?.(old));
+    console?.log?.(JSON?.stringify?.(old));
 
     if (!old) {
       // 新增数据，主键id的随机字符串值，由前端页面提供
